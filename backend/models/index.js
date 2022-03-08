@@ -10,7 +10,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.tutorials = require("./users")(sequelize, Sequelize);
-
+db.users = require("./users")(sequelize, Sequelize);
+db.message = require("./post")(sequelize, Sequelize);
 
 module.exports = db;
