@@ -1,6 +1,13 @@
 const express = require('express');
-
 const app = express();
+const cors = require('cors');
+let corsOptions = {
+  origin: "http://localhost:3000"
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
   //requêtes Cors (cross origin ressource Sharing)//
   app.use((req, res, next) => {
