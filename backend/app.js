@@ -9,6 +9,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+require("dotenv").config();
+
   //requêtes Cors (cross origin ressource Sharing)//
   app.use((req, res, next) => {
    res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,6 +23,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res) => {
    res.json({ message: 'Votre requête a bien été reçue !' }); 
+});
+
+
+const db = require("./models");
+db.sequelize.sync({ force: true }).then(() => {
+  console.log("Drop and re-sync db.");
 });
 
 module.exports = app;
