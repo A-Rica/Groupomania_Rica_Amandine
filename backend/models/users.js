@@ -37,6 +37,10 @@ module.exports = (sequelize, Sequelize) => {
       avatar: {
         type: Sequelize.STRING,
         defaultValue: "https//"
+      },
+      admin: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       }
     });
     return Utilisateur;
