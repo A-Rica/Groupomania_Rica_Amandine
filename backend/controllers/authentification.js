@@ -1,6 +1,5 @@
 const db = require("../models");
-const user = db.users;
-const Op = db.Sequelize.Op;
+const Users = db.users;
 //module de sécurité utilisateur//
 const bcrypt = require ('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -10,14 +9,13 @@ const jwt = require('jsonwebtoken');
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.mot_de_passe, 10)
       .then(hash => {
-        const user = new User({
+        const users = new Users({
           nom: req.body.nom,
           prenom: req.body.prenom,
           email: req.body.email,
           mot_de_passe: hash
-        });
-        console.log(user);
-        user.save()
+        }); 
+        users.save()
           .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
           .catch(error => res.status(400).json({ error }));
       })
@@ -27,24 +25,24 @@ exports.signup = (req, res, next) => {
   //Connexion de l'utilisateur//
 
   exports.login = (req, res, next) => {
-   user.findOne({ email: req.body.email })
-      .then(user => {
-        if (!user) {
+   Users.findOne({ email: req.body.email })
+      .then(users => {
+        if (!users) {
           return res.status(401).json({ error: 'Utilisateur non trouvé !' });
         }
-        bcrypt.compare(req.body.password, user.password)
+        bcrypt.compare(req.body.mot_de_passe, users.mot_de_passe)
           .then(valid => {
             if (!valid) {
               return res.status(401).json({ error: 'Mot de passe incorrect !' });
             }
             res.status(200).json({
-              userId: user.id,
+              userId: users.id,
               token: jwt.sign(
                   {userId: user.id},
                process.env.TOKEN,
-           { expiresIn: '24h' }
+           { expiresIn: '24h' } 
               )
-            });
+            }); 
           })
           .catch(error => res.status(500).json({ error }));
       })

@@ -4,10 +4,4 @@ module.exports = {
     PASSWORD: process.env.DB_PASSWORD,
     DB: "reseau_groupomania",
     dialect: "mysql",
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000
-    }
   };

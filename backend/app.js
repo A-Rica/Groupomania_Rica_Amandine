@@ -27,6 +27,7 @@ db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and re-sync db.");
 });
 
- require("./routes/authentification")(app);
+require("./routes/authentification")(app);
+require("./routes/test.routes")(app);
 
 module.exports = app;
