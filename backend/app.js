@@ -3,7 +3,7 @@ const app = express();
 
 const cors = require('cors');
 let corsOptions = {
-  origin: "http://localhost:3001"
+  origin: "http://localhost:8081"
 };
 
 
@@ -27,6 +27,6 @@ db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and re-sync db.");
 });
 
- require("./routes/test.routes")(app);
+ require("./routes/authentification")(app);
 
 module.exports = app;
