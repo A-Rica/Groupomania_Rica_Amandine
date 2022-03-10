@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
+
 const cors = require('cors');
 let corsOptions = {
-  origin: "http://localhost:3000"
+  origin: "http://localhost:3001"
 };
+
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -20,15 +22,11 @@ require("dotenv").config();
    next();
  });
 
-
-app.use((req, res) => {
-   res.json({ message: 'Votre requête a bien été reçue !' }); 
-});
-
-
 const db = require("./models");
 db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and re-sync db.");
 });
+
+ require("./routes/test.routes")(app);
 
 module.exports = app;
