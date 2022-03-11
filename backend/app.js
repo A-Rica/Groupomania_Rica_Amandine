@@ -23,11 +23,11 @@ require("dotenv").config();
  });
 
 const db = require("./models");
-db.sequelize.sync({ force: true }).then(() => {
+db.sequelize.sync().then(() => {
   console.log("Drop and re-sync db.");
 });
 
 require("./routes/authentification")(app);
-require("./routes/test.routes")(app);
+require("./routes/profil")(app);
 
 module.exports = app;
