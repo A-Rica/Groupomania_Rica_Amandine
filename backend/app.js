@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-
+const path = require('path');
 const cors = require('cors');
 let corsOptions = {
   origin: "http://localhost:8081"
@@ -26,6 +26,8 @@ const db = require("./models");
 db.sequelize.sync().then(() => {
   console.log("Drop and re-sync db.");
 });
+// { force: true }
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 require("./routes/authentification")(app);
 require("./routes/profil")(app);
