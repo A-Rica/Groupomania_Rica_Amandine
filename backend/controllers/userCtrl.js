@@ -88,18 +88,5 @@ Users.findOne({
 }; 
 
 exports.updateProfil = (req, res) => {
-// //   if (req.file) { 
-// //   Users.findOne({id: req.params.id })
-// // .then(users => {
-// //   const filename = users.avatarUrl.split('/images/')[1];
-// //      fs.unlinkSync(`images/${filename}`)
-// // });
-// const profilUsers = req.file ?
-// {
-//   ...JSON.parse(req.params.id),
-//   avatarUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-//     } : { ...req.body };
-//     Users.update({ where: { id: req.params.id }}, { ...profilUsers, id: req.params.id })
-//     .then(() => res.status(200).json({ message: 'Profil modifiée !' }))
-//     .catch((error) => {res.status(400).json({ error })});
+
 }
