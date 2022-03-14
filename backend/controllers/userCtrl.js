@@ -1,6 +1,9 @@
 const db = require("../models");
 const Users = db.users;
+const jwt = require('jsonwebtoken');
 const Op = db.Sequelize.Op;
+const fs = require('fs');
+
 //module de sécurité utilisateur//
 const bcrypt = require ('bcrypt');
 //Regex d'authentification
@@ -51,11 +54,14 @@ Users.findOne ({ where: {email: req.body.email} })
       return res.status(401).json({ error: 'Mot de passe incorrect !' });
     }
     res.status(200).json({
-                usersId: users.id,
-                email: users.email,
-                token: process.env.TOKEN,
-                message: 'Vous êtes bien connecté.'
-              });
+      email: users.email,
+      token: jwt.sign(
+          {users_Id: users.id},
+       process.env.TOKEN,
+   { expiresIn: '24h' }
+      ),
+      message: 'Vous êtes bien connecté.'
+    })
   })
 .catch(error => res.status(500).json({ error }));                             
 })
@@ -80,3 +86,20 @@ Users.findOne({
   res.status(500).json ({ error })
 })
 }; 
+
+exports.updateProfil = (req, res) => {
+// //   if (req.file) { 
+// //   Users.findOne({id: req.params.id })
+// // .then(users => {
+// //   const filename = users.avatarUrl.split('/images/')[1];
+// //      fs.unlinkSync(`images/${filename}`)
+// // });
+// const profilUsers = req.file ?
+// {
+//   ...JSON.parse(req.params.id),
+//   avatarUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+//     } : { ...req.body };
+//     Users.update({ where: { id: req.params.id }}, { ...profilUsers, id: req.params.id })
+//     .then(() => res.status(200).json({ message: 'Profil modifiée !' }))
+//     .catch((error) => {res.status(400).json({ error })});
+}

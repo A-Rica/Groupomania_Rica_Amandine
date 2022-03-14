@@ -22,7 +22,7 @@ module.exports = (sequelize, Sequelize) => {
        
       },
       mot_de_passe: {
-        type: Sequelize.STRING,
+        type: Sequelize.JSON,
         allowNull: false,
         
       },

@@ -6,9 +6,8 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true
           },
      
-      id_users: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+      nom: {
+        type: Sequelize.STRING 
       }
         });
     return Administration;
