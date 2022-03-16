@@ -1,17 +1,17 @@
 module.exports = app => {
     const user = require("../controllers/userCtrl");
     const express = require ('express');
-    const auth = require("../middleware/authJwt")
-const multer = require('../middleware/multer-config');
+    const authJwt = require("../middleware/authJwt");
+    const multer = require('../middleware/multer-config');
 const router = express.Router();
 
 
 //Visionner un profil//
-router.get("/:id",auth.verifyToken, user.profil);
+router.get("/:id", authJwt.verifyToken, multer, user.profil);
 // //Modifier le profil//
-router.put("/:id", user.updateProfil);
+router.put("/:id",  authJwt.verifyToken, multer, user.updateProfil);
 // //Supprimer le profil//
-// router.delete("/:id", test.delete);
+router.delete("/:id", multer, user.deleteProfil);
 
 app.use('/api/profil', router);
 }

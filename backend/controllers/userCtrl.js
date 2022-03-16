@@ -19,7 +19,7 @@ exports.signup = (req, res, next) => {
         const users = new Users({
           nom: req.body.nom,
           prenom: req.body.prenom,
-          email: req.body.email,
+          email: req.body.email, 
           mot_de_passe: hash
         });
 
@@ -53,19 +53,22 @@ Users.findOne ({ where: {email: req.body.email} })
     if (!valid) {
       return res.status(401).json({ error: 'Mot de passe incorrect !' });
     }
+ 
     res.status(200).json({
+      usersId: users.id,
       email: users.email,
+      message: 'Vous êtes bien connecté.',
       token: jwt.sign(
-          {users_Id: users.id},
-       process.env.TOKEN,
-   { expiresIn: '24h' }
-      ),
-      message: 'Vous êtes bien connecté.'
-    })
+         { userId: users.id}, 
+         process.env.TOKEN, 
+         { expiresIn: '24h' } )
+     
+    }) 
   })
 .catch(error => res.status(500).json({ error }));                             
 })
-.catch(error => res.status(500).json({ error }));   
+.catch(error => res.status(500).json({ error })); 
+
  };
  
  //Visionnage du profil//
@@ -88,5 +91,52 @@ Users.findOne({
 }; 
 
 exports.updateProfil = (req, res) => {
+  // if (req.file) { Users.findOne({attributes: ['avatar'],
+  //  where: { id: req.params.id} })
+  // .then(users => {
+  //   const filename = users.image.split('/images/')[1];
+  //    fs.unlinkSync(`images/${filename}`)
+  // }) } 
 
+  const usersObject = req.file ?
+        {
+            ...req.params.id,
+            image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+        } : { ... req.body}
+
+        bcrypt.hash(req.body.mot_de_passe, 10)
+  .then( hash => {
+    Users.update({
+       nom: req.body.nom,
+      prenom: req.body.prenom,
+      email: req.body.email, 
+      admin: req.body.admin,
+      mot_de_passe: hash,
+       id:  req.params.id}, { where: { id: req.params.id }})
+    res.status(200).json({
+ ...usersObject }) })
+      .catch(error => res.status(400).json({ error }))
 }
+
+exports.deleteProfil = (req, res) => {
+  const id = req.params.id;
+    Users.destroy({
+      where: { id: id }
+    })
+      .then(users => {
+        if (users) {
+          res.send({
+            message: "Utilisateurs supprimé"
+          });
+        } else {
+          res.send({
+            message: `Impossibilité de suppression de l'utilisateur.`
+          });
+        }
+      })
+      .catch(error => {
+        res.status(500).send({
+          error
+        });
+      });
+    }

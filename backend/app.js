@@ -23,26 +23,14 @@ require("dotenv").config();
  });
 
  const db = require("./models");
-const Administration = db.administration;
 db.sequelize.sync().then(() => {
   console.log("Drop and re-sync db.");
-  // initial();
+
 }); 
 // {force: true }
-// function initial() {
-//   Administration.create({
-//     id: 1,
-//     name: "users"
-//   });
- 
-//   Administration.create({
-//     id: 2,
-//     name: "admin"
-//   });
-// }
 
 
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('./images/', express.static(path.join(__dirname, 'images')));
 
 require("./routes/authentification")(app);
 require("./routes/profil")(app);

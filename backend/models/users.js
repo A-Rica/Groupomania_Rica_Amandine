@@ -28,7 +28,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       avatar: {
         type: Sequelize.STRING,
-        defaultValue: "http://localhost:3000/images/FGFP.png"
+        defaultValue: "http://localhost:3000/pardefaut.png1647426103961.png"
       },
       admin: {
         type: Sequelize.BOOLEAN,
