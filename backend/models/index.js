@@ -23,4 +23,4 @@ db.commentaire.belongsTo(db.message, {
   foreignKey: "messageId",
   as: "Message",
 });
-module.exports = db;
+module.exports = db; 

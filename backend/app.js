@@ -35,5 +35,6 @@ app.use('./images/', express.static(path.join(__dirname, 'images')));
 require("./routes/authentification")(app);
 require("./routes/profil")(app);
 require("./routes/images")(app);
+require("./routes/post")(app);
 
 module.exports = app;
