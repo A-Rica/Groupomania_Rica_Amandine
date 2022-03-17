@@ -14,12 +14,15 @@ const Regex_password = new RegExp("^[a-zA-Z0-9]{3,14}$");
 
 exports.signup = (req, res, next) => {
 
+
+
   bcrypt.hash(req.body.mot_de_passe, 10)
   .then( hash => {
         const users = new Users({
           nom: req.body.nom,
           prenom: req.body.prenom,
           email: req.body.email, 
+          image: req.body.image,
           mot_de_passe: hash
         });
 
@@ -76,7 +79,7 @@ Users.findOne ({ where: {email: req.body.email} })
  exports.profil = (req, res, next) => {
 
 Users.findOne({
-  attributes: ['id', 'nom', 'prenom', 'email', 'avatar'],
+  attributes: ['id', 'nom', 'prenom', 'email', 'image'],
   where: {id:  req.params.id}
 })
 .then(users => {
@@ -91,31 +94,32 @@ Users.findOne({
 }; 
 
 exports.updateProfil = (req, res) => {
-  // if (req.file) { Users.findOne({attributes: ['avatar'],
-  //  where: { id: req.params.id} })
-  // .then(users => {
-  //   const filename = users.image.split('/images/')[1];
-  //    fs.unlinkSync(`images/${filename}`)
-  // }) } 
 
-  const usersObject = req.file ?
-        {
-            ...req.params.id,
-            image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-        } : { ... req.body}
+  if (req.file) { Users.findOne({where: {id: req.params.id}, attributes:  ['image'], })
+  .then(users => {
+    const image = req.file.filename
+     fs.unlinkSync(`images/${image}`)
+   console.log(image); }) } 
 
-        bcrypt.hash(req.body.mot_de_passe, 10)
-  .then( hash => {
-    Users.update({
-       nom: req.body.nom,
-      prenom: req.body.prenom,
-      email: req.body.email, 
-      admin: req.body.admin,
-      mot_de_passe: hash,
-       id:  req.params.id}, { where: { id: req.params.id }})
-    res.status(200).json({
- ...usersObject }) })
-      .catch(error => res.status(400).json({ error }))
+const usersObject = req.file ?
+{
+    ...req.params.id,
+    image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+} : { ... req.body}
+
+bcrypt.hash(req.body.mot_de_passe, 10)
+.then( hash => {
+Users.update({
+nom: req.body.nom,
+prenom: req.body.prenom,
+email: req.body.email, 
+admin: req.body.admin,
+mot_de_passe: hash,
+image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+id:  req.params.id}, { where: { id: req.params.id }})
+res.status(200).json({
+...usersObject }) })
+.catch(error => res.status(400).json({ error }))
 }
 
 exports.deleteProfil = (req, res) => {

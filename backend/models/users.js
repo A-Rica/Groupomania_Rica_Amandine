@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const Utilisateurs = sequelize.define("utilisateurs", {
+    const Users = sequelize.define("users", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
@@ -26,7 +26,7 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         
       },
-      avatar: {
+      image: {
         type: Sequelize.STRING,
         defaultValue: "http://localhost:3000/pardefaut.png1647426103961.png"
       },
@@ -35,5 +35,5 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: false
       }
     });
-    return Utilisateurs;
-  };
+    return Users;
+  }; 

@@ -18,5 +18,9 @@ db.test = require("./test.model")(sequelize, Sequelize);
 db.users = require("./users")(sequelize, Sequelize);
 db.message = require("./post")(sequelize, Sequelize);
 db.commentaire = require("./commentaire")(sequelize, Sequelize);
-
+db.message.hasMany(db.commentaire, { as: "commentaire" });
+db.commentaire.belongsTo(db.message, {
+  foreignKey: "messageId",
+  as: "Message",
+});
 module.exports = db;
