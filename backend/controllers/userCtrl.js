@@ -1,9 +1,9 @@
 const db = require("../models");
+const path = require('path');
 const Users = db.users;
 const jwt = require('jsonwebtoken');
 const Op = db.Sequelize.Op;
 const fs = require('fs');
-
 //module de sécurité utilisateur//
 const bcrypt = require ('bcrypt');
 //Regex d'authentification
@@ -13,8 +13,6 @@ const Regex_password = new RegExp("^[a-zA-Z0-9]{3,14}$");
 //inscription de l'utilisateur//
 
 exports.signup = (req, res, next) => {
-
-
 
   bcrypt.hash(req.body.mot_de_passe, 10)
   .then( hash => {
@@ -62,7 +60,7 @@ Users.findOne ({ where: {email: req.body.email} })
       email: users.email,
       message: 'Vous êtes bien connecté.',
       token: jwt.sign(
-         { userId: users.id}, 
+         { usersId: users.id}, 
          process.env.TOKEN, 
          { expiresIn: '24h' } )
      
@@ -95,52 +93,47 @@ Users.findOne({
 
 exports.updateProfil = (req, res) => {
 
-  if (req.file) { Users.findOne({where: {id: req.params.id}, attributes:  ['image'], })
+  if (req.file) { Users.findOne({where: {id: req.params.id} })
   .then(users => {
-    const image = req.file.filename
-     fs.unlinkSync(`images/${image}`)
-   console.log(image); }) } 
+    const filename = users.image.split('/images/')[1];
+     fs.unlinkSync(`images/${filename}`)
+  }) }
 
-const usersObject = req.file ?
-{
-    ...req.params.id,
-    image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-} : { ... req.body}
+  const usersObject = req.file ?
+    {
+      image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+    } : { ...req.body };
 
-bcrypt.hash(req.body.mot_de_passe, 10)
-.then( hash => {
-Users.update({
-nom: req.body.nom,
-prenom: req.body.prenom,
-email: req.body.email, 
-admin: req.body.admin,
-mot_de_passe: hash,
-image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
-id:  req.params.id}, { where: { id: req.params.id }})
-res.status(200).json({
-...usersObject }) })
-.catch(error => res.status(400).json({ error }))
+    console.log(usersObject);
+   
+    Users.update({ ...usersObject, id:  req.params.id}, { where: { id: req.params.id }})
+ 
+    .then(() => res.status(200).json({ ...usersObject }))
+    .catch((error) => {res.status(400).json({ error })});
 }
 
 exports.deleteProfil = (req, res) => {
-  const id = req.params.id;
+  const id = req.body.id;
+  console.log(id);
+  if (req.params.id = admin = 1) {
     Users.destroy({
-      where: { id: id }
-    })
-      .then(users => {
-        if (users) {
-          res.send({
-            message: "Utilisateurs supprimé"
+          where: { id }
+        })
+          .then(users => {
+            if (users) {
+              res.send({
+                message: "Utilisateurs supprimé"
+              });
+            } else {
+              res.send({
+                message: `Impossibilité de suppression de l'utilisateur.`
+              });
+            }
+          }) 
+          .catch(error => {
+            res.status(500).send({
+              error
+            });
           });
-        } else {
-          res.send({
-            message: `Impossibilité de suppression de l'utilisateur.`
-          });
-        }
-      })
-      .catch(error => {
-        res.status(500).send({
-          error
-        });
-      });
+  } 
     }

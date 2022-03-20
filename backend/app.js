@@ -22,12 +22,20 @@ require("dotenv").config();
    next();
  });
 
- const db = require("./models");
+const db = require("./models");
+const users = require("./controllers/userCtrl");
+const post = require("./controllers/post");
+
+const run = async () => {
+require("./routes/post")(app); 
+};
+
 db.sequelize.sync().then(() => {
   console.log("Drop and re-sync db.");
-
+  run ();
 }); 
 // {force: true }
+
 
 
 app.use('./images/', express.static(path.join(__dirname, 'images')));
@@ -35,6 +43,6 @@ app.use('./images/', express.static(path.join(__dirname, 'images')));
 require("./routes/authentification")(app);
 require("./routes/profil")(app);
 require("./routes/images")(app);
-require("./routes/post")(app);
 
-module.exports = app;
+
+module.exports = app; 

@@ -16,11 +16,15 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.test = require("./test.model")(sequelize, Sequelize);
 db.users = require("./users")(sequelize, Sequelize);
-db.message = require("./post")(sequelize, Sequelize);
+db.messages = require("./post")(sequelize, Sequelize);
 db.commentaire = require("./commentaire")(sequelize, Sequelize);
-db.message.hasMany(db.commentaire, { as: "commentaire" });
-db.commentaire.belongsTo(db.message, {
-  foreignKey: "messageId",
-  as: "Message",
+db.tutorials = require("./tutorial.model")(sequelize, Sequelize);
+db.comments = require("./comments.model")(sequelize, Sequelize);
+
+db.users.hasMany(db.messages, { as: "messages" });
+db.messages.belongsTo(db.users, {
+  foreignKey: "usersId",
+  as: "users",
 });
+
 module.exports = db; 
