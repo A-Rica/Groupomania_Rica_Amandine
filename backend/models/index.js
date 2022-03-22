@@ -14,17 +14,30 @@ module.exports = {
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.test = require("./test.model")(sequelize, Sequelize);
-db.users = require("./users")(sequelize, Sequelize);
+db.user = require("./user")(sequelize, Sequelize);
 db.messages = require("./post")(sequelize, Sequelize);
 db.commentaire = require("./commentaire")(sequelize, Sequelize);
-db.tutorials = require("./tutorial.model")(sequelize, Sequelize);
-db.comments = require("./comments.model")(sequelize, Sequelize);
 
-db.users.hasMany(db.messages, { as: "messages" });
-db.messages.belongsTo(db.users, {
-  foreignKey: "usersId",
-  as: "users",
+db.user.hasMany(db.messages, { as: "messages" });
+db.messages.belongsTo(db.user, {
+  foreignKey: {field: "userId",
+  allowNull: false
+},
+  as: "user",
+  onDelete: "cascade"
 });
+db.role = require("../models/role")(sequelize, Sequelize);
+db.role.belongsToMany(db.user, {
+  through: "user_roles",
+  foreignKey: "roleId",
+  otherKey: "userId"
+});
+db.user.belongsToMany(db.role, {
+  through: "user_roles",
+  foreignKey: "userId",
+  otherKey: "roleId"
+});
+
+db.ROLES = ["user", "admin"];
 
 module.exports = db; 

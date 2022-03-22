@@ -11,7 +11,7 @@ router.get("/:id", authJwt.verifyToken, multer, user.profil);
 // //Modifier le profil//
 router.put("/:id",  authJwt.verifyToken, multer, user.updateProfil);
 // //Supprimer le profil//
-router.delete("/:id", multer, user.deleteProfil);
+router.delete("/:id", multer,authJwt.verifyToken, user.deleteProfil);
 
 app.use('/api/profil', router);
 }

@@ -6,11 +6,11 @@ module.exports = app => {
 const router = express.Router();
 
 
-// //creation post//
-// router.post("/", authJwt.verifyToken,  multer, messages.createMessage);
+// //creation post// 
+router.post("/", authJwt.verifyToken,  multer, messages.createMessage);
 
 // // //visionner le message //
-// router.get("/:id", authJwt.verifyToken, multer, messages.getOneMessages);
+router.get("/:id", authJwt.verifyToken, multer, messages.getOneMessages);
 // //Modifier le profil//
 // router.put("/:id",  authJwt.verifyToken, multer, user.updateProfil);
 // // //Supprimer le profil//

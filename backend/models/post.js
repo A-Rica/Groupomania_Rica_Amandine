@@ -5,15 +5,15 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true,
             primaryKey: true
           },
-      titre: {
+      title: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      texte: {
+      text: {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-
+ 
       image: {
         type: Sequelize.STRING
       },

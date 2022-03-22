@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const config = require("../db/auth.config");
 const db = require("../models");
-const Users = db.users;
+const User = db.user;
 
 verifyToken = (req, res, next) => {
     let token = req.headers.authorization.split(' ')[1];
@@ -19,27 +19,30 @@ verifyToken = (req, res, next) => {
           message: "Non Autorisé!"
         });
       }
-      req.usersId = decoded.id;
+      req.userId = decoded.id;
+      console.log(decoded.id);
       next();
     });
   };
-  isAdmin = (req, res, next) => {
-    Users.findByPk(req.users_Id).then(users => {
-      users.getAdministration().then(administration => {
-        for (let i = 0; i < administration.length; i++) {
-          if (administration[i].nom === "admin") {
-            next();
-            return;
-          }
-        }
-        res.status(403).send({
-          message: "Droit d'administration requis!"
-        });
-        return;
-      });
-    });
-  };
 
+  isAdmin = async (req, res, next) => {
+    try {
+      const user = await User.findByPk(req.userId);
+      const roles = await user.getRoles();
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i].name === "admin") {
+          return next();
+        }
+      }
+      return res.status(403).send({
+        message: "Require Admin Role!",
+      });
+    } catch (error) {
+      return res.status(500).send({
+        message: "Unable to validate User role!",
+      });
+    }
+  };
   const authJwt = {
     verifyToken: verifyToken,
     isAdmin: isAdmin

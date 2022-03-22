@@ -23,6 +23,7 @@ require("dotenv").config();
  });
 
 const db = require("./models");
+const Role = db.role;
 const users = require("./controllers/userCtrl");
 const post = require("./controllers/post");
 
@@ -30,19 +31,31 @@ const run = async () => {
 require("./routes/post")(app); 
 };
 
-db.sequelize.sync().then(() => {
+function initial() {
+  Role.create({
+    id: 1,
+    name: "user"
+  });
+ 
+  Role.create({
+    id: 2,
+    name: "admin"
+  });
+}
+
+db.sequelize.sync({force: true }).then(() => {
   console.log("Drop and re-sync db.");
   run ();
+  initial();
 }); 
-// {force: true }
-
-
+// 
 
 app.use('./images/', express.static(path.join(__dirname, 'images')));
 
 require("./routes/authentification")(app);
 require("./routes/profil")(app);
 require("./routes/images")(app);
+require("./routes/post")(app);
 
 
 module.exports = app; 
