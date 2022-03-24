@@ -30,7 +30,11 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         defaultValue: "http://localhost:3000/pardefaut.png1647426103961.png"
       },
- 
+      role: {
+        type: Sequelize.ENUM('user','admin'),
+        defaultValue: "user",
+        allowNull: false,
+        },
     });
     return User;
   }; 
