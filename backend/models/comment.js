@@ -1,12 +1,12 @@
 module.exports = (sequelize, Sequelize) => {
-    const Commentaire = sequelize.define("commentaire", {
+    const Comment = sequelize.define("comment", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
             primaryKey: true
           },
      
-      texte: {
+      text: {
         type: Sequelize.TEXT,
         allowNull: false,
       },
@@ -20,5 +20,5 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: sequelize.NOW
       }
     });
-    return Commentaire;
+    return Comment; 
   };

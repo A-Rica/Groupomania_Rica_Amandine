@@ -15,11 +15,27 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.user = require("./user")(sequelize, Sequelize);
-db.messages = require("./message")(sequelize, Sequelize);
-db.commentaire = require("./commentaire")(sequelize, Sequelize);
+db.message = require("./message")(sequelize, Sequelize);
+db.comment= require("./comment")(sequelize, Sequelize);
 
-db.user.hasMany(db.messages, { as: "messages" });
-db.messages.belongsTo(db.user, {
+db.user.hasMany(db.message, { as: "message" });
+db.user.hasMany(db.comment, { as: "comment" });
+db.message.hasMany(db.comment, { as: "comment" });
+db.message.belongsTo(db.user, {
+  foreignKey: {field: "userId",
+  allowNull: false
+}, 
+  as: "user",
+  onDelete: "cascade"
+});
+db.comment.belongsTo(db.message, {
+  foreignKey: {field: "messageId",
+  allowNull: false 
+},  
+  as: "message",
+  onDelete: "cascade"
+});
+db.comment.belongsTo(db.user, {
   foreignKey: {field: "userId",
   allowNull: false
 }, 

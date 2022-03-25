@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const Messages = sequelize.define("messages", {
+    const Message = sequelize.define("message", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
@@ -23,5 +23,5 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: sequelize.NOW
       }
     });
-    return Messages;
+    return Message;
   };

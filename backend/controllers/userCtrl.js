@@ -160,7 +160,7 @@ exports.deleteProfil = (req, res) => {
      if (req.body.id === req.params.id || req.body.role === "admin"){
         //utilisation d'User.Destroy afin de supprimer l'utilisateur.
     User.destroy({
-          where: { id }
+          where: { id: req.params.id }
         })
           .then(user => {
             const filename = user.image.split('/images/')[1];
@@ -168,7 +168,7 @@ exports.deleteProfil = (req, res) => {
 
             if (user) {
               res.send({
-                message: "Utilisateurs supprimé"
+                message: "Utilisateur supprimé"
               });
             } else {
               res.send({

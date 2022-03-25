@@ -23,12 +23,9 @@ require("dotenv").config();
  });
 
 const db = require("./models");
-const Role = db.role;
-const users = require("./controllers/userCtrl");
-const message = require("./controllers/message");
-
 const run = async () => {
-require("./routes/message")(app); 
+  require("./routes/message")(app) 
+  require("./routes/comment")(app) 
 };
 
 
@@ -43,7 +40,6 @@ app.use('./images/', express.static(path.join(__dirname, 'images')));
 require("./routes/authentification")(app);
 require("./routes/profil")(app);
 require("./routes/images")(app);
-require("./routes/message")(app);
- 
+
 
 module.exports = app;  
