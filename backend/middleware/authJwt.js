@@ -4,47 +4,35 @@ const db = require("../models");
 const User = db.user;
 
 verifyToken = (req, res, next) => {
-    let token = req.headers.authorization.split(' ')[1];
-    console.log(token);
-    if (!token) {
-      return res.status(403).send({
-        message: "Aucun Token fournis!"
-      });
-    }
-    // console.log(jwt.verify(token, config.secret));
-    console.log(config.secret);
-    jwt.verify(token, config.secret, (err, decoded) => {
-      if (err) {
-        return res.status(401).send({
-          message: "Non Autorisé!"
-        });
-      }
-      req.userId = decoded.id;
-      console.log(decoded.id);
-      next();
+  let token = req.headers.authorization.split(' ')[1];
+  console.log(token);
+  if (!token) {
+    return res.status(403).send({
+      message: "Aucun Token fournis!"
     });
-  };
-
-  isAdmin = async (req, res, next) => {
-    try {
-      const user = await User.findByPk(req.userId);
-      const roles = await user.getRoles();
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "admin") {
-          return next();
-        }
-      }
-      return res.status(403).send({
-        message: "Require Admin Role!",
-      });
-    } catch (error) {
-      return res.status(500).send({
-        message: "Unable to validate User role!",
+  }
+  // console.log(jwt.verify(token, config.secret));
+  console.log(config.secret);
+  jwt.verify(token, config.secret, async function (err, decoded) {
+    if (err) {
+      return res.status(401).send({
+        message: "Non Autorisé!"
       });
     }
-  };
-  const authJwt = {
-    verifyToken: verifyToken,
-    isAdmin: isAdmin
-  };
-  module.exports = authJwt;
+
+    req.userId = decoded.userId;
+    // console.log(db);
+    const user = await User.findByPk(req.userId);
+    req.userIsAdmin = (user.role == "admin") ? true : false
+    // const roles = await user.role();
+    // const user = await User.findOne({where: {id: req.userId}});
+
+    console.log(req.userIsAdmin);
+    next();
+  });
+};
+
+const authJwt = {
+  verifyToken: verifyToken
+};
+module.exports = authJwt;
