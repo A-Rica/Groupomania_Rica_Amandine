@@ -18,11 +18,11 @@ exports.signup = (req, res, next) => {
         name: req.body.name,
         lastname: req.body.lastname,
         email: req.body.email,
-        image: 'http://localhost:3000/pardefaut.png1647426103961.png',
-        role: req.body.role,
+        // image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+        // role: req.body.role,
         password: hash,
       });
-      // //Obligation de remplir les champs demandé avec plusieurs if et des regex//
+      //Obligation de remplir les champs demandé avec plusieurs if et des regex//
       if (req.body.email == null || req.body.name == null || req.body.lastname == null || req.body.password == null) {
         return res.status(400).json({ error: 'Champs obligatoire vide!' })
       }
@@ -32,7 +32,7 @@ exports.signup = (req, res, next) => {
       if (!Regex_password.test(req.body.password)) {
         return res.status(400).json({ error: 'Mot de passe invalide' });
       }
-      //Sauvegarde de l'utilisateurs + message d'erreur//
+      // Sauvegarde de l'utilisateurs + message d'erreur//
       user.save()
         .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
         .catch(error => res.status(400).json({ error }));
