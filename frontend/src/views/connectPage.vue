@@ -1,9 +1,5 @@
 <template>
   <section class="section-connectPage">
-    <img
-      alt="logo groupomania"
-      src="../assets/icon-left-font-monochrome-black.png"
-    />
     <h1>Bienvenue sur le réseau social de l'entreprise Groupomania.</h1>
     <!-- titre switchant vers l'inscription -->
     <h2 v-if="mode == 'login'">
