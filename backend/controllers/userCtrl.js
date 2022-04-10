@@ -6,7 +6,7 @@ const fs = require('fs');
 //module de sécurité utilisateur//
 const bcrypt = require('bcrypt');
 //Regex d'authentification
-const Regex_email = new RegExp("^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+$");
+const Regex_email = new RegExp("^[a-zA-Z0-9. -_]+[@]{1}[a-zA-Z0-9.-_]+$");
 const Regex_password = new RegExp("^[a-zA-Z0-9]{3,14}$");
 //inscription de l'utilisateur//
 
@@ -18,8 +18,8 @@ exports.signup = (req, res, next) => {
         name: req.body.name,
         lastname: req.body.lastname,
         email: req.body.email,
-        // image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
-        // role: req.body.role,
+        image: `http://localhost:3000/pardefaut.png1647426103961.png`,
+        role: req.body.role,
         password: hash,
       });
       //Obligation de remplir les champs demandé avec plusieurs if et des regex//
@@ -88,10 +88,11 @@ exports.signout = async (req, res) => {
 //Visualisation du profil//
 
 exports.profil = (req, res, next) => {
+
   // Utilisation de findOne pour visualiser les information de l'utilisateur avec where et req.params.id
   User.findOne({
     // attributes: ['id', 'nom', 'prenom', 'email', 'image'],
-    where: { id: req.params.id }
+    where: { id: req.userId }
   })
     //Si aucune erreur, les informations s'afficherons. Sinon un message apparaitra indiquant que l'utilisateur n'existe pas
     .then(user => {

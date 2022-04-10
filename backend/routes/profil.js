@@ -7,7 +7,7 @@ module.exports = app => {
 
 
     //Visionner un profil//
-    router.get("/:id", authJwt.verifyToken, multer, user.profil);
+    router.get("/user", authJwt.verifyToken, multer, user.profil);
     // //Modifier le profil//
     router.put("/:id", authJwt.verifyToken, multer, user.updateProfil);
     // //Supprimer le profil//

@@ -7,7 +7,7 @@ class connectDataService {
     }
 
     login(data) {
-        return http.post("/login", data);
+        return http.post("/auth/login", data)
     }
     signout(data) {
         return http.post("/signout", data);
