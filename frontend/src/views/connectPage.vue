@@ -87,7 +87,73 @@
     </form>
   </section>
 </template>
+<script>
+import connectDataService from "../service/connectDataService";
+import { mapState } from "vuex";
 
+export default {
+  name: "MyUser",
+  data: function () {
+    return {
+      mode: "login",
+      email: "",
+      name: "",
+      lastname: "",
+      password: "",
+      submitted: false,
+    };
+  },
+
+  methods: {
+    switchCreateUser: function () {
+      this.mode = "create";
+    },
+    switchLogin: function () {
+      this.mode = "login";
+    },
+    computed: {
+      ...mapState(["user"]),
+    },
+    createdUser() {
+      const data = {
+        name: this.name,
+        lastname: this.lastname,
+        email: this.email,
+        image: "http://localhost:3000/pardefaut.png1647426103961.png",
+        role: "user",
+        password: this.password,
+      };
+
+      connectDataService
+        .signup(data)
+        .then((response) => {
+          this.data;
+          console.log(response.data);
+          this.submitted = true;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    connectedUser() {
+      const loginUser = {
+        email: this.email,
+        password: this.password,
+      };
+      // console.log(loginUser);
+      connectDataService
+        .login(loginUser)
+        .then((response) => {
+          console.log(response.data);
+          // localStorage.setItem("token", response.data.token);
+          this.$router.push({ name: "home" });
+        })
+        .catch((error) => console.log(error));
+    },
+  },
+};
+</script>
 <style scoped lang="scss">
 .section-connectPage {
   display: flex;
@@ -185,69 +251,3 @@
   }
 }
 </style>
-<script>
-import connectDataService from "../service/connectDataService";
-import { mapState } from "vuex";
-
-export default {
-  name: "MyUser",
-  data: function () {
-    return {
-      mode: "login",
-      email: "",
-      name: "",
-      lastname: "",
-      password: "",
-      submitted: false,
-    };
-  },
-
-  methods: {
-    switchCreateUser: function () {
-      this.mode = "create";
-    },
-    switchLogin: function () {
-      this.mode = "login";
-    },
-    computed: {
-      ...mapState(["user"]),
-    },
-    createdUser() {
-      const data = {
-        name: this.name,
-        lastname: this.lastname,
-        email: this.email,
-        image: "http://localhost:3000/pardefaut.png1647426103961.png",
-        role: "user",
-        password: this.password,
-      };
-
-      connectDataService
-        .signup(data)
-        .then((response) => {
-          this.data;
-          console.log(response.data);
-          this.submitted = true;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-
-    connectedUser() {
-      const loginUser = {
-        email: this.email,
-        password: this.password,
-      };
-      // console.log(loginUser);
-      connectDataService
-        .login(loginUser)
-        .then((response) => {
-          localStorage.setItem("token", response.data.token);
-          this.$router.push({ name: "home" });
-        })
-        .catch((error) => console.log(error));
-    },
-  },
-};
-</script>

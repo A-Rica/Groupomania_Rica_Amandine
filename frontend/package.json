@@ -9,6 +9,11 @@
     "sass": "sass --watch ./public/SASS/main.scss:./public/CSS/style.css"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-brands-svg-icons": "^6.1.1",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/vue-fontawesome": "^3.0.0-5",
     "axios": "^0.26.1",
     "bootstrap": "^4.6.0",
     "core-js": "^3.8.3",
