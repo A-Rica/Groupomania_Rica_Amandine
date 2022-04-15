@@ -101,7 +101,7 @@ exports.profil = (req, res, next) => {
       } else {
         res.status(404).json({ error: `L'utilisateur n'existe pas.` });
       }
-    }).catch(err => {
+    }).catch(error => {
       res.status(500).json({ error })
     })
 };

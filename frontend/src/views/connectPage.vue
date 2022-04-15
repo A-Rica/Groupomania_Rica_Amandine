@@ -1,4 +1,4 @@
-<template>
+<template >
   <section class="section-connectPage">
     <h1>Bienvenue sur le réseau social de l'entreprise Groupomania.</h1>
     <!-- titre switchant vers l'inscription -->
@@ -13,10 +13,10 @@
       <span class="lien-inscription" @click="switchLogin()">connecter</span>
     </h2>
     <!-- formulaire connexion contenant l'email et le mot de passe -->
-    <form class="formulaire" v-if="mode == 'login'">
+    <form class="formulaire" v-if="mode == 'login'" @submit.prevent="submit">
       <label for="email">Email: </label>
       <input
-        v-model="email"
+        v-model="user.email"
         id="email"
         name="email"
         type="email"
@@ -25,26 +25,21 @@
 
       <label class="label-password" for="password">Mot de passe: </label>
       <input
-        v-model="password"
+        v-model="user.password"
         id="password"
         name="password"
         type="password"
         placeholder="Entrez ici votre mot de passe"
       />
-      <input
-        id="connexion"
-        class="connexion"
-        name="connexion"
-        type="button"
-        @click="connectedUser()"
-        value="Connexion"
-      />
+      <button id="connexion" class="connexion" name="connexion" type="submit">
+        Connexion
+      </button>
     </form>
     <!-- formulaire inscription avec les mêmes champs que connexion mais avec le noms et prenom -->
-    <form class="formulaire" v-else>
+    <form class="formulaire" v-else @submit.prevent="createdUser()">
       <label for="email">Email: </label>
       <input
-        v-model="email"
+        v-model="user.email"
         id="email"
         name="email"
         type="email"
@@ -52,7 +47,7 @@
       />
       <label class="label-lastname" for="lastname">Prénom: </label>
       <input
-        v-model="lastname"
+        v-model="user.lastname"
         id="lastname"
         name="lastname"
         type="text"
@@ -60,7 +55,7 @@
       />
       <label class="label-name" for="name">Nom: </label>
       <input
-        v-model="name"
+        v-model="user.name"
         id="name"
         name="name"
         type="text"
@@ -69,37 +64,35 @@
 
       <label class="label-password" for="password">Mot de passe: </label>
       <input
-        v-model="password"
+        v-model="user.password"
         id="password"
         name="password"
         type="password"
         placeholder="Entrez ici votre mot de passe"
       />
-
-      <input
-        class="connexion"
-        id="subscribe"
-        name="subscribe"
-        type="button"
-        @click="createdUser()"
-        value="S'inscrire"
-      />
+      <button class="connexion" id="subscribe" name="subscribe" type="submit">
+        Inscription
+      </button>
     </form>
   </section>
 </template>
 <script>
-import connectDataService from "../service/connectDataService";
-import { mapState } from "vuex";
+// import connectDataService from "../services/connectDataService";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "MyUser",
   data: function () {
     return {
       mode: "login",
-      email: "",
-      name: "",
-      lastname: "",
-      password: "",
+      user: {
+        email: "",
+        name: "",
+        lastname: "",
+        password: "",
+        image: "http://localhost:3000/pardefaut.png1647426103961.png",
+        role: "user",
+      },
       submitted: false,
     };
   },
@@ -114,42 +107,16 @@ export default {
     computed: {
       ...mapState(["user"]),
     },
-    createdUser() {
-      const data = {
-        name: this.name,
-        lastname: this.lastname,
-        email: this.email,
-        image: "http://localhost:3000/pardefaut.png1647426103961.png",
-        role: "user",
-        password: this.password,
-      };
-
-      connectDataService
-        .signup(data)
-        .then((response) => {
-          this.data;
-          console.log(response.data);
-          this.submitted = true;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    ...mapActions({
+      signin: "auth/signin",
+      signup: "auth/signup",
+    }),
+    submit() {
+      this.signin(this.user);
+      this.$router.push({ name: "home" });
     },
-
-    connectedUser() {
-      const loginUser = {
-        email: this.email,
-        password: this.password,
-      };
-      // console.log(loginUser);
-      connectDataService
-        .login(loginUser)
-        .then((response) => {
-          console.log(response.data);
-          // localStorage.setItem("token", response.data.token);
-          this.$router.push({ name: "home" });
-        })
-        .catch((error) => console.log(error));
+    createdUser() {
+      this.signup(this.user);
     },
   },
 };
