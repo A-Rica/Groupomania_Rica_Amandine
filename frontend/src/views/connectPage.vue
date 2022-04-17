@@ -77,7 +77,6 @@
   </section>
 </template>
 <script>
-// import connectDataService from "../services/connectDataService";
 import { mapActions, mapState } from "vuex";
 
 export default {

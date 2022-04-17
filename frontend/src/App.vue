@@ -1,16 +1,19 @@
 <template>
   <div id="app">
     <navBar />
+    <profil />
 
     <router-view />
   </div>
 </template>
 <script>
 import navBar from "./components/navBar.vue";
+import profil from "./components/profil.vue";
 export default {
   name: "App",
   components: {
     navBar,
+    profil,
   },
 };
 </script>

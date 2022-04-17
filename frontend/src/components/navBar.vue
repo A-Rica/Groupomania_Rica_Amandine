@@ -16,26 +16,35 @@
         </li>
       </ul>
     </div>
+    <span class="welcomeUser">Bienvenue {{ lastname }}</span>
     <img src="../assets/icon-left-font-monochrome-white.png" />
   </nav>
 </template>
 <script>
 // import profilDataService from "../services/profilDataService";
 import { mapGetters, mapActions } from "vuex";
-
+import axios from "axios";
 export default {
   name: "navBar",
   data: function () {
     return {
       showNavBar: false,
       currentUser: null,
+      name: "",
+      lastname: "",
     };
   },
+
   computed: {
     ...mapGetters({
       authenficated: "auth/authenficated",
       user: "auth/user",
     }),
+  },
+  created: function () {
+    axios.get("http://localhost:3000/api/profil/me").then((user) => {
+      (this.name = user.data.name), (this.lastname = user.data.lastname);
+    });
   },
   methods: {
     ...mapActions({ signoutAction: "auth/signout" }),
@@ -82,6 +91,14 @@ export default {
       opacity: 0;
     }
   }
+  .welcomeUser {
+    color: white;
+    font-size: 20px;
+    margin-left: 20px;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
   .menue-profil {
     z-index: 0;
     margin-top: 50px;

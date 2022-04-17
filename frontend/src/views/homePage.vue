@@ -41,7 +41,8 @@ export default {
   box-shadow: 1px 2px 5px #635c9b;
   width: 70%;
   padding: 15px;
-  //   margin-top: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
   margin-left: auto;
   margin-right: auto;
 }

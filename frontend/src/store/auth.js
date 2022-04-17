@@ -35,7 +35,7 @@ export default ({
 
         async signup(_, credentials) {
             let response = await axios.post("auth/signup", credentials);
-            console.log(response.data.message);
+            console.log(response.data);
             alert('Vous êtes bien inscrit sur le réseaux de Groupomania. Vous pouvez, à présent, vous connecter.')
         },
 
