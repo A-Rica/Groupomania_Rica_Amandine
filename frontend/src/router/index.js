@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ConnectPage from '../views/connectPage.vue'
 import HomePage from '../views/homePage.vue'
-// import ProfilPage from '../views/profilPage.vue'
-
+import MembersPage from '../views/membersPage.vue'
+import ModifPage from '../views/modifyProfilPage.vue'
 const routes = [
   {
     path: '/',
@@ -15,7 +15,16 @@ const routes = [
     component: HomePage,
 
   },
-
+  {
+    path: '/members',
+    name: 'members',
+    component: MembersPage
+  },
+  {
+    path: '/profilModif',
+    name: 'modifyProfil',
+    component: ModifPage
+  }
 
   // {
   //   path: '/about',

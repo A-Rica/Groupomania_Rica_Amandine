@@ -15,6 +15,7 @@
   </section>
 </template>
 <script>
+// import de la map Getters
 import { mapGetters } from "vuex";
 
 export default {
@@ -26,7 +27,9 @@ export default {
       user: "auth/user",
     }),
   },
+
   methods: {
+    // fonction de redirection en cas ou l'utilisateur est déconnecté, visant à le renvoyé à la page connexion
     redirection() {
       this.$router.push({ name: "connexion" });
     },

@@ -8,10 +8,12 @@ module.exports = app => {
 
     //Visionner un profil//
     router.get("/me", authJwt.verifyToken, multer, user.profil);
+    //Visionner plusieurs profil//
+    router.get('/', authJwt.verifyToken, user.profilAll);
     // //Modifier le profil//
     router.put("/:id", authJwt.verifyToken, multer, user.updateProfil);
     // //Supprimer le profil//
-    router.delete("/user", multer, authJwt.verifyToken, user.deleteProfil);
+    router.delete("/me", multer, authJwt.verifyToken, user.deleteProfil);
 
     app.use('/api/profil', router);
 }

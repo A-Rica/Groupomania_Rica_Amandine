@@ -9,6 +9,7 @@
 <script>
 import navBar from "./components/navBar.vue";
 import profil from "./components/profil.vue";
+
 export default {
   name: "App",
   components: {

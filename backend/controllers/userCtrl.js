@@ -105,9 +105,19 @@ exports.profil = (req, res, next) => {
       res.status(500).json({ error })
     })
 };
+//Visionnage de plusieurs profils//
+exports.profilAll = (req, res, next) => {
+  User.findAll({
+    where: { id: { [Op.gt]: 0 } }
+  })
+    //Utilisation d'un status 200 en renvoyant les messages sinon erreur
+    .then(users => res.status(200).json(users))
+    .catch((error) => {
+      res.status(400).json({ error })
+    });
+}
 //Mise a jours du profil utilisateur
 exports.updateProfil = (req, res) => {
-
   //utilisation d'une condition if pour comparer l'image déjà existante et celle selectionnée sont identiques ou non. 
 
   //si elle ne l'es pas, l'ancienne image sera remplacer grace a fs.unlinkSync en récupérant la fin de l'url envoyé lors de la selection de l'image
@@ -115,7 +125,7 @@ exports.updateProfil = (req, res) => {
 
   //Pour la comparative, utilisation de findOne avec req.params.id pour récuperer les données de l'utilisateurs et ainsi le modifié. 
 
-  if (req.body.id === req.userId || req.userIsAdmin) {
+  if (req.params.id == req.userId || req.userIsAdmin) {
     if (req.file) {
       User.findOne({ where: { id: req.params.id } })
 
@@ -135,7 +145,7 @@ exports.updateProfil = (req, res) => {
             email: req.body.email,
             password: hash,
             //mise en lien du fichier image téléchargé.
-            image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+            image: `${req.protocol}://${req.get("host")}/api/${req.file.filename}`,
           } : { ...req.body };
         console.log(userObject);
         //utilisation update afin de mettre a jours les données que l'utilisateur aura modifié. le where servant à dire où chercher.

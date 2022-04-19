@@ -8,8 +8,8 @@
     ></span>
     <div class="menue-profil" v-if="showNavBar">
       <ul>
-        <li @click="getUser">
-          <span>Profil<i class="fa-solid fa-user"></i></span>
+        <li @click="getUsers">
+          <span>Membres<i class="fa-solid fa-user"></i></span>
         </li>
         <li @click="signout">
           <span>Déconnexion<i class="fa-solid fa-right-from-bracket"></i></span>
@@ -21,7 +21,7 @@
   </nav>
 </template>
 <script>
-// import profilDataService from "../services/profilDataService";
+// import de la map Getters et Action ainsi qu'Axios
 import { mapGetters, mapActions } from "vuex";
 import axios from "axios";
 export default {
@@ -36,17 +36,20 @@ export default {
   },
 
   computed: {
+    // utilisation de mapGetters afin d'avoir l'information si l'utilisateur est connecté ou non afin d'affiché ou non la navbar
     ...mapGetters({
       authenficated: "auth/authenficated",
       user: "auth/user",
     }),
   },
+  // utilisation d'une fonction afin de lire les données de l'utilisateur et ainsi les réutiliser pour afficher le noms et prénom de l'utilisateur
   created: function () {
     axios.get("http://localhost:3000/api/profil/me").then((user) => {
       (this.name = user.data.name), (this.lastname = user.data.lastname);
     });
   },
   methods: {
+    // mise en place d'une fonction avec map Action pour la déconnection de l'utilisateur et ainsi le renvoyé vers la page connexion
     ...mapActions({ signoutAction: "auth/signout" }),
 
     signout() {
@@ -56,9 +59,9 @@ export default {
         });
       });
     },
-
-    getUser() {
-      this.$router.push({ name: "profil" });
+    // Mise en place d'un bouton pour envoyé l'utilisateur vers la page membres. Utilisation un switch mode pour afficher le menue
+    getUsers() {
+      this.$router.push({ name: "members" });
       console.log(mapActions);
     },
     showNavBarSwitch() {
@@ -100,7 +103,7 @@ export default {
   }
 
   .menue-profil {
-    z-index: 0;
+    z-index: 1;
     margin-top: 50px;
     margin-left: -90px;
     padding-left: 10px;

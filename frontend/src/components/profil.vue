@@ -1,10 +1,17 @@
 <template>
-  <section class="section-profil" v-if="authenficated">
-    <img
-      src="https://i44.servimg.com/u/f44/17/45/43/58/pardef10.png"
-      class="image-profil"
-    />
-    <h2>{{ lastname }} {{ name }}</h2>
+  <section v-if="authenficated">
+    <div class="section-profil">
+      <img :src="image" class="image-profil" />
+      <div class="hoverImage">
+        <span @click="ModifProfil">Modifier votre profil</span>
+      </div>
+      <h2>{{ lastname }} {{ name }}</h2>
+      <span
+        ><b>Email:</b> {{ email }} <br />
+        <b>Date d'inscription: </b> {{ inscription }} <br /><b>Vous êtes</b>
+        {{ role }}</span
+      >
+    </div>
   </section>
 </template>
 <style lang="scss">
@@ -21,19 +28,51 @@
   margin-left: 20px;
   margin-right: auto;
   .image-profil {
-    width: 50%;
+    width: 125px;
     margin-left: auto;
     margin-right: auto;
     border-radius: 100px;
   }
+  .hoverImage {
+    display: flex;
+    width: 115px;
+    height: 115px;
+    background-color: #a5a0bd;
+    margin-top: -50%;
+    margin-left: 25%;
+    border-radius: 100px;
+    padding: 5px;
+    opacity: 0;
+    transition: opacity 700ms;
+    span {
+      text-align: center;
+      margin-top: auto;
+      margin-bottom: auto;
+      font-weight: bold;
+      opacity: 1;
+      &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+    &:hover {
+      opacity: 0.8;
+    }
+  }
   h2 {
     text-align: center;
+  }
+  span {
+    font-size: 14px;
   }
 }
 </style>
 <script>
+// import de mapGetters, axios et moment
 import { mapGetters } from "vuex";
 import axios from "axios";
+import moment from "moment";
+
 export default {
   name: "MyProfil",
   data: function () {
@@ -41,20 +80,34 @@ export default {
       image: "",
       name: "",
       lastname: "",
+      email: "",
+      inscription: "",
+      role: "",
     };
   },
   computed: {
+    // comme pour la navbar utilisation de mapGetter afin d'afficher ou non le profil en cas de connexion ou non
     ...mapGetters({
       authenficated: "auth/authenficated",
       user: "auth/user",
     }),
   },
+  // mise en place d'une fonction afin de lire les données de l'utilisateur. Utilisation du package moment afin de modifié le format de la date.
   created: function () {
     axios.get("http://localhost:3000/api/profil/me").then((user) => {
       this.image = user.data.image;
       this.name = user.data.name;
       this.lastname = user.data.lastname;
+      this.email = user.data.email;
+      this.inscription = moment(user.data.createdAt).format("DD/MM/YYYY");
+      this.role = user.data.role;
     });
+  },
+  methods: {
+    // fonction permettant de rediriger l'utilisateur vers la modification de son profil.
+    ModifProfil: function () {
+      this.$router.push({ name: "modifyProfil" });
+    },
   },
 };
 </script>

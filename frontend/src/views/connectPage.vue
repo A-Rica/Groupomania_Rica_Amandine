@@ -77,6 +77,7 @@
   </section>
 </template>
 <script>
+// import depuis le store des données lié à l'authentification avec en data le mode pour switcher et les données de l'utilisateur
 import { mapActions, mapState } from "vuex";
 
 export default {
@@ -90,12 +91,12 @@ export default {
         lastname: "",
         password: "",
         image: "http://localhost:3000/pardefaut.png1647426103961.png",
-        role: "user",
+        role: "utilisateur",
       },
       submitted: false,
     };
   },
-
+  // La methode pour switcher entre l'inscription et la connexion
   methods: {
     switchCreateUser: function () {
       this.mode = "create";
@@ -103,6 +104,7 @@ export default {
     switchLogin: function () {
       this.mode = "login";
     },
+    // l'utilisation des données lier à la map state et actions.
     computed: {
       ...mapState(["user"]),
     },
@@ -110,10 +112,12 @@ export default {
       signin: "auth/signin",
       signup: "auth/signup",
     }),
+    // fonction permettant de mettre en lien le store et la page, avec auth/signin et la map user. Pour ensuite faire une redirection vers la page Home
     submit() {
       this.signin(this.user);
       this.$router.push({ name: "home" });
     },
+    // Fonction ayant le même but que submit, sauf que c'est pour l'enregistrement d'un utilisateur
     createdUser() {
       this.signup(this.user);
     },
