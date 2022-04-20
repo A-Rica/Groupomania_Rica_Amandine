@@ -41,7 +41,7 @@
       name="subscribe"
       type="submit"
     >
-      Inscription
+      Modifier
     </button>
   </section>
 </template>
@@ -59,7 +59,7 @@ export default {
         lastname: "",
         email: "",
         password: "",
-        newImage: "./backend/images/pardefaut.png1647440599846.png",
+        newImage: "./backend/images_default/image-default-user.png",
         file: null,
         id: "",
       },
@@ -84,9 +84,24 @@ export default {
       this.newImage = URL.createObjectURL(this.file);
     },
     updateProfil() {
+      this.submitted = true;
+      const formData = new FormData();
+      // console.log(this.file);
+      console.log(
+        "http://localhost:3000/api/profil/" +
+          this.$router.currentRoute.value.params.id
+      );
+
+      formData.append("image", this.file);
       axios.put(
-        "http://localhost:3000/api/profil/" + this.id,
-        localStorage.getItem("token")
+        "http://localhost:3000/api/profil/" +
+          this.$router.currentRoute.value.params.id,
+        formData,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
       );
     },
   },

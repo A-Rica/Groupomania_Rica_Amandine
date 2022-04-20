@@ -106,7 +106,8 @@ export default {
   methods: {
     // fonction permettant de rediriger l'utilisateur vers la modification de son profil.
     ModifProfil: function () {
-      this.$router.push({ name: "modifyProfil" });
+      console.log(this.user.id);
+      this.$router.push({ path: "/profil/" + this.user.id });
     },
   },
 };

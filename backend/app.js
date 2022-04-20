@@ -12,11 +12,10 @@ var hpp = require('hpp');
 //limitation de l’accès à l’application
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   res.setHeader('Content-Security-Policy', "default-src 'self'");
-  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
   next();
 });
 
@@ -36,10 +35,10 @@ app.use(session({
   }
 }));
 
-app.use(helmet());
+// app.use(helmet());
 // sécurisation de l'utilisateur en interdisant l'utilisation d'iframe afin d'empêcher toutes récupération des données
 // de l'utilisateur via une fausse page "Anti-click Jacking"
-app.use(helmet.frameguard({ action: 'deny' }));
+// app.use(helmet.frameguard({ action: 'deny' }));
 
 app.use(hpp());
 
@@ -56,7 +55,8 @@ db.sequelize.sync().then(() => {
 });
 // { force: true }
 
-app.use('./images/', express.static(path.join(__dirname, 'images')));
+app.use('/images/', express.static(path.join(__dirname, 'images')));
+app.use('/images_default/', express.static(path.join(__dirname, 'images_default')));
 
 require("./routes/authentification")(app);
 require("./routes/profil")(app);

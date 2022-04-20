@@ -11,6 +11,7 @@ verifyToken = (req, res, next) => {
       message: "Aucun Token fournis!"
     });
   }
+
   // console.log(jwt.verify(token, config.secret));
   console.log(config.secret);
   jwt.verify(token, process.env.TOKEN, async function (err, decoded) {
@@ -27,7 +28,7 @@ verifyToken = (req, res, next) => {
     // const roles = await user.role();
     // const user = await User.findOne({where: {id: req.userId}});
 
-    console.log(req.userIsAdmin);
+    console.log('isAdmin', req.userIsAdmin);
     next();
   });
 };

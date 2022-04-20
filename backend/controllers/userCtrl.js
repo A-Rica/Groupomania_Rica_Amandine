@@ -18,7 +18,7 @@ exports.signup = (req, res, next) => {
         name: req.body.name,
         lastname: req.body.lastname,
         email: req.body.email,
-        image: `http://localhost:3000/pardefaut.png1647426103961.png`,
+        image: `${req.protocol}://${req.get('host')}/images_default/image-default-user.png`,
         role: req.body.role,
         password: hash,
       });
@@ -118,48 +118,57 @@ exports.profilAll = (req, res, next) => {
 }
 //Mise a jours du profil utilisateur
 exports.updateProfil = (req, res) => {
+  console.log('ça passe controlleur');
   //utilisation d'une condition if pour comparer l'image déjà existante et celle selectionnée sont identiques ou non. 
 
   //si elle ne l'es pas, l'ancienne image sera remplacer grace a fs.unlinkSync en récupérant la fin de l'url envoyé lors de la selection de l'image
   // afin que ca correspond au noms du fichier présent dans le dossiers images. 
 
   //Pour la comparative, utilisation de findOne avec req.params.id pour récuperer les données de l'utilisateurs et ainsi le modifié. 
+  // if (req.params.id == req.userId || req.userIsAdmin) {
 
-  if (req.params.id == req.userId || req.userIsAdmin) {
-    if (req.file) {
-      User.findOne({ where: { id: req.params.id } })
+  if (req.file) {
+    User.findOne({ where: { id: req.params.id } })
 
-        .then(user => {
-          const filename = user.image.split('/images/')[1];
-          fs.unlinkSync(`images/${filename}`)
-        })
-    }
-    //mise en place d'un bcrypt sur le mot de passe afin que ce dernier, en cas de modification soit toujours sécurisé.
-    bcrypt.hash(req.body.password, 10)
-      .then(hash => {
-        //Création d'une constante avec les données de l'utilisateurs modifiable. 
-        const userObject = req.file ?
-          {
-            name: req.body.name,
-            lastname: req.body.lastname,
-            email: req.body.email,
-            password: hash,
-            //mise en lien du fichier image téléchargé.
-            image: `${req.protocol}://${req.get("host")}/api/${req.file.filename}`,
-          } : { ...req.body };
-        console.log(userObject);
-        //utilisation update afin de mettre a jours les données que l'utilisateur aura modifié. le where servant à dire où chercher.
-        User.update({ ...userObject, id: req.params.id }, { where: { id: req.params.id } })
-          //dans la response 200 ont renvoie la constante crée plus tôt avec les données modifié. dans le cas contraire une erreur 400 apparaitra.
-          .then(() => res.status(200).json({ ...userObject }))
+      .then(user => {
+        if (user.image == `${req.protocol}://${req.get('host')}/images_default/image-default-user.png`) { return; }
+        const filename = user.image.split('/images/')[1];
+        fs.unlinkSync(`images/${filename}`)
       })
-      .catch((error) => { res.status(400).json({ error }) });
   }
-  else {
-    res.status(500).send({
-      message: `Vous n'êtes pas autorisé à modifié ce profil.`
-    });
-  }
+
+
+  console.log('body', req.body);
+
+  //mise en place d'un bcrypt sur le mot de passe afin que ce dernier, en cas de modification soit toujours sécurisé.
+  bcrypt.hash(req.body.password, 10)
+    .then(hash => {
+
+      //Création d'une constante avec les données de l'utilisateurs modifiable. 
+      const userObject = req.file ?
+        {
+          name: req.body.name,
+          lastname: req.body.lastname,
+          email: req.body.email,
+          password: hash,
+          //mise en lien du fichier image téléchargé.
+          image: `${req.protocol}://${req.get("host")}/${req.file.filename}`,
+        } : { ...req.body };
+
+      console.log('UserObject', userObject);
+      return res.status(200).end();
+      //utilisation update afin de mettre a jours les données que l'utilisateur aura modifié. le where servant à dire où chercher.
+      User.update({ ...userObject, id: req.params.id }, { where: { id: req.params.id } })
+        //dans la response 200 ont renvoie la constante crée plus tôt avec les données modifié. dans le cas contraire une erreur 400 apparaitra.
+        .then(() => res.status(200).json({ ...userObject }))
+    })
+    .catch((error) => { res.status(400).json({ error }) });
+  // }
+  // else {
+  //   res.status(500).send({
+  //     message: `Vous n'êtes pas autorisé à modifié ce profil.`
+  //   });
+  // }
 }
 //Suppression du fichier.
 exports.deleteProfil = (req, res) => {

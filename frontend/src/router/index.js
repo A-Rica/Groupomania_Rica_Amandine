@@ -21,7 +21,7 @@ const routes = [
     component: MembersPage
   },
   {
-    path: '/profilModif',
+    path: '/profil/:id',
     name: 'modifyProfil',
     component: ModifPage
   }
