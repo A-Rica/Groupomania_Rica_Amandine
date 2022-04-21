@@ -59,8 +59,7 @@ export default {
         lastname: "",
         email: "",
         password: "",
-        newImage: "./backend/images_default/image-default-user.png",
-        file: null,
+        image: "",
         id: "",
       },
     };
@@ -80,23 +79,17 @@ export default {
 
   methods: {
     onFileChange() {
-      this.file = this.$refs.file.files[0];
-      this.newImage = URL.createObjectURL(this.file);
+      this.image = URL.createObjectURL(this.file);
+      console.log(this.image);
     },
     updateProfil() {
       this.submitted = true;
-      const formData = new FormData();
       // console.log(this.file);
-      console.log(
-        "http://localhost:3000/api/profil/" +
-          this.$router.currentRoute.value.params.id
-      );
 
-      formData.append("image", this.file);
       axios.put(
         "http://localhost:3000/api/profil/" +
           this.$router.currentRoute.value.params.id,
-        formData,
+        // formData,
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
