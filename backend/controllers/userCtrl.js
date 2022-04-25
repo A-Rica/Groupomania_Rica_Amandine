@@ -7,7 +7,7 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 //Regex d'authentification
 const Regex_email = new RegExp("^[a-zA-Z0-9. -_]+[@]{1}[a-zA-Z0-9.-_]+$");
-const Regex_password = new RegExp("^[a-zA-Z0-9]{3,14}$");
+const Regex_password = new RegExp("^[a-zA-Z0-9. -_]{3,30}$");
 //inscription de l'utilisateur//
 
 exports.signup = (req, res, next) => {
@@ -117,7 +117,7 @@ exports.profilAll = (req, res, next) => {
     });
 }
 //Mise a jours du profil utilisateur
-exports.updateProfil = (req, res) => {
+exports.updateProfil = async (req, res) => {
   console.log('ça passe controlleur');
   //utilisation d'une condition if pour comparer l'image déjà existante et celle selectionnée sont identiques ou non. 
 
@@ -128,7 +128,7 @@ exports.updateProfil = (req, res) => {
   if (req.params.id == req.userId || req.userIsAdmin) {
 
     if (req.file) {
-      User.findOne({ where: { id: req.params.id } })
+      await User.findOne({ where: { id: req.params.id } })
 
         .then(user => {
           if (user.image == `${req.protocol}://${req.get('host')}/images_default/image-default-user.png`) { return; }
@@ -137,11 +137,10 @@ exports.updateProfil = (req, res) => {
         })
     }
 
-
-    console.log('body', req.body);
-
+    console.log('mot de passe:', req.body.password)
     //mise en place d'un bcrypt sur le mot de passe afin que ce dernier, en cas de modification soit toujours sécurisé.
     bcrypt.hash(req.body.password, 10)
+
       .then(hash => {
 
         //Création d'une constante avec les données de l'utilisateurs modifiable. 
@@ -152,7 +151,7 @@ exports.updateProfil = (req, res) => {
             email: req.body.email,
             password: hash,
             //mise en lien du fichier image téléchargé.
-            image: `${req.protocol}://${req.get("host")}/${req.file.filename}`,
+            image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
           } : { ...req.body };
 
         console.log('UserObject', userObject);

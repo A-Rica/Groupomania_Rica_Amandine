@@ -1,17 +1,22 @@
 <template>
   <section class="section-membersPage">
     <label for="name">Nom:</label>
-    <input v-model="name" id="name" type="text" placeholder="Votre nom ici" />
+    <input
+      v-model="users.name"
+      id="name"
+      type="text"
+      placeholder="Votre nom ici"
+    />
     <label for="lastname">Prenom: </label>
     <input
-      v-model="lastname"
+      v-model="users.lastname"
       id="lastname"
       type="text"
       placeholder="Votre prénom ici"
     />
     <label for="email">Email:</label>
     <input
-      v-model="email"
+      v-model="users.email"
       id="email"
       name="email"
       type="email"
@@ -19,7 +24,7 @@
     />
     <label for="password">Mot de passe: </label>
     <input
-      v-model="password"
+      v-model="users.password"
       id="password"
       name="password"
       type="password"
@@ -27,7 +32,7 @@
     />
     <label for="file">Votre image de profil:</label>
     <input
-      @change="onFileChange()"
+      @change="onFileChange"
       type="file"
       ref="file"
       name="image"
@@ -54,14 +59,16 @@ export default {
   name: "ModifyProfilPage",
   data: function () {
     return {
-      user: {
+      users: {
         name: "",
         lastname: "",
         email: "",
         password: "",
         image: "",
-        id: "",
+        // file: null,
+        id: localStorage.getItem("userId"),
       },
+      submitted: true,
     };
   },
   computed: {
@@ -79,23 +86,43 @@ export default {
 
   methods: {
     onFileChange() {
-      this.image = URL.createObjectURL(this.file);
-      console.log(this.image);
+      //   this.users.file = this.$refs.file.files[0];
+      this.users.image = this.$refs.file.files[0];
+      //   this.users.images = URL.createObjectURL(this.users.file);
     },
     updateProfil() {
       this.submitted = true;
-      // console.log(this.file);
 
-      axios.put(
-        "http://localhost:3000/api/profil/" +
-          this.$router.currentRoute.value.params.id,
-        // formData,
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
+      const formData = new FormData();
+      console.log(this.users.image);
+      formData.append("image", this.users.image);
+      formData.append("name", this.users.name);
+      formData.append("lastname", this.users.lastname);
+      formData.append("password", this.users.password);
+      formData.append("email", this.users.email);
+
+      axios
+        .put(
+          "http://localhost:3000/api/profil/" + localStorage.getItem("userId"),
+
+          formData,
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        )
+        .then(() => {
+          const confimration = confirm(
+            "Désirez vous vraiment modifier votre profil?"
+          );
+          if (confimration) {
+            alert("Votre profil à bien été modifié");
+          } else {
+            alert("Demande de modification annulé");
+          }
+          location.reload();
+        });
     },
   },
 };

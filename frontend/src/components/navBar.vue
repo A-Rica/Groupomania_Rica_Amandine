@@ -8,8 +8,11 @@
     ></span>
     <div class="menue-profil" v-if="showNavBar">
       <ul>
+        <li @click="getHome">
+          <span>Homes <i class="fa-solid fa-house"></i></span>
+        </li>
         <li @click="getUsers">
-          <span>Membres<i class="fa-solid fa-user"></i></span>
+          <span>Membres <i class="fa-solid fa-user-group"></i></span>
         </li>
         <li @click="signout">
           <span>Déconnexion<i class="fa-solid fa-right-from-bracket"></i></span>
@@ -62,11 +65,13 @@ export default {
     // Mise en place d'un bouton pour envoyé l'utilisateur vers la page membres. Utilisation un switch mode pour afficher le menue
     getUsers() {
       this.$router.push({ name: "members" });
-      console.log(mapActions);
     },
     showNavBarSwitch() {
       this.showNavBar = !this.showNavBar;
       // alert(!this.showNavBar);
+    },
+    getHome() {
+      this.$router.push({ name: "home" });
     },
   },
 };

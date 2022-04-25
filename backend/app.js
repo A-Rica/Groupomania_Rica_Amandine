@@ -45,6 +45,11 @@ const run = async () => {
   require("./routes/comment")(app)
 };
 
+// app.use((req, res, next) => {
+//   console.log('file', req.file);
+//   console.log('test');
+// })
+
 
 db.sequelize.sync().then(() => {
   console.log("Drop and re-sync db.");

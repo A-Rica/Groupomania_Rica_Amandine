@@ -29,6 +29,7 @@ export default ({
         async signin({ dispatch }, credentials) {
             let response = await axios.post("auth/login", credentials);
 
+            localStorage.setItem('userId', response.data.userId);
             dispatch('attempt', response.data.token);
 
         },

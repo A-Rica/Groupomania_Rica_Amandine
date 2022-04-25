@@ -8,7 +8,7 @@ module.exports = app => {
 
 
     // //creation post// 
-    router.post("/:id", authJwt.verifyToken, multer, message.createMessage);
+    router.post("/", authJwt.verifyToken, multer, message.createMessage);
 
     // // //visionner le message //
     router.get("/:id", authJwt.verifyToken, multer, message.getOneMessages);
