@@ -117,9 +117,9 @@ export default {
             "Désirez vous vraiment modifier votre profil?"
           );
           if (confimration) {
-            alert("Votre profil à bien été modifié");
+            alert("Votre profil à bien été modifié.");
           } else {
-            alert("Demande de modification annulé");
+            alert("Demande de modification annulé.");
           }
           location.reload();
         });

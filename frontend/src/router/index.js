@@ -3,6 +3,7 @@ import ConnectPage from '../views/connectPage.vue'
 import HomePage from '../views/homePage.vue'
 import MembersPage from '../views/membersPage.vue'
 import ModifPage from '../views/modifyProfilPage.vue'
+import MessagePage from '../views/messagePage.vue'
 const routes = [
   {
     path: '/',
@@ -24,6 +25,12 @@ const routes = [
     path: '/profil/:id',
     name: 'modifyProfil',
     component: ModifPage
+  },
+  {
+    path: '/message/:id',
+    name: 'message',
+    component: MessagePage,
+    props: true,
   }
 
   // {

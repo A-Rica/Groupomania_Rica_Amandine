@@ -1,6 +1,7 @@
 <template >
   <section>
-    <div class="newPost" @click="showNewPostSwitch">
+    <!-- Partie permettant d'envoyer les messages sur le mur avec un effet glissière -->
+    <div class="newPost" @click="showNewPostSwitch" v-if="authenficated">
       Postez un nouveau message
     </div>
     <div class="blockNewPost" v-if="showNewPost">
@@ -19,6 +20,7 @@
         <label id="labelBlockNewPost" for="image">Image:</label>
         <input
           type="file"
+          ref="file"
           name="image"
           id="image"
           @change="onFileChange"
@@ -28,8 +30,34 @@
         </button>
       </form>
     </div>
-    <div v-if="authenficated" class="section-homePage">testi test</div>
-
+    <!-- Partie servant à afficher les messages sur le mur -->
+    <div v-if="authenficated" class="section-homePage">
+      <div class="postWall" v-for="post in posts" v-bind:key="post.id">
+        <div class="positionTitleNameImage">
+          <img v-bind:src="post.user.image" class="img-members" />
+          <span class="positionTitleName">
+            <h3>
+              <router-link
+                :to="{ name: 'message', params: { id: post.id } }"
+                class="colorLink"
+                >{{ post.title }}</router-link
+              >
+            </h3>
+            <br />
+            <h4>
+              Par {{ post.user.lastname }} {{ post.user.name }} le
+              {{ new Date(post.createdAt).toLocaleString() }}
+            </h4></span
+          >
+        </div>
+        <p class="formatText">
+          {{ post.text }}
+          <img v-bind:src="post.image" class="imagePost" />
+        </p>
+        <div class="barreBottom"><i class="fa-solid fa-thumbs-up"></i></div>
+      </div>
+    </div>
+    <!-- Partie avertissant l'utilisateur qu'il faut être connecté pour voir les messages sur le mur -->
     <div v-else class="section-homePage2">
       <img src="../assets/icon-left-font-monochrome-black.png" />
       Merci de vous reconnecter afin d'accéder aux réseaux Groupomania;
@@ -49,9 +77,10 @@
 // import de la map Getters
 import { mapGetters } from "vuex";
 import axios from "axios";
+// import moment from "moment";
 export default {
   name: "Wall-post",
-
+  // Data à envoyé dans la dataBase
   data: function () {
     return {
       showNewPost: false,
@@ -59,22 +88,31 @@ export default {
         title: "",
         text: "",
         image: "",
+        id: "",
+        // UserId récupérer dans le localStorage
+        userId: localStorage.getItem("userId"),
       },
+      // Data lier à l'affichage des messages. Mis en Array
+      posts: [],
     };
   },
   computed: {
+    // Récupération de l'authentification dans le store
     ...mapGetters({
       authenficated: "auth/authenficated",
       user: "auth/user",
     }),
   },
+  created: function () {
+    axios.get("http://localhost:3000/api/messages/").then((posts) => {
+      this.posts = posts.data;
+    });
+  },
 
   methods: {
     // fonction permettant de récuperer l'image envoyé
-    onFileChange(e) {
-      console.log(e.target.files);
-      const file = e.target.files[0].name;
-      this.post.image = file;
+    onFileChange() {
+      this.post.image = this.$refs.file.files[0];
     },
     // fonction de redirection en cas ou l'utilisateur est déconnecté, visant à le renvoyé à la page connexion
     redirection() {
@@ -87,8 +125,38 @@ export default {
     },
     // mise en place de l'envoie d'un message dans la base de données
     createdPost() {
-      axios.post("http://localhost:3000/api/profil/me");
-      console.log(this.post);
+      // création d'une constante formData pour y imposer les data à envoyé
+      const formData = new FormData();
+      // ajout du titre, texte et de l'image dans formData
+      formData.append("title", this.post.title);
+      formData.append("text", this.post.text);
+      formData.append("image", this.post.image);
+      // mise en place du lien vers l'API message, en utilisant l'userId présent dans la data.
+      axios
+        .post(
+          "http://localhost:3000/api/messages/" + this.post.userId,
+          // Mise en lien avec la constant formData. Informant ainsi Axios qu'il faut l'envoyé dans la DB
+          formData,
+          {
+            // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        )
+        .then(() => {
+          const accept = confirm("Souhaitez vous poster ce message?");
+          if (accept) {
+            alert("Votre message à bien été posté.");
+          }
+          location.reload();
+        });
+    },
+    messagePage() {
+      axios.get("http://localhost:3000/api/messages/").then((posts) => {
+        console.log(posts.data);
+      });
+      // this.$router.push({ path: "/message/" + post.id });
     },
   },
 };
@@ -156,7 +224,68 @@ export default {
     }
   }
 }
-
+.postWall {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 1px 2px 5px #635c9b;
+  border-radius: 20px;
+  margin-top: 25px;
+  .positionTitleNameImage {
+    display: flex;
+    flex-direction: row;
+    .img-members {
+      width: 100px;
+      border-radius: 100px;
+      margin-top: -20px;
+      margin-left: -20px;
+    }
+    .positionTitleName {
+      display: flex;
+      flex-direction: column;
+      h3 {
+        font-size: 16.5px;
+        margin-left: 10px;
+        margin-top: -2px;
+        cursor: pointer;
+        .colorLink {
+          color: black;
+          text-decoration: none;
+        }
+      }
+      h4 {
+        font-size: 13px;
+        font-weight: lighter;
+        margin-top: -17px;
+        margin-left: 10px;
+      }
+    }
+  }
+  .formatText {
+    display: flex;
+    flex-direction: column;
+    width: 96%;
+    text-align: justify;
+    margin-top: -2px;
+    margin-left: auto;
+    margin-right: auto;
+    .imagePost {
+      width: 60%;
+      margin-left: 19%;
+      margin-top: 20px;
+      border-radius: 5px;
+    }
+  }
+  .barreBottom {
+    width: 96%;
+    border-top: 2px solid darkgray;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
 .section-homePage2 {
   display: flex;
   flex-direction: column;
