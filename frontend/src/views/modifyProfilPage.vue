@@ -132,6 +132,8 @@ export default {
   display: flex;
   flex-direction: column;
   background-color: #c4c4fd;
+  background-image: url("../assets/Pattern-Transparent-Background.png");
+  background-size: cover;
   box-shadow: 1px 2px 5px #635c9b;
   width: 50%;
   padding: 15px;

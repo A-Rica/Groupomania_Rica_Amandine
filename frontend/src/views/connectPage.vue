@@ -36,6 +36,7 @@
       </button>
     </form>
     <!-- formulaire inscription avec les mêmes champs que connexion mais avec le noms et prenom -->
+    <!-- Ne pas oublier mettre message avertissement quand le formulaire est mal rempli -->
     <form class="formulaire" v-else @submit.prevent="createdUser()">
       <label for="email">Email: </label>
       <input
@@ -129,6 +130,8 @@ export default {
   display: flex;
   flex-direction: column;
   background-color: #c4c4fd;
+  background-image: url("../assets/Pattern-Transparent-Background.png");
+  background-size: cover;
   box-shadow: 1px 2px 5px #635c9b;
   border-radius: 20px;
   width: 43%;
