@@ -54,6 +54,36 @@
           {{ post.text }}
           <img v-bind:src="post.image" class="imagePost" />
         </p>
+        <div class="barreBottom">
+          <i class="fa-solid fa-thumbs-up"></i>
+          <span class="linkComment" @click="showCommentSwitch"
+            >Voir les commentaires</span
+          >
+          <div class="blockComment" v-if="showComments">
+            <!-- Partie création de commentaire -->
+            <form @submit.prevent="createdComment()">
+              <textarea
+                name="comment"
+                id="comments"
+                type="text"
+                v-model="comment.text"
+              ></textarea>
+              <input
+                type="file"
+                ref="file"
+                name="image"
+                id="image"
+                @change="onFileChangeComment"
+              />
+              <button class="send" id="forward" name="send" type="submit">
+                Envoyer
+              </button>
+            </form>
+            <!-- <div v-for="comment in comments" v-bind:key="comment">
+              {{ comment.text }}
+            </div> -->
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -67,12 +97,19 @@ export default {
   data: function () {
     return {
       showModifyPost: false,
+      showComments: false,
       post: {
         title: "",
         text: "",
         image: "",
         id: "",
         user: [],
+      },
+      comment: {
+        text: "",
+        image: "",
+        messageId: this.$route.params.id,
+        userId: localStorage.getItem("userId"),
       },
     };
   },
@@ -104,6 +141,9 @@ export default {
     showModifyPostSwitch() {
       this.showModifyPost = !this.showModifyPost;
     },
+    showCommentSwitch() {
+      this.showComments = !this.showComments;
+    },
     onFileChange() {
       this.post.image = this.$refs.file.files[0];
     },
@@ -129,6 +169,33 @@ export default {
             alert("Votre message à bien été modifié.");
           } else {
             alert("Demande de modification annulé.");
+          }
+          location.reload();
+        });
+    },
+
+    // creation d'un commentaires
+    onFileChangeComment() {
+      this.comment.image = this.$refs.file.files[0];
+    },
+    createdComment() {
+      console.log(this.comment);
+      const formData = new FormData();
+
+      formData.append("text", this.comment.text);
+      formData.append("image", this.comment.image);
+
+      axios
+        .post("http://localhost:3000/api/comment/", formData, {
+          // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then(() => {
+          const accept = confirm("Souhaitez vous poster ce commentaire?");
+          if (accept) {
+            alert("Votre commentaire à bien été posté.");
           }
           location.reload();
         });
@@ -244,6 +311,46 @@ export default {
   margin-top: 20px;
   &:hover {
     background-color: darken(#635c9b, 10%);
+  }
+}
+
+.barreBottom {
+  width: 96%;
+  border-top: 2px solid darkgray;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 3px;
+  .linkComment {
+    float: right;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  .blockComment {
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    form {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+      #image {
+        margin-top: 10px;
+      }
+      button {
+        width: 20%;
+        height: 25px;
+        margin-top: -25px;
+        margin-left: 80%;
+        color: white;
+        background-color: #635c9b;
+        &:hover {
+          background-color: darken(#635c9b, 10%);
+        }
+      }
+    }
   }
 }
 </style>

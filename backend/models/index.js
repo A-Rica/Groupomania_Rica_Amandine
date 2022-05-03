@@ -40,6 +40,7 @@ db.comment.belongsTo(db.message, {
   as: "message",
   onDelete: "cascade"
 });
+
 db.comment.belongsTo(db.user, {
   foreignKey: {
     field: "userId",

@@ -54,7 +54,17 @@
           {{ post.text }}
           <img v-bind:src="post.image" class="imagePost" />
         </p>
-        <div class="barreBottom"><i class="fa-solid fa-thumbs-up"></i></div>
+        <div class="barreBottom">
+          <i class="fa-solid fa-thumbs-up"></i>
+          <span class="linkComment" @click="showCommentSwitch"
+            >Voir les commentaires</span
+          >
+          <div class="blockComment" v-if="showComments">
+            <!-- <div v-for="comment in comments" v-bind:key="comment">
+              {{ comment.text }}
+            </div> -->
+          </div>
+        </div>
       </div>
     </div>
     <!-- Partie avertissant l'utilisateur qu'il faut être connecté pour voir les messages sur le mur -->
@@ -84,6 +94,7 @@ export default {
   data: function () {
     return {
       showNewPost: false,
+      showComments: false,
       post: {
         title: "",
         text: "",
@@ -94,6 +105,7 @@ export default {
       },
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
+      // data lier à la création d'un commentaire.
     };
   },
   computed: {
@@ -106,6 +118,7 @@ export default {
   created: function () {
     axios.get("http://localhost:3000/api/messages/").then((posts) => {
       this.posts = posts.data;
+      console.log(posts.data);
     });
   },
 
@@ -152,11 +165,9 @@ export default {
           location.reload();
         });
     },
-    messagePage() {
-      axios.get("http://localhost:3000/api/messages/").then((posts) => {
-        console.log(posts.data);
-      });
-      // this.$router.push({ path: "/message/" + post.id });
+    // Ouvrir le block commentaires
+    showCommentSwitch() {
+      this.showComments = !this.showComments;
     },
   },
 };
@@ -286,6 +297,39 @@ export default {
     border-top: 2px solid darkgray;
     margin-left: auto;
     margin-right: auto;
+    padding: 3px;
+    .linkComment {
+      float: right;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    .blockComment {
+      width: 98%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 10px;
+      form {
+        display: flex;
+        flex-direction: column;
+        margin-top: 20px;
+        #imageComment {
+          margin-top: 10px;
+        }
+        button {
+          width: 20%;
+          height: 25px;
+          margin-top: -25px;
+          margin-left: 80%;
+          color: white;
+          background-color: #635c9b;
+          &:hover {
+            background-color: darken(#635c9b, 10%);
+          }
+        }
+      }
+    }
   }
 }
 .section-homePage2 {
