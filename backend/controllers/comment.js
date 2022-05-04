@@ -36,7 +36,7 @@ exports.getAllComments = (req, res, next) => {
     .catch((error) => {
       res.status(400).json({ error })
     });
-  // where: { messageId: req.params.id },
+  //,
 }
 
 exports.modifyComment = async function (req, res, next) {

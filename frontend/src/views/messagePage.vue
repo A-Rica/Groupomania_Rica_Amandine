@@ -79,9 +79,16 @@
                 Envoyer
               </button>
             </form>
-            <!-- <div v-for="comment in comments" v-bind:key="comment">
+            <!-- <div>
               {{ comment.text }}
             </div> -->
+            <div
+              class="blockDisplayComment"
+              v-for="comment in comments"
+              v-bind:key="comment.id"
+            >
+              {{ comment.text }}
+            </div>
           </div>
         </div>
       </div>
@@ -106,11 +113,14 @@ export default {
         user: [],
       },
       comment: {
+        id: "",
         text: "",
         image: "",
         messageId: this.$route.params.id,
         userId: localStorage.getItem("userId"),
       },
+
+      comments: [],
     };
   },
   computed: {
@@ -134,6 +144,21 @@ export default {
         this.post.text = post.data.text;
         this.post.image = post.data.image;
         this.post.user = post.data.user;
+      });
+
+    axios
+      .get("http://localhost:3000/api/comment/", {
+        // autorisation nécessaire pour la lecture des données et récupération du token dans le localStorage.
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((comments) => {
+        this.comments = comments.data;
+        // this.comment.text = comments.data.text;
+        // this.comment.image = comments.data.image;
+        // this.comment.user = comments.data.user;
+        // this.comment.message = comments.data.message;
       });
   },
 
@@ -184,6 +209,7 @@ export default {
 
       formData.append("text", this.comment.text);
       formData.append("image", this.comment.image);
+      formData.append("messageId", this.comment.messageId);
 
       axios
         .post("http://localhost:3000/api/comment/", formData, {
@@ -350,6 +376,16 @@ export default {
           background-color: darken(#635c9b, 10%);
         }
       }
+    }
+    .blockDisplayComment {
+      margin-top: 10px;
+      width: 98%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 5px;
+      border-radius: 5px;
+      background-color: rgb(223, 223, 223);
+      box-shadow: 1px 2px 5px #635c9b;
     }
   }
 }
