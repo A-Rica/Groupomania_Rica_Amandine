@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div v-if="authenficated" class="section-messagePage">
+    <div class="section-messagePage">
       <!-- partie message utilisateurs -->
       <!-- Partie modification du message de l'utilisateur avec un switch
        faisant disparaitre le message pour laisser s'afficher la page de modification -->
@@ -82,12 +82,23 @@
             <!-- <div>
               {{ comment.text }}
             </div> -->
+            <h3>Commentaires</h3>
             <div
               class="blockDisplayComment"
               v-for="comment in comments"
               v-bind:key="comment.id"
             >
-              {{ comment.text }}
+              <i class="fa-solid fa-ellipsis positionPoint"></i>
+              <img class="formAvatar" v-bind:src="comment.user.image" />
+              <div class="formComment">
+                <h4>de {{ comment.user.lastname }} {{ comment.user.name }}</h4>
+                <span>{{ comment.text }}</span>
+                <img
+                  class="imageComment"
+                  :src="comment.image"
+                  v-show="comment.image"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -96,7 +107,7 @@
   </section>
 </template>
 <script>
-import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
 import axios from "axios";
 
 export default {
@@ -105,6 +116,7 @@ export default {
     return {
       showModifyPost: false,
       showComments: false,
+
       post: {
         title: "",
         text: "",
@@ -117,17 +129,12 @@ export default {
         text: "",
         image: "",
         messageId: this.$route.params.id,
+        // UserId récupérer dans le localStorage
         userId: localStorage.getItem("userId"),
       },
 
       comments: [],
     };
-  },
-  computed: {
-    ...mapGetters({
-      authenficated: "auth/authenficated",
-      user: "auth/user",
-    }),
   },
 
   created: function () {
@@ -155,10 +162,6 @@ export default {
       })
       .then((comments) => {
         this.comments = comments.data;
-        // this.comment.text = comments.data.text;
-        // this.comment.image = comments.data.image;
-        // this.comment.user = comments.data.user;
-        // this.comment.message = comments.data.message;
       });
   },
 
@@ -204,13 +207,12 @@ export default {
       this.comment.image = this.$refs.file.files[0];
     },
     createdComment() {
-      console.log(this.comment);
       const formData = new FormData();
 
       formData.append("text", this.comment.text);
       formData.append("image", this.comment.image);
       formData.append("messageId", this.comment.messageId);
-
+      formData.append("userId", this.comment.userId);
       axios
         .post("http://localhost:3000/api/comment/", formData, {
           // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
@@ -225,6 +227,9 @@ export default {
           }
           location.reload();
         });
+    },
+    imgDisplay() {
+      this.isLoaded = true;
     },
   },
 };
@@ -378,14 +383,48 @@ export default {
       }
     }
     .blockDisplayComment {
-      margin-top: 10px;
-      width: 98%;
+      display: flex;
+      flex-direction: row;
       margin-left: auto;
       margin-right: auto;
-      padding: 5px;
-      border-radius: 5px;
-      background-color: rgb(223, 223, 223);
-      box-shadow: 1px 2px 5px #635c9b;
+
+      .positionPoint {
+        position: absolute;
+        right: 10%;
+        font-size: 20px;
+        margin-top: 6px;
+      }
+      .formComment {
+        margin-top: 25px;
+        width: 82%;
+        padding: 5px;
+        margin-left: 20px;
+        border-radius: 5px;
+        text-align: justify;
+        background-color: rgb(239, 237, 237);
+        box-shadow: 1px 2px 5px #635c9b;
+
+        h4 {
+          margin-top: -5px;
+          font-size: 15px;
+        }
+        span {
+          font-size: 13px;
+        }
+        .imageComment {
+          margin-left: 38%;
+          height: 170px;
+          border-radius: 20px;
+        }
+      }
+
+      .formAvatar {
+        margin-top: 25px;
+        width: 100px;
+        height: 100px;
+        border-radius: 5px;
+        box-shadow: 1px 2px 5px #635c9b;
+      }
     }
   }
 }

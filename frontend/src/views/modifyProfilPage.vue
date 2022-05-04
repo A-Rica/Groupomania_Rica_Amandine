@@ -53,7 +53,7 @@
 <script>
 // import d'axios et du map Getters. Mise en place de la data.
 import axios from "axios";
-import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
 
 export default {
   name: "ModifyProfilPage",
@@ -72,16 +72,22 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
-      authenficated: "auth/authenficated",
-      user: "auth/user",
-    }),
+    // ...mapGetters({
+    //   authenficated: "auth/authenficated",
+    //   user: "auth/user",
+    // }),
   },
   // fonction pour lire l'id de l'utilisateurs pour pouvoir ensuite l'upgrade. Fonction update à revoir.
   created: function () {
-    axios.get("http://localhost:3000/api/profil/me").then((user) => {
-      this.id = user.data.id;
-    });
+    axios
+      .get("http://localhost:3000/api/profil/me", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((user) => {
+        this.users.id = user.data.id;
+      });
   },
 
   methods: {

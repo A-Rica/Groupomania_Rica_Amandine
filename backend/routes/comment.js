@@ -12,6 +12,6 @@ module.exports = app => {
     //modification du commentaire
     router.put("/:id", authJwt.verifyToken, multer, comment.modifyComment);
     //suppression du commentaire
-    router.delete("/:id", multer, comment.deleteComment);
+    router.delete("/:id", authJwt.verifyToken, multer, comment.deleteComment);
     app.use('/api/comment', router);
 }

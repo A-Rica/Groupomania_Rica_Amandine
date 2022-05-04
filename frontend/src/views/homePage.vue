@@ -1,7 +1,7 @@
 <template >
   <section>
     <!-- Partie permettant d'envoyer les messages sur le mur avec un effet glissière -->
-    <div class="newPost" @click="showNewPostSwitch" v-if="authenficated">
+    <div class="newPost" @click="showNewPostSwitch">
       Postez un nouveau message
     </div>
     <div class="blockNewPost" v-if="showNewPost">
@@ -31,7 +31,7 @@
       </form>
     </div>
     <!-- Partie servant à afficher les messages sur le mur -->
-    <div v-if="authenficated" class="section-homePage">
+    <div class="section-homePage">
       <div class="postWall" v-for="post in posts" v-bind:key="post.id">
         <div class="positionTitleNameImage">
           <img v-bind:src="post.user.image" class="img-members" />
@@ -56,10 +56,10 @@
         </p>
         <div class="barreBottom">
           <i class="fa-solid fa-thumbs-up"></i>
-          <span class="linkComment" @click="showCommentSwitch"
+          <span class="linkComment" @click="showCommentSwitch(post.id)"
             >Voir les commentaires</span
           >
-          <div class="blockComment" v-if="showComments">
+          <div class="blockComment" v-if="showCommentspostId == post.id">
             <!-- <div v-for="comment in comments" v-bind:key="comment">
               {{ comment.text }}
             </div> -->
@@ -67,25 +67,9 @@
         </div>
       </div>
     </div>
-    <!-- Partie avertissant l'utilisateur qu'il faut être connecté pour voir les messages sur le mur -->
-    <div v-else class="section-homePage2">
-      <img src="../assets/icon-left-font-monochrome-black.png" />
-      Merci de vous reconnecter afin d'accéder aux réseaux Groupomania;
-      <button
-        id="connexion"
-        class="connexion"
-        name="connexion"
-        type="submit"
-        @click="redirection"
-      >
-        Redirection vers la page connexion.
-      </button>
-    </div>
   </section>
 </template>
 <script>
-// import de la map Getters
-import { mapGetters } from "vuex";
 import axios from "axios";
 // import moment from "moment";
 export default {
@@ -95,6 +79,7 @@ export default {
     return {
       showNewPost: false,
       showComments: false,
+      showCommentspostId: null,
       post: {
         title: "",
         text: "",
@@ -103,23 +88,23 @@ export default {
         // UserId récupérer dans le localStorage
         userId: localStorage.getItem("userId"),
       },
+      token: "",
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
       // data lier à la création d'un commentaire.
     };
   },
-  computed: {
-    // Récupération de l'authentification dans le store
-    ...mapGetters({
-      authenficated: "auth/authenficated",
-      user: "auth/user",
-    }),
-  },
   created: function () {
-    axios.get("http://localhost:3000/api/messages/").then((posts) => {
-      this.posts = posts.data;
-      console.log(posts.data);
-    });
+    axios
+      .get("http://localhost:3000/api/messages/", {
+        // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((posts) => {
+        this.posts = posts.data;
+      });
   },
 
   methods: {
@@ -166,7 +151,8 @@ export default {
         });
     },
     // Ouvrir le block commentaires
-    showCommentSwitch() {
+    showCommentSwitch(postId) {
+      this.showCommentspostId = postId;
       this.showComments = !this.showComments;
     },
   },

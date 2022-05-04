@@ -1,5 +1,5 @@
 <template>
-  <section class="section-membersPage" v-if="authenficated">
+  <section class="section-membersPage">
     <div class="center-block">
       <div v-for="user in users" v-bind:key="user.id" class="block-members">
         <img v-bind:src="user.image" class="img-members" />
@@ -15,7 +15,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
 export default {
   name: "PageMembers",
   data: function () {
@@ -24,18 +24,26 @@ export default {
     };
   },
   computed: {
-    // comme pour la navbar utilisation de mapGetter afin d'afficher ou non le profil en cas de connexion ou non
-    ...mapGetters({
-      authenficated: "auth/authenficated",
-      user: "auth/user",
-    }),
+    // // comme pour la navbar utilisation de mapGetter afin d'afficher ou non le profil en cas de connexion ou non
+    // ...mapGetters({
+    //   authenficated: "auth/authenficated",
+    //   user: "auth/user",
+    // }),
   },
   created: function () {
-    axios.get("http://localhost:3000/api/profil/").then((users) => {
-      console.log(users.data);
-      this.users = users.data;
-      this.users.createdAt = moment(users.data.createdAt).format("DD/MM/YYYY");
-    });
+    axios
+      .get("http://localhost:3000/api/profil/", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((users) => {
+        console.log(users.data);
+        this.users = users.data;
+        this.users.createdAt = moment(users.data.createdAt).format(
+          "DD/MM/YYYY"
+        );
+      });
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <section v-if="authenficated">
+  <section>
     <div class="section-profil">
       <img :src="image" class="image-profil" />
       <div class="hoverImage">
@@ -17,7 +17,7 @@
 
 <script>
 // import de mapGetters, axios et moment
-import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
 import axios from "axios";
 import moment from "moment";
 
@@ -35,27 +35,33 @@ export default {
   },
   computed: {
     // comme pour la navbar utilisation de mapGetter afin d'afficher ou non le profil en cas de connexion ou non
-    ...mapGetters({
-      authenficated: "auth/authenficated",
-      user: "auth/user",
-    }),
+    // ...mapGetters({
+    //   authenficated: "auth/authenficated",
+    //   user: "auth/user",
+    // }),
   },
   // mise en place d'une fonction afin de lire les données de l'utilisateur. Utilisation du package moment afin de modifié le format de la date.
   created: function () {
-    axios.get("http://localhost:3000/api/profil/me").then((user) => {
-      this.image = user.data.image;
-      this.name = user.data.name;
-      this.lastname = user.data.lastname;
-      this.email = user.data.email;
-      this.inscription = moment(user.data.createdAt).format("DD/MM/YYYY");
-      this.role = user.data.role;
-    });
+    axios
+      .get("http://localhost:3000/api/profil/me", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((user) => {
+        this.image = user.data.image;
+        this.name = user.data.name;
+        this.lastname = user.data.lastname;
+        this.email = user.data.email;
+        this.inscription = moment(user.data.createdAt).format("DD/MM/YYYY");
+        this.role = user.data.role;
+      });
   },
   methods: {
     // fonction permettant de rediriger l'utilisateur vers la modification de son profil.
     ModifProfil: function () {
-      console.log(this.user.id);
-      this.$router.push({ path: "/profil/" + this.user.id });
+      // console.log(this.user.id);
+      this.$router.push({ path: "/profil/" + localStorage.getItem("userId") });
     },
   },
 };
