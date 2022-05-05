@@ -88,9 +88,50 @@
               v-for="comment in comments"
               v-bind:key="comment.id"
             >
-              <i class="fa-solid fa-ellipsis positionPoint"></i>
+              <!-- bouton list modifié -->
+              <nav>
+                <span
+                  class="positionPoint"
+                  @click="showModifyMenuComment(comment.id)"
+                  ><i class="fa-solid fa-ellipsis"></i
+                ></span>
+                <ul
+                  class="formMenuModifyComment"
+                  v-if="showCommentMenuId == comment.id"
+                >
+                  <li
+                    @click="showModifyCommentSwitch(comment.id)"
+                    v-if="!showButtonModify"
+                  >
+                    Modifier le commentaire
+                  </li>
+                  <li @click="showModifyCommentSwitch" v-else>
+                    Annuler la modification
+                  </li>
+                </ul>
+              </nav>
               <img class="formAvatar" v-bind:src="comment.user.image" />
-              <div class="formComment">
+              <div class="formComment" v-if="showModifyComments == comment.id">
+                <form @submit.prevent="modifyComments(comment.id)">
+                  <textarea
+                    name="comment"
+                    id="comments"
+                    type="text"
+                    v-model="comment.text"
+                  ></textarea>
+                  <input
+                    type="file"
+                    ref="file"
+                    name="image"
+                    id="image"
+                    @change="onImageChangeComment(comment.id)"
+                  />
+                  <button class="send" id="forward" name="send" type="submit">
+                    Envoyer
+                  </button>
+                </form>
+              </div>
+              <div class="formComment" v-else>
                 <h4>de {{ comment.user.lastname }} {{ comment.user.name }}</h4>
                 <span>{{ comment.text }}</span>
                 <img
@@ -115,8 +156,11 @@ export default {
   data: function () {
     return {
       showModifyPost: false,
+      showModifyComments: false,
       showComments: false,
-
+      showButtonModify: false,
+      showMenuModifyComment: false,
+      showCommentMenuId: null,
       post: {
         title: "",
         text: "",
@@ -172,6 +216,14 @@ export default {
     showCommentSwitch() {
       this.showComments = !this.showComments;
     },
+    showModifyMenuComment(commentMenuId) {
+      this.showCommentMenuId = commentMenuId;
+    },
+    showModifyCommentSwitch(commentId) {
+      this.showModifyComments = commentId;
+      this.showButtonModify = !this.showButtonModify;
+    },
+
     onFileChange() {
       this.post.image = this.$refs.file.files[0];
     },
@@ -206,6 +258,11 @@ export default {
     onFileChangeComment() {
       this.comment.image = this.$refs.file.files[0];
     },
+
+    onImageChangeComment() {
+      this.comment.image = this.$refs.file[0].files[0];
+    },
+
     createdComment() {
       const formData = new FormData();
 
@@ -230,6 +287,16 @@ export default {
     },
     imgDisplay() {
       this.isLoaded = true;
+    },
+
+    modifyComments(commentaireId) {
+      axios.put("http://localhost:3000/api/comment/" + commentaireId, {
+        // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      console.log(localStorage.getItem("token"));
     },
   },
 };
@@ -393,6 +460,25 @@ export default {
         right: 10%;
         font-size: 20px;
         margin-top: 6px;
+        cursor: pointer;
+      }
+      .formMenuModifyComment {
+        position: absolute;
+        right: 8%;
+        margin-top: 2%;
+        list-style: none;
+        background-color: #c4c4fd;
+        background-image: url("../assets/Pattern-Transparent-Background.png");
+        background-size: cover;
+        box-shadow: 1px 2px 5px #635c9b;
+        width: 13%;
+        padding: 5px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 13px;
+        li {
+          cursor: pointer;
+        }
       }
       .formComment {
         margin-top: 25px;
