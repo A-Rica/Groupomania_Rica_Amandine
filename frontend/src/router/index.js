@@ -4,6 +4,8 @@ import HomePage from '../views/homePage.vue'
 import MembersPage from '../views/membersPage.vue'
 import ModifPage from '../views/modifyProfilPage.vue'
 import MessagePage from '../views/messagePage.vue'
+
+
 const routes = [
   {
     path: '/',
@@ -14,24 +16,28 @@ const routes = [
     path: '/home',
     name: 'home',
     component: HomePage,
-
+    meta: { requiresAuth: [localStorage.getItem('userId'), localStorage.getItem('token')] }
   },
   {
     path: '/members',
     name: 'members',
-    component: MembersPage
+    component: MembersPage,
+    meta: { requiresAuth: [localStorage.getItem('userId'), localStorage.getItem('token')] }
   },
   {
     path: '/profil/:id',
     name: 'modifyProfil',
-    component: ModifPage
+    component: ModifPage,
+    meta: { requiresAuth: [localStorage.getItem('userId'), localStorage.getItem('token')] }
   },
   {
     path: '/message/:id',
     name: 'message',
     component: MessagePage,
     props: true,
-  }
+    meta: { requiresAuth: [localStorage.getItem('userId'), localStorage.getItem('token')] }
+  },
+
 
   // {
   //   path: '/about',
@@ -47,5 +53,13 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
-
+router.beforeEach((to, from) => {
+  // const userId = localStorage.getItem('userId');
+  // const token = localStorage.getItem('token');
+  // const requiresAuth = [userId, token];
+  // console.log(requiresAuth);
+  console.log(to);
+  console.log(from);
+  console.log(to.matched.some(record => record.meta.requiresAuth));
+})
 export default router

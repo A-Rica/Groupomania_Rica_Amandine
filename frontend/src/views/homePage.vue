@@ -92,6 +92,7 @@ export default {
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
       // data lier à la création d'un commentaire.
+      comments: [],
     };
   },
   created: function () {
@@ -105,6 +106,17 @@ export default {
       .then((posts) => {
         this.posts = posts.data;
       });
+
+      axios.get('http://localhost:3000/api/comment/', {
+        // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((comments) => {
+        console.log(comments.data);
+        this.comments = comments.data;
+      })
   },
 
   methods: {

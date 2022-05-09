@@ -24,6 +24,7 @@ verifyToken = (req, res, next) => {
     req.userId = decoded.userId;
     // console.log(db);
     const user = await User.findByPk(req.userId);
+    console.log(user);
     req.userIsAdmin = (user.role == "admin") ? true : false
     // const roles = await user.role();
     // const user = await User.findOne({where: {id: req.userId}});

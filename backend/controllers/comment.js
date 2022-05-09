@@ -41,14 +41,14 @@ exports.getAllComments = (req, res, next) => {
 
 exports.modifyComment = async function (req, res, next) {
   //création d'une constante afin de récuperer les données lier au commentaires via l'id
-  const comment = await Comment.findByPk(req.body.id);
+  const comment = await Comment.findByPk(req.params.id);
   //mise en place d'une condition pour autoriser l'utilisateur créateur à modifier le commentaire.
   if (req.userId == comment.userId) {
     //mise en place d'une condition en récupérant les données du commentaire via l'id incluant l'user et le message.
     //utilisation du req.file dans une condition, pour savoir si l'image est modifié ou non, si c'est le cas, 
     // l'ancienne sera supprimer grace à un fs.unlinkSync
     if (req.file) {
-      Comment.findOne({ where: { id: req.body.id }, include: ["user", "message"] })
+      Comment.findOne({ where: { id: req.params.id }, include: ["user", "message"] })
 
         .then(comment => {
 
@@ -80,8 +80,8 @@ exports.modifyComment = async function (req, res, next) {
 }
 
 
-exports.deleteComment = (req, res) => {
-
+exports.deleteComment = async (req, res) => {
+  const comment = await Comment.findByPk(req.params.id);
   //utilisation de deux condition if recupérant le role user et admin 
   if (req.userId == comment.userId || req.userIsAdmin) {
     // mise en place d'un findOne pour lire la base de données grace à son id. 

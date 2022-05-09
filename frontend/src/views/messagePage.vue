@@ -79,9 +79,7 @@
                 Envoyer
               </button>
             </form>
-            <!-- <div>
-              {{ comment.text }}
-            </div> -->
+
             <h3>Commentaires</h3>
             <div
               class="blockDisplayComment"
@@ -102,12 +100,13 @@
                   <li
                     @click="showModifyCommentSwitch(comment.id)"
                     v-if="!showButtonModify"
-                  >
+                  class="marginTopLi">
                     Modifier le commentaire
                   </li>
-                  <li @click="showModifyCommentSwitch" v-else>
+                  <li @click="showModifyCommentSwitch" v-else class="marginTopLi">
                     Annuler la modification
                   </li>
+                  <li @click="deleteComment(comment.id)">Suppression du Commentaire</li>
                 </ul>
               </nav>
               <img class="formAvatar" v-bind:src="comment.user.image" />
@@ -117,7 +116,7 @@
                     name="comment"
                     id="comments"
                     type="text"
-                    v-model="comment.text"
+                    v-model="commentary.text"
                   ></textarea>
                   <input
                     type="file"
@@ -169,6 +168,14 @@ export default {
         user: [],
       },
       comment: {
+        id: "",
+        text: "",
+        image: "",
+        messageId: this.$route.params.id,
+        // UserId récupérer dans le localStorage
+        userId: localStorage.getItem("userId"),
+      },
+      commentary: {
         id: "",
         text: "",
         image: "",
@@ -290,14 +297,44 @@ export default {
     },
 
     modifyComments(commentaireId) {
-      axios.put("http://localhost:3000/api/comment/" + commentaireId, {
-        // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-      console.log(localStorage.getItem("token"));
+      console.log(commentaireId);
+      const formData = new FormData();
+
+      formData.append("text", this.commentary.text);
+      formData.append("image", this.comment.image);
+      formData.append("messageId", this.commentary.messageId);
+      formData.append("userId", this.commentary.userId);
+
+      axios
+        .put("http://localhost:3000/api/comment/" + commentaireId, formData, {
+          // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          console.log(response);
+        });
     },
+
+    // suppression du commentaire.
+    deleteComment(commentaireId){
+axios.delete("http://localhost:3000/api/comment/" + commentaireId,
+{
+          // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+.then(() => {
+const confirmation = confirm (
+  "Désirez vous supprimez votre commentaire?"
+);
+if(confirmation){
+  alert("Votre message à bien été modifié.");
+}
+location.reload();
+}) }
   },
 };
 </script>
@@ -472,12 +509,20 @@ export default {
         background-size: cover;
         box-shadow: 1px 2px 5px #635c9b;
         width: 13%;
-        padding: 5px;
-        text-align: center;
+        padding: 5px; 
         font-weight: bold;
+        text-align: center;
         font-size: 13px;
+        .marginTopLi{
+          margin-top: -5px;
+        }
         li {
+          display: inline-block;
+          border-bottom: 1px solid #635c9b;
+          padding-top: 10px;
+          padding-bottom: 10px;
           cursor: pointer;
+          
         }
       }
       .formComment {
