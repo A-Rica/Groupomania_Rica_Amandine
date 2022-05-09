@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="section-messagePage">
+    <div class="section-messagePage" v-if ="authenficated">
       <!-- partie message utilisateurs -->
       <!-- Partie modification du message de l'utilisateur avec un switch
        faisant disparaitre le message pour laisser s'afficher la page de modification -->
@@ -144,12 +144,25 @@
         </div>
       </div>
     </div>
+    <div class="section-messagePage" v-else>
+       <img class="imgEntete" src="../assets/icon-left-font-monochrome-black.png" />
+      Merci de vous reconnecter afin d'accéder aux réseaux Groupomania;
+      <button
+        id="connexion"
+        class="connexion"
+        name="connexion"
+        type="submit"
+        @click="redirection"
+      >
+        Redirection vers la page connexion.
+      </button>
+    </div>
   </section>
 </template>
 <script>
 // import { mapGetters } from "vuex";
 import axios from "axios";
-
+import { mapGetters } from "vuex";
 export default {
   name: "MessagePage",
   data: function () {
@@ -187,7 +200,13 @@ export default {
       comments: [],
     };
   },
-
+  computed: {
+    // Récupération de l'authentification dans le store
+    ...mapGetters({
+      authenficated: "auth/authenficated",
+      user: "auth/user",
+    }),
+  },
   created: function () {
     let postId = this.$route.params;
     axios
@@ -217,6 +236,11 @@ export default {
   },
 
   methods: {
+
+     redirection() {
+      this.$router.push({ name: "connexion" });
+    },
+
     showModifyPostSwitch() {
       this.showModifyPost = !this.showModifyPost;
     },
@@ -352,6 +376,11 @@ location.reload();
   margin-top: 20px;
   border-radius: 10px;
   margin-right: 30px;
+  .imgEntete {
+    margin-left: auto;
+    margin-right: auto;
+    height: 50px;
+  }
 }
 
 .postUser {

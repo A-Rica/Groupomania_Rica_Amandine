@@ -1,5 +1,5 @@
 <template>
-  <section class="section-membersPage">
+  <section><div class="section-membersPage" v-if="authenficated">
     <label for="name">Nom:</label>
     <input
       v-model="users.name"
@@ -48,12 +48,26 @@
     >
       Modifier
     </button>
+    </div>
+    <div class="section-membersPage" v-else>
+       <img classe ="imgEnTete" src="../assets/icon-left-font-monochrome-black.png" />
+      Merci de vous reconnecter afin d'accéder aux réseaux Groupomania;
+      <button
+        id="connexion"
+        class="connexion"
+        name="connexion"
+        type="submit"
+        @click="redirection"
+      >
+        Redirection vers la page connexion.
+      </button>
+    </div>
   </section>
 </template>
 <script>
 // import d'axios et du map Getters. Mise en place de la data.
 import axios from "axios";
-// import { mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "ModifyProfilPage",
@@ -72,10 +86,10 @@ export default {
     };
   },
   computed: {
-    // ...mapGetters({
-    //   authenficated: "auth/authenficated",
-    //   user: "auth/user",
-    // }),
+    ...mapGetters({
+      authenficated: "auth/authenficated",
+      user: "auth/user",
+    }),
   },
   // fonction pour lire l'id de l'utilisateurs pour pouvoir ensuite l'upgrade. Fonction update à revoir.
   created: function () {
@@ -91,6 +105,10 @@ export default {
   },
 
   methods: {
+     redirection() {
+      this.$router.push({ name: "connexion" });
+    },
+
     onFileChange() {
       //   this.users.file = this.$refs.file.files[0];
       this.users.image = this.$refs.file.files[0];
@@ -147,5 +165,10 @@ export default {
   border-radius: 10px;
   margin-left: auto;
   margin-right: auto;
+  .imgEntete {
+    margin-left: auto;
+    margin-right: auto;
+    height: 50px;
+  }
 }
 </style>

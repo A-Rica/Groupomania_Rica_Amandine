@@ -80,7 +80,6 @@
 <script>
 // import depuis le store des données lié à l'authentification avec en data le mode pour switcher et les données de l'utilisateur
 import { mapActions, mapState } from "vuex";
-import axios from "axios";
 export default {
   name: "MyUser",
   data: function () {
@@ -97,7 +96,6 @@ export default {
       submitted: false,
     };
   },
-
   // La methode pour switcher entre l'inscription et la connexion
   methods: {
     switchCreateUser: function () {
@@ -108,34 +106,19 @@ export default {
     },
     // l'utilisation des données lier à la map state et actions.
     computed: {
-      ...mapState(["user"], ["token"]),
+      ...mapState(["user"]),
     },
     ...mapActions({
-      // signin: "auth/signin",
+      signin: "auth/signin",
       signup: "auth/signup",
     }),
     // fonction permettant de mettre en lien le store et la page, avec auth/signin et la map user. Pour ensuite faire une redirection vers la page Home
     submit() {
-      axios
-        .post("http://localhost:3000/api/auth/login", this.user)
-        .then((response) => {
-          localStorage.setItem("userId", response.data.userId);
-          localStorage.setItem("token", response.data.token);
-        });
-      // this.signin(this.user);
-      // console.log(this.$store);
-      this.$router.push({ name: "home" });
+      this.signin(this.user)
     },
     // Fonction ayant le même but que submit, sauf que c'est pour l'enregistrement d'un utilisateur
     createdUser() {
-      axios
-        .post("http://localhost:3000/api/auth/signup", this.user)
-        .then(() => {
-          const accept = confirm("Souhaitez vous vous inscrire?");
-          if (accept) {
-            alert("Vous avez bien été inscrit. Veuillez vous connecter");
-          }
-        });
+      this.signup(this.user);
     },
   },
 };
@@ -180,7 +163,6 @@ export default {
     }
   }
 }
-
 .formulaire {
   display: flex;
   flex-direction: column;
@@ -201,7 +183,6 @@ export default {
   #lastname {
     width: 47%;
   }
-
   .label-name {
     margin-top: -43.5px;
     margin-left: 51%;
@@ -224,7 +205,6 @@ export default {
       background-color: darken(#7272a5, 10%);
     }
   }
-
   #subscribe {
     width: 40%;
     height: 25px;

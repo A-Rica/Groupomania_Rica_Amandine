@@ -1,5 +1,5 @@
 <template>
-  <nav id="navBar">
+  <nav id="navBar" v-if="authenficated">
     <span class="icon-Menue" @click="showNavBarSwitch" v-if="!showNavBar"
       ><i class="fa-solid fa-bars"></i
     ></span>
@@ -25,7 +25,7 @@
 </template>
 <script>
 // import de la map Getters et Action ainsi qu'Axios
-import { mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import axios from "axios";
 export default {
   name: "navBar",
@@ -37,43 +37,28 @@ export default {
       lastname: "",
     };
   },
-
   computed: {
     // utilisation de mapGetters afin d'avoir l'information si l'utilisateur est connecté ou non afin d'affiché ou non la navbar
-    // ...mapGetters({
-    //   authenficated: "auth/authenficated",
-    //   user: "auth/user",
-    // }),
+    ...mapGetters({
+      authenficated: "auth/authenficated",
+      user: "auth/user",
+    }),
   },
   // utilisation d'une fonction afin de lire les données de l'utilisateur et ainsi les réutiliser pour afficher le noms et prénom de l'utilisateur
   created: function () {
-    axios
-      .get("http://localhost:3000/api/profil/me", {
-        // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((user) => {
-        (this.name = user.data.name), (this.lastname = user.data.lastname);
-      });
+    axios.get("http://localhost:3000/api/profil/me").then((user) => {
+      (this.name = user.data.name), (this.lastname = user.data.lastname);
+    });
   },
   methods: {
     // mise en place d'une fonction avec map Action pour la déconnection de l'utilisateur et ainsi le renvoyé vers la page connexion
     ...mapActions({ signoutAction: "auth/signout" }),
-
     signout() {
-      axios
-        .post("http://localhost:3000/api/auth/signout", {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        })
-        .then(() => {
-          localStorage.removeItem("userId");
-          localStorage.removeItem("token");
-          this.$router.push({ name: "connexion" });
+      this.signoutAction().then(() => {
+        this.$router.replace({
+          name: "connexion",
         });
+      });
     },
     // Mise en place d'un bouton pour envoyé l'utilisateur vers la page membres. Utilisation un switch mode pour afficher le menue
     getUsers() {
@@ -119,7 +104,6 @@ export default {
     margin-top: auto;
     margin-bottom: auto;
   }
-
   .menue-profil {
     z-index: 1;
     margin-top: 50px;

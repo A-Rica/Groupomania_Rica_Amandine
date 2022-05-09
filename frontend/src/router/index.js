@@ -4,38 +4,36 @@ import HomePage from '../views/homePage.vue'
 import MembersPage from '../views/membersPage.vue'
 import ModifPage from '../views/modifyProfilPage.vue'
 import MessagePage from '../views/messagePage.vue'
-
+// import store from '../store'
 
 const routes = [
   {
     path: '/',
     name: 'connexion',
-    component: ConnectPage
+    component: ConnectPage,
+
   },
   {
     path: '/home',
     name: 'home',
     component: HomePage,
-    meta: { requiresAuth: [localStorage.getItem('userId'), localStorage.getItem('token')] }
   },
   {
     path: '/members',
     name: 'members',
     component: MembersPage,
-    meta: { requiresAuth: [localStorage.getItem('userId'), localStorage.getItem('token')] }
   },
   {
     path: '/profil/:id',
     name: 'modifyProfil',
     component: ModifPage,
-    meta: { requiresAuth: [localStorage.getItem('userId'), localStorage.getItem('token')] }
   },
   {
     path: '/message/:id',
     name: 'message',
     component: MessagePage,
     props: true,
-    meta: { requiresAuth: [localStorage.getItem('userId'), localStorage.getItem('token')] }
+
   },
 
 
@@ -53,13 +51,21 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
-router.beforeEach((to, from) => {
-  // const userId = localStorage.getItem('userId');
-  // const token = localStorage.getItem('token');
-  // const requiresAuth = [userId, token];
-  // console.log(requiresAuth);
-  console.log(to);
-  console.log(from);
-  console.log(to.matched.some(record => record.meta.requiresAuth));
-})
+// router.beforeEach((to, from, next) => {
+//   // mise en place d'une condition pour voir si l'utilisateur est connecté.
+//   // utilisation to.matched.some test la meta requiresAuth lier aux routes.
+
+//   if (to.matched.some(record => record.meta.requiresAuth)) {
+//     const userConnected = store.getters['auth/authenficatedToken']
+//     console.log(userConnected);
+//     if (!userConnected && to.name !== 'connexion') {
+
+//       return { name: 'connexion'}
+//     } else {
+//       next();
+//     }
+//   } else {
+//     next();
+//   }
+// })
 export default router
