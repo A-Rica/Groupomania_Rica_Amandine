@@ -169,7 +169,7 @@ exports.updateProfil = async (req, res) => {
     });
   }
 }
-//Suppression du fichier.
+//Suppression du fichier. 
 exports.deleteProfil = (req, res) => {
   //Mise en place de la suppression du fichier avec un comparatif 
   //permettant de rendre la suppression possible que par l'utilisateur en question et/ou par un administrateur.
@@ -177,8 +177,9 @@ exports.deleteProfil = (req, res) => {
   //Création d'une constante récupérantl'id et le role de l'utilisateurs afin de plus tard les supprimer.
 
   //utilisation de deux condition if recupérant le role user et admin
-  if (req.body.id === req.params.id || req.userIsAdmin) {
-    //utilisation d'User.Destroy afin de supprimer l'utilisateur.
+  if (req.params.id == req.userId || req.userIsAdmin) {
+
+    // utilisation d'User.Destroy afin de supprimer l'utilisateur.
     User.destroy({
       where: { id: req.params.id }
     })
@@ -196,7 +197,7 @@ exports.deleteProfil = (req, res) => {
           });
         }
       })
-      //Message d'erreur en cas de soucis.
+      //Message d'erreur en cas de soucis. 
       .catch(error => {
         res.status(500).send({
           error

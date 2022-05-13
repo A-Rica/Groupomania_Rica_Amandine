@@ -5,14 +5,14 @@
       v-model="users.name"
       id="name"
       type="text"
-      placeholder="Votre nom ici"
+      v-bind:placeholder="user.name"
     />
     <label for="lastname">Prenom: </label>
     <input
       v-model="users.lastname"
       id="lastname"
       type="text"
-      placeholder="Votre prénom ici"
+      v-bind:placeholder="user.lastname"
     />
     <label for="email">Email:</label>
     <input
@@ -20,7 +20,7 @@
       id="email"
       name="email"
       type="email"
-      placeholder="Votre adresse mail: nom@hotmail.fr"
+      v-bind:placeholder="user.email"
     />
     <label for="password">Mot de passe: </label>
     <input
@@ -39,16 +39,19 @@
       id="file"
       accept=".jpg, .jpeg, .gif, .png"
     />
-    <button
+    <div class="positionButton"><button
       @click="updateProfil"
-      class="connexion"
-      id="subscribe"
-      name="subscribe"
+      class="update"
+      id="update"
+      name="update"
       type="submit"
     >
       Modifier
-    </button>
-    </div>
+    </button> <button @click="suppressionCompte" class="delete"
+      id="delete"
+      name="delete"
+      type="submit">Suppression du compte</button>
+    </div></div>
     <div class="section-membersPage" v-else>
        <img classe ="imgEnTete" src="../assets/icon-left-font-monochrome-black.png" />
       Merci de vous reconnecter afin d'accéder aux réseaux Groupomania;
@@ -82,6 +85,7 @@ export default {
         // file: null,
         id: localStorage.getItem("userId"),
       },
+      user: [],
       submitted: true,
     };
   },
@@ -100,6 +104,7 @@ export default {
         },
       })
       .then((user) => {
+        this.user = user.data
         this.users.id = user.data.id;
       });
   },
@@ -137,17 +142,31 @@ export default {
           }
         )
         .then(() => {
-          const confimration = confirm(
+          const confirmation = confirm(
             "Désirez vous vraiment modifier votre profil?"
           );
-          if (confimration) {
+          if (confirmation) {
             alert("Votre profil à bien été modifié.");
-          } else {
-            alert("Demande de modification annulé.");
           }
           location.reload();
         });
     },
+
+    // Suppression du compte
+
+//     suppressionCompte() {
+  
+// axios.delete('http://localhost:3000/api/profil/' + localStorage.getItem("userId"),  {
+//             headers: {
+//               Authorization: "Bearer " + localStorage.getItem("token"),
+//             },
+//           }
+//           )
+//           .then((response)=>{
+// console.log(response);
+//           })
+          
+//     }
   },
 };
 </script>
@@ -170,5 +189,34 @@ export default {
     margin-right: auto;
     height: 50px;
   }
+  .positionButton{
+    
+display:flex;
+flex-direction: row;
+margin-top: 20px;
+width: 100%;
+  .update{
+    width: 40%;
+    height: 25px;
+    color: white;
+   margin-left: auto;
+margin-right: auto; 
+background-color: #7272a5;
+    &:hover {
+      background-color: darken(#7272a5, 10%);
+    }
+  }
+  .delete{
+     margin-left: auto;
+margin-right: auto; 
+    width: 40%;
+    height: 25px;
+    color: white;
+    background-color: #7272a5;
+    &:hover {
+      background-color: darken(#7272a5, 10%);
+    }
+  } 
+   }
 }
 </style>

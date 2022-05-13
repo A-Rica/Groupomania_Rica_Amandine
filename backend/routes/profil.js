@@ -13,7 +13,7 @@ module.exports = app => {
     // //Modifier le profil//
     router.put("/:id", authJwt.verifyToken, multer, user.updateProfil);
     // //Supprimer le profil//
-    router.delete("/me", multer, authJwt.verifyToken, user.deleteProfil);
+    router.delete("/:id", multer, authJwt.verifyToken, user.deleteProfil);
 
     app.use('/api/profil', router);
 }

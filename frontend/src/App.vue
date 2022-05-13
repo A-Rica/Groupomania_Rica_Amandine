@@ -2,8 +2,8 @@
   <div id="app">
     <navBar />
     <profil />
-
-    <router-view />
+<router-view />
+    
   </div>
 </template>
 <script>

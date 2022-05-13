@@ -20,6 +20,7 @@ module.exports = app => {
     router.delete("/:id", multer, authJwt.verifyToken, message.deleteMessage);
     //Mettre des likes
     router.post("/:id/like", authJwt.verifyToken, like.likeUsers);
+    // visionner les likes
 
     app.use('/api/messages', router);
-}
+} 

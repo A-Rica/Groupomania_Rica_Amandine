@@ -45,10 +45,11 @@ exports.modifyMessage = async function (req, res, next) {
   //constant pour récuperer les données du message via l'id
   const message = await Message.findByPk(req.params.id);
   //mise en place d'une condition pour autoriser l'utilisateur créateur à modifier le message.
-  if (req.userId === message.userId) {
+  if (req.userId === message.userId || req.userIsAdmin) {
     //mise en place d'une condition en récupérant les données du message via l'id incluant l'user.
     //utilisation du req.file dans une condition, pour savoir si l'image est modifié ou non, si c'est le cas, 
     // l'ancienne sera supprimer grace à un fs.unlinkSync
+    // console.log(req.userIsAdmin);
     if (req.file) {
       Message.findOne({ where: { id: req.params.id }, include: ["user"] })
 

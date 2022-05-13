@@ -4,6 +4,8 @@ import HomePage from '../views/homePage.vue'
 import MembersPage from '../views/membersPage.vue'
 import ModifPage from '../views/modifyProfilPage.vue'
 import MessagePage from '../views/messagePage.vue'
+import Dashboard from '../views/dashBoard.vue'
+
 // import store from '../store'
 
 const routes = [
@@ -16,7 +18,7 @@ const routes = [
   {
     path: '/home',
     name: 'home',
-    component: HomePage,
+    component: HomePage
   },
   {
     path: '/members',
@@ -35,7 +37,11 @@ const routes = [
     props: true,
 
   },
-
+  {
+    path: '/dashboard/:id',
+    name: 'dashboard',
+    component: Dashboard,
+  }
 
   // {
   //   path: '/about',

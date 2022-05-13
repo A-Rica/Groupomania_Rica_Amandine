@@ -49,20 +49,31 @@
               {{ new Date(post.createdAt).toLocaleString() }}
             </h4></span
           >
+          <span class="croixDelete" @click="deletePost(post.id)" :key="post.user.id"><i class="fa-solid fa-xmark"></i></span>
         </div>
         <p class="formatText">
           {{ post.text }}
           <img v-bind:src="post.image" class="imagePost" />
         </p>
-        <div class="barreBottom">
-          <i class="fa-solid fa-thumbs-up"></i>
-          <span class="linkComment" @click="showCommentSwitch"
+        <div class="barreBottom"> 
+          <button class="likeForm" @click="likeClick(post.id)"><i class="fa-solid fa-thumbs-up"></i></button> 
+         
+         <span class="linkComment" @click="showCommentSwitch(post.id)"
             >Voir les commentaires</span
           >
-          <div class="blockComment" v-if="showComments">
-            <!-- <div v-for="comment in comments" v-bind:key="comment">
-              {{ comment.text }}
-            </div> -->
+          <div class="blockComment" v-if="showCommentspostId == post.id">
+            <div class="blockCommentPosition" v-for="comment in comments" v-bind:key="comment">
+              <img v-bind:src="comment.user.image" class="imageUserComment">
+              <div class="formComment">
+                <h4>de {{ comment.user.lastname }} {{ comment.user.name }}</h4>
+                <span>{{ comment.text }}</span>
+                <img
+                  class="imageComment"
+                  :src="comment.image"
+                  v-show="comment.image"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -95,6 +106,7 @@ export default {
     return {
       showNewPost: false,
       showComments: false,
+      showCommentspostId: null,
       post: {
         title: "",
         text: "",
@@ -106,7 +118,14 @@ export default {
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
       // data lier à la création d'un commentaire.
-      comments: []
+      comments: [],
+      // data lier aux likes
+      like: 
+      {
+       userId: localStorage.getItem('userId'),
+       messageId: '',
+      },
+    likes: []
     };
   },
   computed: {
@@ -119,7 +138,7 @@ export default {
   created: function () {
     axios.get("http://localhost:3000/api/messages/").then((posts) => {
       this.posts = posts.data;
-      
+      // console.log(this.posts);
     });
     axios.get("http://localhost:3000/api/comment/", {
         // autorisation nécessaire pour la lecture des données et récupération du token dans le localStorage.
@@ -128,7 +147,7 @@ export default {
         },
       })
       .then((comments) => {
-        console.log(comments.data);
+        // console.log(comments.data);
         this.comments = comments.data;
       });
   },
@@ -175,10 +194,47 @@ export default {
           location.reload();
         });
     },
-    // Ouvrir le block commentaires
-    showCommentSwitch() {
+    // Ouvrir le block commentaires 
+    showCommentSwitch(postId) {
+      this.showCommentspostId = postId;
       this.showComments = !this.showComments;
     },
+
+    // Suppression du message
+    deletePost(postId){
+      axios.delete('http://localhost:3000/api/messages/' + postId, 
+       {
+            // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          })
+          .then(() => {
+          const accept = confirm("Souhaitez vous supprimer ce message?");
+          if (accept) {
+            alert("Votre message à bien été supprimé.");
+          }
+          location.reload();
+        });
+    },
+ likeClick(PostId) {
+   
+const formData = new FormData();
+
+formData.append("userId", this.like.userId)
+formData.append('messageId', this.like. messageId)
+   axios.post('http://localhost:3000/api/messages/' + PostId + '/like', 
+   formData, {
+            // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          })
+          .then((likes) => {
+          this.likes = likes.data.dataValues
+          })
+  
+ }
   },
 };
 </script>
@@ -286,6 +342,14 @@ export default {
         margin-left: 10px;
       }
     }
+    .croixDelete{
+      position: absolute;
+      cursor: pointer;
+      right: 8%;
+      font-size: 25px;
+      color: #565363;
+      margin-top: 4px;
+    }
   }
   .formatText {
     display: flex;
@@ -308,6 +372,15 @@ export default {
     margin-left: auto;
     margin-right: auto;
     padding: 3px;
+    .likeForm{
+      font-size: 20px;
+      margin-left: 20px;
+      background-color: transparent;
+      border: none;
+      &:focus{
+        color: #635c9b;
+      }
+    }
     .linkComment {
       float: right;
       cursor: pointer;
@@ -320,25 +393,40 @@ export default {
       margin-left: auto;
       margin-right: auto;
       padding: 10px;
-      form {
+      .blockCommentPosition{
         display: flex;
-        flex-direction: column;
-        margin-top: 20px;
-        #imageComment {
-          margin-top: 10px;
+        flex-direction: row;
+     .imageUserComment{
+       width: 110px;
+       height: 110px;
+       border-radius: 100px;
+       margin-top: 20px;
+        box-shadow: 1px 2px 5px #635c9b;
+     }
+     .formComment {
+        margin-top: 25px;
+        width: 82%;
+        padding: 5px;
+        margin-left: 20px;
+        border-radius: 5px;
+        text-align: justify;
+        background-color: rgb(239, 237, 237);
+        box-shadow: 1px 2px 5px #635c9b;
+
+        h4 {
+          margin-top: -5px;
+          font-size: 15px;
         }
-        button {
-          width: 20%;
-          height: 25px;
-          margin-top: -25px;
-          margin-left: 80%;
-          color: white;
-          background-color: #635c9b;
-          &:hover {
-            background-color: darken(#635c9b, 10%);
-          }
+        span {
+          font-size: 13px;
+        }
+        .imageComment {
+          margin-left: 38%;
+          height: 170px;
+          border-radius: 20px;
         }
       }
+     }
     }
   }
 }

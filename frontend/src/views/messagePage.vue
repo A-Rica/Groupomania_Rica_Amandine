@@ -454,8 +454,10 @@ location.reload();
     margin-left: auto;
     margin-right: auto;
     .imagePost {
+      display: block;
       width: 60%;
-      margin-left: 19%;
+      margin-left: auto;
+      margin-right: auto;
       margin-top: 20px;
       border-radius: 5px;
     }
@@ -572,7 +574,9 @@ location.reload();
           font-size: 13px;
         }
         .imageComment {
-          margin-left: 38%;
+         display: block;
+         margin-left: auto;
+         margin-right: auto;
           height: 170px;
           border-radius: 20px;
         }

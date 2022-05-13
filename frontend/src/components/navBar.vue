@@ -14,6 +14,11 @@
         <li @click="getUsers">
           <span>Membres <i class="fa-solid fa-user-group"></i></span>
         </li>
+
+        <li @click="getdashboard">
+          <span>Dashboard <i class="fa-solid fa-folder-open"></i></span>
+        </li>
+
         <li @click="signout">
           <span>Déconnexion<i class="fa-solid fa-right-from-bracket"></i></span>
         </li>
@@ -71,6 +76,11 @@ export default {
     getHome() {
       this.$router.push({ name: "home" });
     },
+    getdashboard() {
+      this.$router.push({
+       path: '/dashboard/' + localStorage.getItem('userId')
+      });
+    }
   },
 };
 </script>

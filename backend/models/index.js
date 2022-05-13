@@ -51,25 +51,30 @@ db.comment.belongsTo(db.user, {
 });
 
 //association des likes
-db.user.belongsToMany(db.message, {
-  through: db.like,
-  foreignKey: {
-    field: "userId",
-    allowNull: false
-  },
-  otherKey: 'messageId',
-  onDelete: "cascade"
-})
 
-db.message.belongsToMany(db.user, {
-  through: db.like,
-  foreignKey: {
-    field: "messageId",
-    allowNull: false
-  },
-  otherKey: 'userId',
-  onDelete: "cascade"
-})
+// db.user.belongsToMany(db.message, {
+//   through: db.like,
+//   foreignKey: {
+//     field: "userId",
+//     allowNull: false
+//   },
+//   otherKey: 'messageId',
+//   onDelete: "cascade"
+// })
+
+// db.message.belongsToMany(db.user, {
+//   through: db.like,
+//   foreignKey: {
+//     field: "messageId",
+//     allowNull: false
+//   },
+//   otherKey: 'userId',
+//   onDelete: "cascade"
+// })
+
+db.message.hasMany(db.like, { as: "like", onDelete: "cascade" })
+
+db.user.hasMany(db.like, { as: "like", onDelete: "cascade" })
 
 db.like.belongsTo(db.user, {
   foreignKey: {
@@ -89,4 +94,4 @@ db.like.belongsTo(db.message, {
   onDelete: "cascade"
 })
 //exportation de la database.
-module.exports = db; 
+module.exports = db;
