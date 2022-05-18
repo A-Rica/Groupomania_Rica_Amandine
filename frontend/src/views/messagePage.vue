@@ -112,12 +112,13 @@
               <img class="formAvatar" v-bind:src="comment.user.image" />
               <div class="formComment" v-if="showModifyComments == comment.id">
                 <form @submit.prevent="modifyComments(comment.id)">
-                  <textarea
+                 <label for="comment">Texte:</label> <textarea
                     name="comment"
                     id="comments"
                     type="text"
                     v-model="commentary.text"
                   ></textarea>
+                  <label for="image">Votre image:</label>
                   <input
                     type="file"
                     ref="file"
@@ -187,6 +188,7 @@ export default {
         messageId: this.$route.params.id,
         // UserId récupérer dans le localStorage
         userId: localStorage.getItem("userId"),
+        user: [],
       },
       commentary: {
         id: "",
@@ -231,6 +233,7 @@ export default {
         },
       })
       .then((comments) => {
+        console.log(comments.data);
         this.comments = comments.data;
       });
   },
@@ -265,6 +268,7 @@ export default {
       formData.append("image", this.post.image);
       formData.append("title", this.post.title);
       formData.append("text", this.post.text);
+      
       axios
         .put("http://localhost:3000/api/messages/" + postId.id, formData, {
           // autorisation nécessaire pour la lecture des données et récupération du token dans le localStorage.
@@ -301,6 +305,7 @@ export default {
       formData.append("image", this.comment.image);
       formData.append("messageId", this.comment.messageId);
       formData.append("userId", this.comment.userId);
+      formData.append("user", this.comment.user)
       axios
         .post("http://localhost:3000/api/comment/", formData, {
           // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
@@ -336,8 +341,16 @@ export default {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
         })
-        .then((response) => {
-          console.log(response);
+        .then(() => {
+        const confimration = confirm(
+            "Désirez vous vraiment modifier votre message?"
+          );
+          if (confimration) {
+            alert("Votre message à bien été modifié.");
+          } else {
+            alert("Demande de modification annulé.");
+          }
+          location.reload();
         });
     },
 
@@ -355,7 +368,7 @@ const confirmation = confirm (
   "Désirez vous supprimez votre commentaire?"
 );
 if(confirmation){
-  alert("Votre message à bien été modifié.");
+  alert("Votre message à bien été supprimé.");
 }
 location.reload();
 }) }
@@ -501,9 +514,12 @@ location.reload();
     form {
       display: flex;
       flex-direction: column;
-      margin-top: 20px;
-      #image {
+      margin-top: 10px;
+      label{
         margin-top: 10px;
+      }
+      #image {
+        margin-top: 5px;
       }
       button {
         width: 20%;

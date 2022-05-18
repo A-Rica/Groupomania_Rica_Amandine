@@ -58,23 +58,23 @@
         <div class="barreBottom"> 
           <button class="likeForm" @click="likeClick(post.id)"><i class="fa-solid fa-thumbs-up"></i></button> 
          
-         <span class="linkComment" @click="showCommentSwitch(post.id)"
+          <span class="linkComment" @click="showCommentSwitch(post.id)"
             >Voir les commentaires</span
           >
-          <div class="blockComment" v-if="showCommentspostId == post.id">
-            <div class="blockCommentPosition" v-for="comment in comments" v-bind:key="comment">
-              <img v-bind:src="comment.user.image" class="imageUserComment">
+         <div class="blockComment" v-if="showCommentspostId == post.id"> 
+            <div class="blockCommentPosition">
+              <!-- <img v-bind:src="post.comment.user.image" class="imageUserComment"> -->
               <div class="formComment">
-                <h4>de {{ comment.user.lastname }} {{ comment.user.name }}</h4>
-                <span>{{ comment.text }}</span>
+                <!-- <h4>de {{ post.comment.user.lastname }} {{ post.comment.user.name }}</h4> -->
+                <span>{{post.comment[0].text }}</span>
                 <img
                   class="imageComment"
-                  :src="comment.image"
-                  v-show="comment.image"
+                  :src="post.comment.image"
+                  v-show="post.comment.image"
                 />
               </div>
             </div>
-          </div>
+          </div> 
         </div>
       </div>
     </div>
@@ -115,11 +115,13 @@ export default {
         // UserId récupérer dans le localStorage
         userId: localStorage.getItem("userId"),
       },
+      
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
       // data lier à la création d'un commentaire.
       comments: [],
       // data lier aux likes
+      //faire mounted avec if
       like: 
       {
        userId: localStorage.getItem('userId'),
@@ -137,21 +139,22 @@ export default {
   },
   created: function () {
     axios.get("http://localhost:3000/api/messages/").then((posts) => {
-      this.posts = posts.data;
-      // console.log(this.posts);
-    });
-    axios.get("http://localhost:3000/api/comment/", {
-        // autorisation nécessaire pour la lecture des données et récupération du token dans le localStorage.
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((comments) => {
-        // console.log(comments.data);
-        this.comments = comments.data;
-      });
+      this.posts = posts.data
+      posts.data.forEach(i => this.posts[i])
+});
+    // axios.get("http://localhost:3000/api/comment/", {
+    //     // autorisation nécessaire pour la lecture des données et récupération du token dans le localStorage.
+    //     headers: {
+    //       Authorization: "Bearer " + localStorage.getItem("token"),
+    //     },
+    //   })
+    //   .then((comments) => {
+    //     // console.log(comments.data);
+    //     this.comments = comments.data;
+    //   });
   },
   methods: {
+
     // fonction permettant de récuperer l'image envoyé
     onFileChange() {
       this.post.image = this.$refs.file.files[0];
@@ -236,6 +239,8 @@ formData.append('messageId', this.like. messageId)
   
  }
   },
+
+
 };
 </script>
 <style lang="scss">
@@ -421,7 +426,9 @@ formData.append('messageId', this.like. messageId)
           font-size: 13px;
         }
         .imageComment {
-          margin-left: 38%;
+                display: block;
+         margin-left: auto;
+         margin-right: auto;
           height: 170px;
           border-radius: 20px;
         }

@@ -2,6 +2,7 @@ const db = require("../models");
 const Message = db.message;
 // const like = db.like;
 const fs = require('fs');
+const { user, comment } = require("../models");
 
 // //creation d'un post//
 
@@ -55,6 +56,9 @@ exports.modifyMessage = async function (req, res, next) {
 
         .then(message => {
 
+          if (message.image == null) {
+            return;
+          }
           const filename = message.image.split('/images/')[1];
           fs.unlinkSync(`images/${filename}`)
         })
@@ -82,9 +86,16 @@ exports.modifyMessage = async function (req, res, next) {
   }
 }
 // mise en place d'une route pour voir tous les messages posté avec findAll en incluant l'utilisateur
-exports.getAllMessages = (req, res, next) => {
-  Message.findAll({ include: ["user"] })
-    //Utilisation d'un status 200 en renvoyant les messages sinon erreur
+exports.getAllMessages = async (req, res, next) => {
+  Message.findAll({
+    include:
+      [
+        "user", { model: comment, as: "comment", include: ["user"] }
+      ]
+
+  })
+
+    //  Utilisation d'un status 200 en renvoyant les messages sinon erreur
     .then(messages => res.status(200).json(messages))
     .catch((error) => {
       res.status(400).json({ error })
@@ -95,18 +106,19 @@ exports.deleteMessage = async function (req, res) {
   //utilisation de deux condition if recupérant le role user et admin 
   const message = await Message.findByPk(req.params.id);
   if (req.userId === message.userId || req.userIsAdmin) {
+
     // mise en place d'un findOne pour lire la base de données grace à son id. 
     Message.findOne({ where: { id: req.params.id } })
       // Suppression de l'image dans le dossier correspondant
       .then(message => {
-        const filename = message.image.split('/images/')[1];
-        fs.unlink(`images/${filename}`, () => {
-          //utilisation de message.Destroy afin de supprimer le message   
-          Message.destroy({ where: { id: req.params.id } })
-            // res.status avec confirmation de la suppression sinon erreur
-            .then(() => res.status(200).json({ message: 'message supprimé !' }))
-            .catch(error => res.status(400).json({ error }));
-        });
+        if (req.file) {
+          const filename = message.image.split('/images/')[1];
+          fs.unlink(`images/${filename}`);
+        }
+        message.destroy()
+          .then(() => res.status(200).json({ message: 'message supprimé !' }))
+          .catch(error => res.status(400).json({ error }));
+
       })
       //Renvoie d'une erreur en cas d'erreur lier au premier then
       .catch(error => res.status(500).json({ error }));

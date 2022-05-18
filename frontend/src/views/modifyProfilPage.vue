@@ -154,19 +154,25 @@ export default {
 
     // Suppression du compte
 
-//     suppressionCompte() {
+    suppressionCompte() {
   
-// axios.delete('http://localhost:3000/api/profil/' + localStorage.getItem("userId"),  {
-//             headers: {
-//               Authorization: "Bearer " + localStorage.getItem("token"),
-//             },
-//           }
-//           )
-//           .then((response)=>{
-// console.log(response);
-//           })
+axios.delete('http://localhost:3000/api/profil/' + localStorage.getItem("userId"),  {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+          )
+          .then(()=>{
+   const confirmation = confirm(
+            "Désirez vous vraiment supprimer ce profil?"
+          );
+          if (confirmation) {
+            alert("Ce profil à bien été supprimé.");
+          }
+          location.reload();
+        });
           
-//     }
+    }
   },
 };
 </script>

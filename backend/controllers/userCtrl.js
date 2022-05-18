@@ -131,7 +131,9 @@ exports.updateProfil = async (req, res) => {
       await User.findOne({ where: { id: req.params.id } })
 
         .then(user => {
-          if (user.image == `${req.protocol}://${req.get('host')}/images_default/image-default-user.png`) { return; }
+          if (user.image == `${req.protocol}://${req.get('host')}/images_default/image-default-user.png`) {
+            return;
+          }
           const filename = user.image.split('/images/')[1];
           fs.unlinkSync(`images/${filename}`)
         })
@@ -179,23 +181,32 @@ exports.deleteProfil = (req, res) => {
   //utilisation de deux condition if recupérant le role user et admin
   if (req.params.id == req.userId || req.userIsAdmin) {
 
-    // utilisation d'User.Destroy afin de supprimer l'utilisateur.
-    User.destroy({
+    User.findOne({
       where: { id: req.params.id }
     })
       .then(user => {
-        const filename = user.image.split('/images/')[1];
-        fs.unlinkSync(`images/${filename}`)
-
-        if (user) {
-          res.status(200).send({
-            message: "Utilisateur supprimé"
-          });
-        } else {
-          res.status(500).send({
-            message: `Impossibilité de suppression de l'utilisateur.`
-          });
+        if (req.file) {
+          const filename = user.image.split('/images/')[1];
+          fs.unlink(`images/${filename}`);
         }
+        // utilisation d'User.Destroy afin de supprimer l'utilisateur.
+        user.destroy()
+          .then((user) => {
+            if (user) {
+              res.status(200).send({
+                message: "Utilisateur supprimé"
+              });
+            } else {
+              res.status(500).send({
+                message: `Impossibilité de suppression de l'utilisateur.`
+              });
+            }
+          })
+          .catch(error => {
+            res.status(500).send({
+              error
+            });
+          })
       })
       //Message d'erreur en cas de soucis. 
       .catch(error => {
@@ -208,6 +219,8 @@ exports.deleteProfil = (req, res) => {
     res.status(400).json({
       message: `Vous n'êtes pas autorisé à supprimer ce profil.`
     })
-
   }
-} 
+
+
+}
+

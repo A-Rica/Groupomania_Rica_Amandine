@@ -30,7 +30,11 @@ exports.createComment = (req, res, next) => {
 
 //mise en place du findAll incluant l'utilisateur et le message
 exports.getAllComments = (req, res, next) => {
-  Comment.findAll({ include: ["user", "message"] })
+  Comment.findAll({
+    include: {
+      all: true
+    }
+  })
     //visualisation des commentaires lier au messages dans un status 200 sinon erreur
     .then(comments => res.status(200).json(comments))
     .catch((error) => {
@@ -43,7 +47,7 @@ exports.modifyComment = async function (req, res, next) {
   //création d'une constante afin de récuperer les données lier au commentaires via l'id
   const comment = await Comment.findByPk(req.params.id);
   //mise en place d'une condition pour autoriser l'utilisateur créateur à modifier le commentaire.
-  if (req.userId == comment.userId) {
+  if (req.userId == comment.userId || req.userIsAdmin) {
     //mise en place d'une condition en récupérant les données du commentaire via l'id incluant l'user et le message.
     //utilisation du req.file dans une condition, pour savoir si l'image est modifié ou non, si c'est le cas, 
     // l'ancienne sera supprimer grace à un fs.unlinkSync
@@ -51,9 +55,12 @@ exports.modifyComment = async function (req, res, next) {
       Comment.findOne({ where: { id: req.params.id }, include: ["user", "message"] })
 
         .then(comment => {
-
+          if (comment.image == null) {
+            return;
+          }
           const filename = comment.image.split('/images/')[1];
           fs.unlinkSync(`images/${filename}`)
+
         })
     }
     //mise en place d'une constance avec la lecture des données grace aux req.body
@@ -88,15 +95,18 @@ exports.deleteComment = async (req, res) => {
 
     Comment.findOne({ where: { id: req.params.id } })
       .then(comment => {
+        if (req.file)
         // Suppression de l'image dans le dossier correspondant
-        const filename = comment.image.split('/images/')[1];
-        fs.unlink(`images/${filename}`, () => {
-          //utilisation de Comment.Destroy afin de supprimer l'utilisateur.
-          Comment.destroy({ where: { id: req.params.id } })
-            // res.status avec confirmation de la suppression sinon erreur
-            .then(() => res.status(200).json({ message: 'commentaire supprimé !' }))
-            .catch(error => res.status(400).json({ error }));
-        });
+        {
+          const filename = comment.image.split('/images/')[1];
+          fs.unlink(`images/${filename}`)
+        }
+        //utilisation de Comment.Destroy afin de supprimer l'utilisateur.
+        comment.destroy()
+          // res.status avec confirmation de la suppression sinon erreur
+          .then(() => res.status(200).json({ message: 'commentaire supprimé !' }))
+          .catch(error => res.status(400).json({ error }));
+
       })
       //Renvoie d'une erreur en cas d'erreur lier au premier then
       .catch(error => res.status(500).json({ error }));

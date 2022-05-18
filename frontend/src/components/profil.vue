@@ -76,6 +76,7 @@ export default {
   margin-right: auto;
   .image-profil {
     width: 125px;
+    height: 125px;
     margin-left: auto;
     margin-right: auto;
     border-radius: 100px;

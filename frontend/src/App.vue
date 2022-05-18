@@ -10,12 +10,19 @@
 import navBar from "./components/navBar.vue";
 import profil from "./components/profil.vue";
 
+
 export default {
   name: "App",
   components: {
     navBar,
     profil,
   },
+  data: function () {
+    return {
+// userConnected: false,
+
+    }
+  }
 };
 </script>
 <style lang="scss">
