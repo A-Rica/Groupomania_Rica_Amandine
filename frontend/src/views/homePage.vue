@@ -56,48 +56,19 @@
           <img v-bind:src="post.image" class="imagePost" />
         </p>
         <div class="barreBottom"> 
-          <button class="likeForm" @click="likeClick(post.id)"><i class="fa-solid fa-thumbs-up"></i></button> 
-         
-          <span class="linkComment" @click="showCommentSwitch(post.id)"
-            >Voir les commentaires</span
-          >
-         <div class="blockComment" v-if="showCommentspostId == post.id"> 
-            <div class="blockCommentPosition">
-              <!-- <img v-bind:src="post.comment.user.image" class="imageUserComment"> -->
-              <div class="formComment">
-                <!-- <h4>de {{ post.comment.user.lastname }} {{ post.comment.user.name }}</h4> -->
-                <span>{{post.comment[0].text }}</span>
-                <img
-                  class="imageComment"
-                  :src="post.comment.image"
-                  v-show="post.comment.image"
-                />
-              </div>
-            </div>
-          </div> 
+          <button class="likeForm" :class="{disabled: iLiked}" @click="likeClick(post.id)"><i class="fa-solid fa-thumbs-up"></i></button> 
+      
         </div>
       </div>
     </div>
-    <!-- Partie avertissant l'utilisateur qu'il faut être connecté pour voir les messages sur le mur -->
-    <div v-else class="section-homePage2">
-      <img src="../assets/icon-left-font-monochrome-black.png" />
-      Merci de vous reconnecter afin d'accéder aux réseaux Groupomania;
-      <button
-        id="connexion"
-        class="connexion"
-        name="connexion"
-        type="submit"
-        @click="redirection"
-      >
-        Redirection vers la page connexion.
-      </button>
-    </div>
+     
   </section>
 </template>
 <script>
 // import de la map Getters
 import { mapGetters } from "vuex";
 import axios from "axios";
+
 // import moment from "moment";
 export default {
   name: "Wall-post",
@@ -107,6 +78,7 @@ export default {
       showNewPost: false,
       showComments: false,
       showCommentspostId: null,
+     iLiked: false,
       post: {
         title: "",
         text: "",
@@ -118,8 +90,6 @@ export default {
       
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
-      // data lier à la création d'un commentaire.
-      comments: [],
       // data lier aux likes
       //faire mounted avec if
       like: 
@@ -127,7 +97,6 @@ export default {
        userId: localStorage.getItem('userId'),
        messageId: '',
       },
-    likes: []
     };
   },
   computed: {
@@ -140,19 +109,12 @@ export default {
   created: function () {
     axios.get("http://localhost:3000/api/messages/").then((posts) => {
       this.posts = posts.data
-      posts.data.forEach(i => this.posts[i])
+
 });
-    // axios.get("http://localhost:3000/api/comment/", {
-    //     // autorisation nécessaire pour la lecture des données et récupération du token dans le localStorage.
-    //     headers: {
-    //       Authorization: "Bearer " + localStorage.getItem("token"),
-    //     },
-    //   })
-    //   .then((comments) => {
-    //     // console.log(comments.data);
-    //     this.comments = comments.data;
-    //   });
+
   },
+
+
   methods: {
 
     // fonction permettant de récuperer l'image envoyé
@@ -162,6 +124,10 @@ export default {
     // fonction de redirection en cas ou l'utilisateur est déconnecté, visant à le renvoyé à la page connexion
     redirection() {
       this.$router.push({ name: "connexion" });
+    },
+
+    linkMessage(postsId){
+  this.$router.push({  path: '/message/' + postsId });
     },
     // Ouverture du block New Post.
     showNewPostSwitch() {
@@ -221,7 +187,7 @@ export default {
         });
     },
  likeClick(PostId) {
-   
+
 const formData = new FormData();
 
 formData.append("userId", this.like.userId)
@@ -235,9 +201,10 @@ formData.append('messageId', this.like. messageId)
           })
           .then((likes) => {
           this.likes = likes.data.dataValues
+          this.iLiked = !this.iLiked;
           })
-  
- }
+ },
+ 
   },
 
 
@@ -382,9 +349,10 @@ formData.append('messageId', this.like. messageId)
       margin-left: 20px;
       background-color: transparent;
       border: none;
-      &:focus{
+    }
+    .disabled {
         color: #635c9b;
-      }
+      
     }
     .linkComment {
       float: right;
@@ -437,37 +405,6 @@ formData.append('messageId', this.like. messageId)
     }
   }
 }
-.section-homePage2 {
-  display: flex;
-  flex-direction: column;
-  background-color: #c4c4fd;
-  background-image: url("../assets/Pattern-Transparent-Background.png");
-  background-size: cover;
-  box-shadow: 1px 2px 5px #635c9b;
-  border-radius: 20px;
-  width: 43%;
-  height: 50%;
-  padding: 15px;
-  margin-top: 5%;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  img {
-    margin-left: auto;
-    margin-right: auto;
-    height: 50px;
-  }
-}
-.connexion {
-  width: 40%;
-  height: 25px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 20px;
-  color: white;
-  background-color: #7272a5;
-  &:hover {
-    background-color: darken(#7272a5, 10%);
-  }
-}
+
+
 </style>

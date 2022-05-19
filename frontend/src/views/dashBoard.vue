@@ -93,7 +93,7 @@
         <li @click="deletePost(post.id)">Suppression</li> 
       </ul>
    <div class="blocModificationPost" v-if="openModify">
-   <form @submit.prevent="updateMessage(post.id)"> <label for="title">Titre: </label>
+   <form @submit.prevent="updateMessage<(post.id)"> <label for="title">Titre: </label>
           <input
             v-model="modifyPost.title"
             type="texte"

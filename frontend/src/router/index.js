@@ -5,6 +5,7 @@ import MembersPage from '../views/membersPage.vue'
 import ModifPage from '../views/modifyProfilPage.vue'
 import MessagePage from '../views/messagePage.vue'
 import Dashboard from '../views/dashBoard.vue'
+import axios from 'axios'
 
 // import store from '../store'
 
@@ -18,29 +19,63 @@ const routes = [
   {
     path: '/home',
     name: 'home',
-    component: HomePage
+    component: HomePage, beforeEnter: () => {
+      let token = localStorage.getItem('token')
+      if (token) {
+        return true
+      }
+      router.push({ name: 'connexion' })
+    }
   },
   {
     path: '/members',
     name: 'members',
-    component: MembersPage,
+    component: MembersPage, beforeEnter: () => {
+      let token = localStorage.getItem('token')
+      if (token) {
+        return true
+      }
+      router.push({ name: 'connexion' })
+    }
   },
   {
     path: '/profil/:id',
     name: 'modifyProfil',
-    component: ModifPage,
+    component: ModifPage, beforeEnter: () => {
+      let token = localStorage.getItem('token')
+      if (token) {
+        return true
+      }
+      router.push({ name: 'connexion' })
+    }
   },
   {
     path: '/message/:id',
     name: 'message',
     component: MessagePage,
-    props: true,
+    props: true, beforeEnter: () => {
+      let token = localStorage.getItem('token')
+      if (token) {
+        return true
+      }
+      router.push({ name: 'connexion' })
+    }
 
   },
   {
     path: '/dashboard/:id',
     name: 'dashboard',
-    component: Dashboard,
+    component: Dashboard, beforeEnter: () => {
+      axios.get("http://localhost:3000/api/profil/me").then((user) => {
+        console.log(user.data.role);
+        let administrateur = user.data.role
+        if (administrateur == 'administrateur') {
+          return true
+        }
+
+        router.push({ name: 'home' })
+      })
+    }
   }
 
   // {
@@ -57,21 +92,5 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
-// router.beforeEach((to, from, next) => {
-//   // mise en place d'une condition pour voir si l'utilisateur est connecté.
-//   // utilisation to.matched.some test la meta requiresAuth lier aux routes.
 
-//   if (to.matched.some(record => record.meta.requiresAuth)) {
-//     const userConnected = store.getters['auth/authenficatedToken']
-//     console.log(userConnected);
-//     if (!userConnected && to.name !== 'connexion') {
-
-//       return { name: 'connexion'}
-//     } else {
-//       next();
-//     }
-//   } else {
-//     next();
-//   }
-// })
 export default router

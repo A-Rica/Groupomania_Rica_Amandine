@@ -15,7 +15,7 @@
           <span>Membres <i class="fa-solid fa-user-group"></i></span>
         </li>
 
-        <li @click="getdashboard">
+        <li @click="getdashboard" v-if="administrator == 'administrateur' ">
           <span>Dashboard <i class="fa-solid fa-folder-open"></i></span>
         </li>
 
@@ -40,6 +40,7 @@ export default {
       currentUser: null,
       name: "",
       lastname: "",
+      administrator: false
     };
   },
   computed: {
@@ -48,11 +49,14 @@ export default {
       authenficated: "auth/authenficated",
       user: "auth/user",
     }),
+   
   },
   // utilisation d'une fonction afin de lire les données de l'utilisateur et ainsi les réutiliser pour afficher le noms et prénom de l'utilisateur
   created: function () {
     axios.get("http://localhost:3000/api/profil/me").then((user) => {
       (this.name = user.data.name), (this.lastname = user.data.lastname);
+   this.administrator = user.data.role
+ 
     });
   },
   methods: {
@@ -82,6 +86,7 @@ export default {
       });
     }
   },
+  
 };
 </script>
 <style lang="scss" scoped>
