@@ -2,6 +2,7 @@
 <section>
     <div class="section-homePage">
      <h2>Les Membres</h2>
+     <!-- Section lier à l'administration des membres avec un v-for user -->
     <div class="displayRow"> <div class="formMembers" v-for="user in users" v-bind:key="user.id">
      <div class="textFormMembers"><img v-bind:src="user.image" class="imgAvatarMembers"/>
      <span><b>{{user.name}} {{user.lastname}}</b>
@@ -10,14 +11,14 @@
      <span class="icon-Menue" @click="showNavBarSwitch(user.id)"
       ><i class="fa-solid fa-bars"></i
     ></span>
-
+<!-- Menue permettant de modifier et de supprimer l'utilisateur -->
     <div class="menueMembers" v-if="showNavBarId == user.id">
     <ul>
       <li @click="openUpdateProfil()">Modification</li>
       
       <li @click="deleteProfil(user.id)"> Suppression</li>
     </ul>
-   
+   <!-- Cadre pour la modification -->
         <div class="blockUpdateProfil" v-if="openUpdateId"> <span class="icon-Menue" @click="closeUpdateProfil()"
       ><i class="fa-solid fa-x"></i
     >
@@ -76,15 +77,18 @@
      </div>
     </div> </div> </div>
      <h2>Les Messages</h2>
+     <!-- section affichant les messages  -->
      <div class="displayRow"> <div class="formPost" v-for="post in posts" v-bind:key="post.id">
     <div class="formPointer" @click="openPostMember(post.id)"> <h4>{{ post.title }}</h4>
      <span>de {{ post.user.lastname }} {{ post.user.name }}</span>
      
      </div>
-     
+     <!-- cadre affichant le message en détail -->
      <div class="retailPost" v-if="showRetailPostId == post.id">
+     <!-- icone permettant de fermer le cadre -->
     <span class="iconX" @click="closePostMember()"><i class="fa-solid fa-x"></i></span>
-     <span class="iconBarMenue" @click="openMenuPostMember()"
+    <!-- menue permettant de modifier et supprimer le message -->
+    <span class="iconBarMenue" @click="openMenuPostMember()"
       ><i class="fa-solid fa-bars"></i
     ></span>
     <div class="MenuePostMember" v-if="openMenuRetail">
@@ -92,6 +96,7 @@
         <li @click="openModifyPost()">Modification</li>
         <li @click="deletePost(post.id)">Suppression</li> 
       </ul>
+      <!-- cadre pour modifier le message -->
    <div class="blocModificationPost" v-if="openModify">
    <form @submit.prevent="updateMessage<(post.id)"> <label for="title">Titre: </label>
           <input
@@ -125,7 +130,9 @@
     </div>
     </div>
      <h2>Les Commentaires</h2>
+     <!-- section affichant les commentaires -->
   <div class="displayRow"> <div class="formComment" v-for="comment in comments" v-bind:key="comment.id">
+  
   <span class="iconBarComment" @click="openMenuComment(comment.id)" v-if="menuCommentId !== comment.id"
       ><i class="fa-solid fa-bars"></i
     ></span>
@@ -133,6 +140,7 @@
       ><i class="fa-solid fa-x"></i
     ></span><h4>Commentaire de {{ comment.user.lastname }} {{ comment.user.name }}</h4>
   <h5> sur le message: <span @click="previewMessage(comment.id)">{{ comment.message.title}}</span></h5> 
+ <!-- menue permettant de modifier et supprimer le commentaire -->
   <div class="blockMenuComment" v-if="menuCommentId == comment.id">
   <ul>
     <li @click="openUpdateComment()">Modification</li>
@@ -141,6 +149,7 @@
   <div class="blockUpdateComment" v-if="openBlockComment">
   <span class="iconXComment" @click="closeUpdateComment()">
   <i class="fa-solid fa-x"></i></span>
+  <!-- partie permettant de modifier le commentaire -->
   <form @submit.prevent="updateComment(comment.id)">
             <label for="comment">Texte:</label>
             <textarea
@@ -161,6 +170,7 @@
                     Envoyer
                   </button></form>
   </div></div>
+  <!-- cadre permettant de visualisé le message lier au commentaire -->
   <div class="blockPreview" v-if="previewMessageId == comment.id">
   <span class="iconXPreview" @click="closePreviewMessageId()">
   <i class="fa-solid fa-x"></i></span>
@@ -180,6 +190,7 @@ export default {
   name: "PageMembers",
   data: function () {
     return {
+      // data lier au ouverture de divers bloc
       showNavBar: false,
       showNavBarId: null,
       openUpdateId: false,
@@ -190,9 +201,11 @@ export default {
        menuCommentId: null,
       //  menuComment: true,
        openBlockComment: false,
+      //  array lier aux data users, posts et commentaire
       users: [],
       posts: [],
       comments: [],
+      // Partie lier aux modifications
 dataUser: {
   lastname: "",
   name: "",
@@ -217,6 +230,7 @@ commentary: {
   },
 
   created: function () {
+    // axios servant à lire l'api et ainsi récuperer les données lier aux utilisateur, message et commentaire
     axios
       .get("http://localhost:3000/api/profil/", {
         headers: {
@@ -241,29 +255,32 @@ console.log(comments.data);
 })
 },
  methods: {
+  //  methode pour ouvrir le menue utilisation
 showNavBarSwitch(userId) {
      this.showNavBarId = userId;
-    //  this.showNavBar = !this.showNavBar;
-      // alert(!this.showNavBar);
     },
+    // Permet d'ouvrir le cadre profil
     openUpdateProfil() {
       this.openUpdateId = true;
     },
+    // permet de fermer le cadre profil
 closeUpdateProfil() {
 this.openUpdateId = false;
 },
-
+// ouverture de la prévisualisation de message
 previewMessage(commentId){
   this.previewMessageId = commentId
 },
-
+// fermeture dee la prévisualisation
 closePreviewMessageId() {
 this.previewMessageId = false
 },
+// ouverture des posts membres
 openPostMember(PostId) {
 this.showRetailPostId = PostId;
 
 },
+// fermeture du cadre
 closePostMember() {
   this.showRetailPostId = false;
 },
@@ -289,24 +306,25 @@ openUpdateComment(){
 closeUpdateComment(){
   this.openBlockComment = false
 },
-
+// fonction permettant de lire les données lier à l'input file
  onFileChange() {
       this.dataUser.image = this.$refs.file[0].files[0];
       
     },
-
-     updateProfil(idMember) {
+    // fonction pour modifier le profil
+updateProfil(idMember) {
      
       this.submitted = true;
-
+// constante afin de crée un nouvel objet lier au formulaire.
       const formData = new FormData();
       console.log(this.dataUser.image);
+      // recuperation des données faisant le lien entre le data et les inputs 
       formData.append("image", this.dataUser.image);
       formData.append("name", this.dataUser.name);
       formData.append("lastname", this.dataUser.lastname);
       formData.append("password", this.dataUser.password);
       formData.append("email", this.dataUser.email);
-
+// envoit des données dans la base de donnée
       axios
         .put(
           "http://localhost:3000/api/profil/" + idMember,
@@ -319,6 +337,7 @@ closeUpdateComment(){
           }
         )
         .then(() => {
+          // confirmation de la modification du profil
           const confirmation = confirm(
             "Désirez vous vraiment modifier votre profil?"
           );
@@ -328,7 +347,7 @@ closeUpdateComment(){
           location.reload();
         });
     },
-
+// suppression du profil
     deleteProfil(userID){
       axios.delete('http://localhost:3000/api/profil/' + userID,  {
             headers: {
@@ -347,18 +366,18 @@ closeUpdateComment(){
         });
            
     },
-
+// recupération de information contenue dans le file
     onFileImageChange(){
       this.modifyPost.image = this.$refs.file[0].files[0];
     },
-
+// modification du message
     updateMessage(PostId){
        const formData = new FormData();
-
+// recupération des données inscrit dans l'input lier
       formData.append("image", this.modifyPost.image);
       formData.append("title", this.modifyPost.title);
       formData.append("text", this.modifyPost.text);
-      
+      // envoit des données dans la base de données
       axios
         .put("http://localhost:3000/api/messages/" + PostId, formData, {
           // autorisation nécessaire pour la lecture des données et récupération du token dans le localStorage.
@@ -367,6 +386,7 @@ closeUpdateComment(){
           },
         })
         .then(() => {
+          // confirmation de l'envoi
           const confimration = confirm(
             "Désirez vous vraiment modifier votre message?"
           );
@@ -378,6 +398,7 @@ closeUpdateComment(){
           location.reload();
         });
     },
+    // suppression du message avec récupération de l'id
     deletePost(deletePostId){
  axios.delete('http://localhost:3000/api/messages/' + deletePostId, 
        {

@@ -1,5 +1,6 @@
 <template>
-  <section><div class="section-membersPage" v-if="authenficated">
+<!-- page pour la modification et suppression du compte utilisateur -->
+  <section><div class="section-membersPage">
     <label for="name">Nom:</label>
     <input
       v-model="users.name"
@@ -52,19 +53,7 @@
       name="delete"
       type="submit">Suppression du compte</button>
     </div></div>
-    <div class="section-membersPage" v-else>
-       <img classe ="imgEnTete" src="../assets/icon-left-font-monochrome-black.png" />
-      Merci de vous reconnecter afin d'accéder aux réseaux Groupomania;
-      <button
-        id="connexion"
-        class="connexion"
-        name="connexion"
-        type="submit"
-        @click="redirection"
-      >
-        Redirection vers la page connexion.
-      </button>
-    </div>
+   
   </section>
 </template>
 <script>
@@ -76,6 +65,7 @@ export default {
   name: "ModifyProfilPage",
   data: function () {
     return {
+      // data lier à la modification de l'utilisateur
       users: {
         name: "",
         lastname: "",
@@ -110,18 +100,14 @@ export default {
   },
 
   methods: {
-     redirection() {
-      this.$router.push({ name: "connexion" });
-    },
-
+// recupération des information de l'image envoit via l'input
     onFileChange() {
-      //   this.users.file = this.$refs.file.files[0];
       this.users.image = this.$refs.file.files[0];
-      //   this.users.images = URL.createObjectURL(this.users.file);
+    
     },
     updateProfil() {
       this.submitted = true;
-
+// recupération des données entrée par l'utilisateur
       const formData = new FormData();
       console.log(this.users.image);
       formData.append("image", this.users.image);
@@ -129,7 +115,7 @@ export default {
       formData.append("lastname", this.users.lastname);
       formData.append("password", this.users.password);
       formData.append("email", this.users.email);
-
+// envoit des données dans la base de donnée
       axios
         .put(
           "http://localhost:3000/api/profil/" + localStorage.getItem("userId"),
@@ -142,6 +128,7 @@ export default {
           }
         )
         .then(() => {
+          // confirmation
           const confirmation = confirm(
             "Désirez vous vraiment modifier votre profil?"
           );
@@ -155,7 +142,7 @@ export default {
     // Suppression du compte
 
     suppressionCompte() {
-  
+  // suppression du compte de l'utilisateur
 axios.delete('http://localhost:3000/api/profil/' + localStorage.getItem("userId"),  {
             headers: {
               Authorization: "Bearer " + localStorage.getItem("token"),
@@ -163,6 +150,7 @@ axios.delete('http://localhost:3000/api/profil/' + localStorage.getItem("userId"
           }
           )
           .then(()=>{
+            // confirmation
    const confirmation = confirm(
             "Désirez vous vraiment supprimer ce profil?"
           );

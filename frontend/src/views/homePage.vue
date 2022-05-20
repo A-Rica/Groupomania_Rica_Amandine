@@ -5,19 +5,22 @@
       Postez un nouveau message
     </div>
     <div class="blockNewPost" v-if="showNewPost">
-      <form @submit.prevent="createdPost()">
+      <Form @submit="createdPost()">
         <label for="title">Titre :</label>
-        <input
+        <Field
           v-model="post.title"
           type="texte"
           name="title"
-          id="title"
+          :id="title"
           class="blockTitle"
-          placeholder="Placez votre titre ici."
-        />
+          placeholder="Placez votre titre ici." :rules="isRequired" />
+        <ErrorMessage name="title" /><br/>
         <label id="labelBlockNewPost" for="Text">Message:</label>
-        <textarea name="Text" class="blockText" v-model="post.text"> </textarea>
+        <Field name="Text"  v-model="post.text" :rules="isRequired" v-slot="{ field }" >
+        <textarea name="Text" class="blockText" v-bind="field"> </textarea></Field>
+        <ErrorMessage name="Text"/><br/>
         <label id="labelBlockNewPost" for="image">Image:</label>
+        
         <input
           type="file"
           ref="file"
@@ -25,10 +28,11 @@
           id="image"
           @change="onFileChange"
         /><br />
+
         <button class="send" id="send" name="send" type="submit">
           Envoyer
         </button>
-      </form>
+      </Form>
     </div>
     <!-- Partie servant à afficher les messages sur le mur -->
     <div v-if="authenficated" class="section-homePage">
@@ -68,16 +72,23 @@
 // import de la map Getters
 import { mapGetters } from "vuex";
 import axios from "axios";
+import { Field, Form, ErrorMessage } from 'vee-validate';
 
 // import moment from "moment";
 export default {
   name: "Wall-post",
+    components: {
+    Field,
+    Form,
+    ErrorMessage,
+  }, 
   // Data à envoyé dans la dataBase
-  data: function () {
+   data: function () {
     return {
       showNewPost: false,
       showComments: false,
       showCommentspostId: null,
+    
      iLiked: false,
       post: {
         title: "",
@@ -87,7 +98,7 @@ export default {
         // UserId récupérer dans le localStorage
         userId: localStorage.getItem("userId"),
       },
-      
+  
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
       // data lier aux likes
@@ -99,6 +110,7 @@ export default {
       },
     };
   },
+ 
   computed: {
     // Récupération de l'authentification dans le store
     ...mapGetters({
@@ -116,7 +128,13 @@ export default {
 
 
   methods: {
+ isRequired(value) {
+      if (value && value.trim()) {
+        return true;
+      }
 
+      return 'This is required';
+    },
     // fonction permettant de récuperer l'image envoyé
     onFileChange() {
       this.post.image = this.$refs.file.files[0];
@@ -136,6 +154,7 @@ export default {
     },
     // mise en place de l'envoie d'un message dans la base de données
     createdPost() {
+
       // création d'une constante formData pour y imposer les data à envoyé
       const formData = new FormData();
       // ajout du titre, texte et de l'image dans formData

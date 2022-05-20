@@ -1,5 +1,7 @@
 <template>
-  <section><div class="section-membersPage" v-if="authenficated">
+<!-- mise en place de l'affichage des membres inscrit sur le site 
+rajout plus tard de la possibilité de voir les messages, le nombre de message et commentaire -->
+  <section><div class="section-membersPage">
     <div class="center-block">
       <div v-for="user in users" v-bind:key="user.id" class="block-members">
         <img v-bind:src="user.image" class="img-members" />
@@ -11,19 +13,7 @@
       </div>
     </div>
     </div>
-    <div class="section-membersPage" v-else>
-         <img classe ="imgEnTete" src="../assets/icon-left-font-monochrome-black.png" />
-      Merci de vous reconnecter afin d'accéder aux réseaux Groupomania;
-      <button
-        id="connexion"
-        class="connexion"
-        name="connexion"
-        type="submit"
-        @click="redirection"
-      >
-        Redirection vers la page connexion.
-      </button>
-    </div>
+   
   </section>
 </template>
 <script>
@@ -34,6 +24,7 @@ export default {
   name: "PageMembers",
   data: function () {
     return {
+      // data lier aux utilisateur en array
       users: [],
     };
   },
@@ -45,6 +36,7 @@ export default {
     }),
   },
   created: function () {
+    // visualisation des données des utilisateur présent dans la base de données
     axios
       .get("http://localhost:3000/api/profil/", {
         headers: {
@@ -59,11 +51,7 @@ export default {
         );
       });
   },
-  methods: {
-         redirection() {
-      this.$router.push({ name: "connexion" });
-    },
-  }
+  
 };
 </script>
 <style lang="scss" scoped>

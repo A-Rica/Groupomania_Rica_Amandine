@@ -15,7 +15,7 @@
           <span>Membres <i class="fa-solid fa-user-group"></i></span>
         </li>
 
-        <li @click="getdashboard" v-if="administrator == 'administrateur' ">
+        <li @click="getdashboard" v-if="user.role == 'administrateur' ">
           <span>Dashboard <i class="fa-solid fa-folder-open"></i></span>
         </li>
 
@@ -24,7 +24,7 @@
         </li>
       </ul>
     </div>
-    <span class="welcomeUser">Bienvenue {{ lastname }} </span>
+    <span class="welcomeUser">Bienvenue {{ user.lastname }} </span>
     <img src="../assets/icon-left-font-monochrome-white.png" />
   </nav>
 </template>
@@ -40,7 +40,7 @@ export default {
       currentUser: null,
       name: "",
       lastname: "",
-      administrator: false
+      role: false
     };
   },
   computed: {
@@ -52,12 +52,7 @@ export default {
    
   },
   // utilisation d'une fonction afin de lire les données de l'utilisateur et ainsi les réutiliser pour afficher le noms et prénom de l'utilisateur
-  created: function () {
-
-  let userInfos = JSON.parse(localStorage.getItem('user'))
-console.log(userInfos);
-  this.lastname = userInfos.lastname
-  },
+  
   methods: {
     // mise en place d'une fonction avec map Action pour la déconnection de l'utilisateur et ainsi le renvoyé vers la page connexion
     ...mapActions({ signoutAction: "auth/signout" }),

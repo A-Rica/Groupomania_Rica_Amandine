@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="section-messagePage" v-if ="authenficated">
+    <div class="section-messagePage">
       <!-- partie message utilisateurs -->
       <!-- Partie modification du message de l'utilisateur avec un switch
        faisant disparaitre le message pour laisser s'afficher la page de modification -->
@@ -145,19 +145,6 @@
         </div>
       </div>
     </div>
-    <div class="section-messagePage" v-else>
-       <img class="imgEntete" src="../assets/icon-left-font-monochrome-black.png" />
-      Merci de vous reconnecter afin d'accéder aux réseaux Groupomania;
-      <button
-        id="connexion"
-        class="connexion"
-        name="connexion"
-        type="submit"
-        @click="redirection"
-      >
-        Redirection vers la page connexion.
-      </button>
-    </div>
   </section>
 </template>
 <script>
@@ -168,12 +155,14 @@ export default {
   name: "MessagePage",
   data: function () {
     return {
+      // data lier aux affichage de menue et des bloc de modification
       showModifyPost: false,
       showModifyComments: false,
       showComments: false,
       showButtonModify: false,
       showMenuModifyComment: false,
       showCommentMenuId: null,
+      // data lier aux posts avec un array de l'utilisateur
       post: {
         title: "",
         text: "",
@@ -181,6 +170,7 @@ export default {
         id: "",
         user: [],
       },
+      // data lier à l'envoi d'un commentaire
       comment: {
         id: "",
         text: "",
@@ -190,6 +180,7 @@ export default {
         userId: localStorage.getItem("userId"),
         user: [],
       },
+    //  data lier à la modification du commentaire
       commentary: {
         id: "",
         text: "",
@@ -198,7 +189,7 @@ export default {
         // UserId récupérer dans le localStorage
         userId: localStorage.getItem("userId"),
       },
-
+ // data permettant de visualiser un commentaire
       comments: [],
     };
   },
@@ -210,6 +201,7 @@ export default {
     }),
   },
   created: function () {
+    // visualisation des données lier aux posts
     let postId = this.$route.params;
     axios
       .get("http://localhost:3000/api/messages/" + postId.id, {
@@ -224,7 +216,7 @@ export default {
         this.post.image = post.data.image;
         this.post.user = post.data.user;
       });
-
+// visualisation des données lier aux commentaires
     axios
       .get("http://localhost:3000/api/comment/", {
         // autorisation nécessaire pour la lecture des données et récupération du token dans le localStorage.
@@ -239,11 +231,7 @@ export default {
   },
 
   methods: {
-
-     redirection() {
-      this.$router.push({ name: "connexion" });
-    },
-
+// ouverture des menues, du cadre de modication de post, de commentaire
     showModifyPostSwitch() {
       this.showModifyPost = !this.showModifyPost;
     },
@@ -257,18 +245,19 @@ export default {
       this.showModifyComments = commentId;
       this.showButtonModify = !this.showButtonModify;
     },
-
+// recupération des informations lier à l'image envoyé
     onFileChange() {
       this.post.image = this.$refs.file.files[0];
     },
+    // modification du post
     modifyPost() {
       let postId = this.$route.params;
       const formData = new FormData();
-
+// recupération des données mit dans les input
       formData.append("image", this.post.image);
       formData.append("title", this.post.title);
       formData.append("text", this.post.text);
-      
+    //  envoit des données dans la base de données   // 
       axios
         .put("http://localhost:3000/api/messages/" + postId.id, formData, {
           // autorisation nécessaire pour la lecture des données et récupération du token dans le localStorage.
@@ -277,6 +266,7 @@ export default {
           },
         })
         .then(() => {
+          // message de confirmation
           const confimration = confirm(
             "Désirez vous vraiment modifier votre message?"
           );
