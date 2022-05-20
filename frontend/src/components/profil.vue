@@ -1,5 +1,5 @@
 <template>
-  <section v-if="authenficated">
+  <section  v-if="authenficated">
     <div class="section-profil">
       <img :src="image" class="image-profil" />
       <div class="hoverImage">
@@ -18,7 +18,7 @@
 <script>
 // import de mapGetters, axios et moment
 import { mapGetters } from "vuex";
-import axios from "axios";
+// import axios from "axios";
 import moment from "moment";
 export default {
   name: "MyProfil",
@@ -41,19 +41,29 @@ export default {
   },
   // mise en place d'une fonction afin de lire les données de l'utilisateur. Utilisation du package moment afin de modifié le format de la date.
   created: function () {
-    axios.get("http://localhost:3000/api/profil/me").then((user) => {
-      this.image = user.data.image;
-      this.name = user.data.name;
-      this.lastname = user.data.lastname;
-      this.email = user.data.email;
-      this.inscription = moment(user.data.createdAt).format("DD/MM/YYYY");
-      this.role = user.data.role;
-    });
+        
+      let userInfos = JSON.parse(localStorage.getItem('user'))
+      this.name = userInfos.name
+      this.lastname = userInfos.lastname
+      this.email = userInfos.email
+      this.inscription = moment(userInfos.createdAt).format("DD/MM/YYYY"); 
+      this.role = userInfos.role
+      this.image = userInfos.image
+      
+
+  //   axios.get("http://localhost:3000/api/profil/me").then((user) => {
+  //     this.image = user.data.image;
+  //     this.name = user.data.name;
+  //     this.lastname = user.data.lastname;
+  //     this.email = user.data.email;
+  //     this.inscription = moment(user.data.createdAt).format("DD/MM/YYYY");
+  //     this.role = user.data.role;
+  //   });
   },
   methods: {
     // fonction permettant de rediriger l'utilisateur vers la modification de son profil.
-    ModifProfil: function () {
-      console.log(this.user.id);
+
+ModifProfil: function () {
       this.$router.push({ path: "/profil/" + this.user.id });
     },
   },

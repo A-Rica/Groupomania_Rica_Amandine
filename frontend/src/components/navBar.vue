@@ -53,7 +53,7 @@ export default {
   },
   // utilisation d'une fonction afin de lire les données de l'utilisateur et ainsi les réutiliser pour afficher le noms et prénom de l'utilisateur
   created: function () {
- 
+
   let userInfos = JSON.parse(localStorage.getItem('user'))
 console.log(userInfos);
   this.lastname = userInfos.lastname
