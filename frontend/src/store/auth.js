@@ -34,7 +34,7 @@ export default ({
                     dispatch('attempt', response.data.token);
                     router.push({ name: "home" });
                 });
-            console.log(response);
+            localStorage.setItem('user', JSON.stringify(response.data))
         },
 
         async signup(_, credentials) {
@@ -53,8 +53,10 @@ export default ({
             }
             try {
                 let response = await axios.get('profil/me'
-                )
-                console.log(response);
+
+                );
+                localStorage.setItem('user', JSON.stringify(response.data))
+                // console.log(response);
                 commit('USER', response.data)
             }
             catch (error) {

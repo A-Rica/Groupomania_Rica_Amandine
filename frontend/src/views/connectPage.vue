@@ -13,14 +13,15 @@
       <span class="lien-inscription" @click="switchLogin()">connecter</span>
     </h2>
     <!-- formulaire connexion contenant l'email et le mot de passe -->
-    <form class="formulaire" v-if="mode == 'login'" @submit.prevent="submit">
-      <label for="email">Email: </label>
+    <form class="formulaire" v-if="mode == 'login'" @submit.prevent="submit()">
+     
+     <label for="email">Email: </label>
       <input
         v-model="user.email"
         id="email"
         name="email"
         type="email"
-        placeholder="Votre adresse mail: nom@hotmail.fr"
+        placeholder="Votre adresse mail: nom@hotmail.fr" 
       />
 
       <label class="label-password" for="password">Mot de passe: </label>
@@ -38,6 +39,7 @@
     <!-- formulaire inscription avec les mêmes champs que connexion mais avec le noms et prenom -->
     <!-- Ne pas oublier mettre message avertissement quand le formulaire est mal rempli -->
     <form class="formulaire" v-else @submit.prevent="createdUser()">
+ 
       <label for="email">Email: </label>
       <input
         v-model="user.email"
@@ -46,31 +48,36 @@
         type="email"
         placeholder="Votre adresse mail: nom@hotmail.fr"
       />
-      <label class="label-lastname" for="lastname">Prénom: </label>
+      <!-- <ErrorMessage name="email" class="errorMessage"/> -->
+     <label class="label-lastname" for="lastname">Prénom: </label>
       <input
         v-model="user.lastname"
         id="lastname"
         name="lastname"
         type="text"
-        placeholder="Ici votre prénom"
+        placeholder="Ici votre prénom" 
       />
+      
       <label class="label-name" for="name">Nom: </label>
       <input
         v-model="user.name"
         id="name"
         name="name"
         type="text"
-        placeholder="Ici votre nom"
+        placeholder="Ici votre nom"  
       />
-
-      <label class="label-password" for="password">Mot de passe: </label>
+      
+    <!-- <span class="positionErrorMessage"> <ErrorMessage name="lastname" class="errorMessage"/>
+<ErrorMessage name="name" class="errorMessageName"/></span>  -->
+      <label class="label-password" for="password">Mot de passe: <b>(doit contenir lettre en majuscule et minuscule et 2 chiffres avec un minimum de 5 lettres)</b> </label>
       <input
         v-model="user.password"
         id="password"
         name="password"
         type="password"
-        placeholder="Entrez ici votre mot de passe"
+        placeholder="Entrez ici votre mot de passe"  
       />
+      <!-- <ErrorMessage name="password" class="errorMessage"/> -->
       <button class="connexion" id="subscribe" name="subscribe" type="submit">
         Inscription
       </button>
@@ -85,6 +92,7 @@ export default {
   data: function () {
     return {
       mode: "login",
+       errors: "",       
       user: {
         email: "",
         name: "",
@@ -96,6 +104,7 @@ export default {
       submitted: false,
     };
   },
+ 
   // La methode pour switcher entre l'inscription et la connexion
   methods: {
     switchCreateUser: function () {
@@ -113,13 +122,16 @@ export default {
       signup: "auth/signup",
     }),
     // fonction permettant de mettre en lien le store et la page, avec auth/signin et la map user. Pour ensuite faire une redirection vers la page Home
-    submit() {
-      this.signin(this.user)
+    submit( ) {
+   this.signin(this.user);
+  
     },
     // Fonction ayant le même but que submit, sauf que c'est pour l'enregistrement d'un utilisateur
-    createdUser() {
+    createdUser( ) {
       this.signup(this.user);
+
     },
+
   },
 };
 </script>
@@ -169,6 +181,14 @@ export default {
   margin-top: 15px;
   label {
     margin-left: 10px;
+    b{
+      font-size: 12.5px;
+    }
+  }
+  .errorMessage{
+    color: black;
+    font-size: 13px;
+    font-weight: bold;
   }
   input {
     height: 20px;
@@ -188,10 +208,20 @@ export default {
     margin-left: 51%;
   }
   #name {
-    // margin-top: -43px;
-    margin-left: 50%;
+  
+  margin-left: 50%;
     height: 19.5px;
     width: 49%;
+  }
+  .positionErrorMessage{
+    display: flex;
+    flex-direction: row;
+  }
+    .errorMessageName{
+    color: black;
+    font-size: 13px;
+    margin-left: 27%;
+    font-weight: bold;
   }
   .connexion {
     width: 40%;

@@ -24,14 +24,14 @@
         </li>
       </ul>
     </div>
-    <span class="welcomeUser">Bienvenue {{ lastname }}</span>
+    <span class="welcomeUser">Bienvenue {{ lastname }} </span>
     <img src="../assets/icon-left-font-monochrome-white.png" />
   </nav>
 </template>
 <script>
 // import de la map Getters et Action ainsi qu'Axios
 import { mapGetters, mapActions } from "vuex";
-import axios from "axios";
+
 export default {
   name: "navBar",
   data: function () {
@@ -53,11 +53,10 @@ export default {
   },
   // utilisation d'une fonction afin de lire les données de l'utilisateur et ainsi les réutiliser pour afficher le noms et prénom de l'utilisateur
   created: function () {
-    axios.get("http://localhost:3000/api/profil/me").then((user) => {
-      (this.name = user.data.name), (this.lastname = user.data.lastname);
-   this.administrator = user.data.role
  
-    });
+  let userInfos = JSON.parse(localStorage.getItem('user'))
+console.log(userInfos);
+  this.lastname = userInfos.lastname
   },
   methods: {
     // mise en place d'une fonction avec map Action pour la déconnection de l'utilisateur et ainsi le renvoyé vers la page connexion

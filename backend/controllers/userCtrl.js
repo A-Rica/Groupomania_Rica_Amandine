@@ -1,4 +1,5 @@
 const db = require("../models");
+
 const User = db.user;
 const jwt = require('jsonwebtoken');
 const Op = db.Sequelize.Op;
@@ -7,7 +8,9 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 //Regex d'authentification
 const Regex_email = new RegExp("^[a-zA-Z0-9. -_]+[@]{1}[a-zA-Z0-9.-_]+$");
-const Regex_password = new RegExp("^[a-zA-Z0-9. -_]{3,30}$");
+
+// propriété du password
+
 //inscription de l'utilisateur//
 
 exports.signup = (req, res, next) => {
@@ -29,9 +32,7 @@ exports.signup = (req, res, next) => {
       if (!Regex_email.test(req.body.email)) {
         return res.status(400).json({ error: 'Email invalide' });
       }
-      if (!Regex_password.test(req.body.password)) {
-        return res.status(400).json({ error: 'Mot de passe invalide' });
-      }
+
       // Sauvegarde de l'utilisateurs + message d'erreur//
       user.save()
         .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
