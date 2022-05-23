@@ -2,8 +2,6 @@ const express = require('express');
 const app = express();
 const path = require('path');
 
-// sécurisation de l'application des vulnérabilité courrante avec Helmet
-const helmet = require("helmet");
 //permet de protéger contre les attaques Http
 var hpp = require('hpp');
 //limitation de l’accès à l’application
@@ -21,11 +19,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 require("dotenv").config();
-
-app.use(helmet());
-// sécurisation de l'utilisateur en interdisant l'utilisation d'iframe afin d'empêcher toutes récupération des données
-// de l'utilisateur via une fausse page "Anti-click Jacking"
-app.use(helmet.frameguard({ action: 'deny' }));
 
 app.use(hpp());
 
