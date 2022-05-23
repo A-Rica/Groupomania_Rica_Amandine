@@ -25,7 +25,7 @@
       </ul>
     </div>
     <span class="welcomeUser">Bienvenue {{ user.lastname }} </span>
-    <img src="../assets/icon-left-font-monochrome-white.png" />
+    <img src="../assets/icon-left-font-monochrome-white.png" alt="Logo de l'entreprise"/>
   </nav>
 </template>
 <script>
@@ -158,5 +158,43 @@ export default {
       }
     }
   }
+}
+
+/***Début Ecran 992px***/
+
+@media screen and (max-width: 992px)
+{
+#navBar {
+  flex-direction: column-reverse;
+  height: 100px;
+  img {
+    display: block;
+    margin-bottom: 50px;
+    margin-left: auto;
+    height: 50px;
+    margin-right: auto;
+  }
+}
+.icon-Menue {
+  position: absolute;
+    top: 50px;
+    margin-left: 10px;
+  }
+  .welcomeUser {
+     position: absolute;
+    float: right;
+    color: white;
+    font-size: 20px;
+   right: 10px;
+   top: 60px;
+  }
+
+  .menue-profil {
+    z-index: 1;
+    position: absolute;
+    top: 50px;
+    left:70px;
+  }
+
 }
 </style> 

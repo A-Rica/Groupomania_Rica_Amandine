@@ -4,7 +4,7 @@
      <h2>Les Membres</h2>
      <!-- Section lier à l'administration des membres avec un v-for user -->
     <div class="displayRow"> <div class="formMembers" v-for="user in users" v-bind:key="user.id">
-     <div class="textFormMembers"><img v-bind:src="user.image" class="imgAvatarMembers"/>
+     <div class="textFormMembers"><img v-bind:src="user.image" class="imgAvatarMembers" alt="image du profil"/>
      <span><b>{{user.name}} {{user.lastname}}</b>
      {{ user.email }},<br>
      {{ user.role }}</span> 
@@ -25,36 +25,43 @@
     </span>
 <h3>Modification du Profil de {{ user.lastname }} {{ user.name }}</h3>
   
- <label for="name">Nom:</label>
-    <input
+ <Form @submit="updateProfil(user.id)">
+   <label for="name">Nom:</label>
+    <Field
       v-model="dataUser.name"
       id="name"
+      name="name"
       type="text"
-      v-bind:placeholder="user.name"
+      v-bind:placeholder="user.name" :rules="isRequired"
     />
+     <ErrorMessage name="name" class="errorMessage"/><br/>
     <label for="lastname">Prenom: </label>
-    <input
+    <Field
       v-model="dataUser.lastname"
       id="lastname"
+      name="lastname"
       type="text"
-      v-bind:placeholder="user.lastname"
+      v-bind:placeholder="user.lastname" :rules="isRequired"
     />
+     <ErrorMessage name="lastname" class="errorMessage"/><br/>
     <label for="email">Email:</label>
-    <input
+    <Field
       v-model="dataUser.email"
       id="email"
       name="email"
       type="email"
-      v-bind:placeholder="user.email"
+      v-bind:placeholder="user.email" :rules="isRequired"
     />
+    <ErrorMessage name="email" class="errorMessage"/><br/>
     <label for="password">Mot de passe: </label>
-    <input
+    <Field
       v-model="dataUser.password"
       id="password"
       name="password"
       type="password"
-      placeholder="Entrez ici votre mot de passe"
+      placeholder="Entrez ici votre mot de passe" :rules="isRequired"
     />
+    <ErrorMessage name="password" class="errorMessage"/><br/>
     <label for="file">Votre image de profil:</label>
     <input
       @change="onFileChange"
@@ -65,7 +72,6 @@
       accept=".jpg, .jpeg, .gif, .png"
     />
     <div class="positionButton"><button
-      @click="updateProfil(user.id)"
       class="update"
       id="update"
       name="update"
@@ -73,6 +79,7 @@
     >
       Modifier
     </button></div>
+    </form>
   </div>
      </div>
     </div> </div> </div>
@@ -98,18 +105,21 @@
       </ul>
       <!-- cadre pour modifier le message -->
    <div class="blocModificationPost" v-if="openModify">
-   <form @submit.prevent="updateMessage<(post.id)"> <label for="title">Titre: </label>
-          <input
+   <Form @submit="updateMessage(post.id)"> <label for="title">Titre: </label>
+          <Field
             v-model="modifyPost.title"
             type="texte"
             name="title"
             id="title"
             class="blockTitle"
-            placeholder="Placez votre titre ici."
-          />
+            placeholder="Placez votre titre ici." :rules="isRequired"
+          /><br/>
+          <ErrorMessage name="title" class="errorMessageText"/><br/>
           <label id="labelBlockNewPost" for="Text">Message:</label>
-          <textarea name="Text" class="blockText" v-model="modifyPost.text">
-          </textarea>
+           <Field name="Text" id="Text" v-model="modifyPost.text" :rules="isRequired" v-slot="{ field }">
+          <textarea name="Text" id="Text" class="blockText" v-model="modifyPost.text" v-bind="field">
+          </textarea></Field><br/>
+           <ErrorMessage name="Text" class="errorMessageText"/><br/>
           <label id="labelBlockNewPost" for="image">Image:</label>
           <input
             type="file"
@@ -126,7 +136,7 @@
     <h4> {{ post.title }}</h4>  
    <span class="postUser">de {{ post.user.lastname }} {{ post.user.name }}</span>
    <span class="postText"> {{ post.text }}</span>
-   <img v-bind:src="post.image"/> </div>
+   <img v-bind:src="post.image" alt="image du message"> </div>
     </div>
     </div>
      <h2>Les Commentaires</h2>
@@ -150,14 +160,16 @@
   <span class="iconXComment" @click="closeUpdateComment()">
   <i class="fa-solid fa-x"></i></span>
   <!-- partie permettant de modifier le commentaire -->
-  <form @submit.prevent="updateComment(comment.id)">
-            <label for="comment">Texte:</label>
-            <textarea
-                    name="comment"
+  <Form @submit="updateComment(comment.id)">
+            <label for="comments">Texte:</label>
+             <Field name="comments" id="comments" v-model="commentary.text" :rules="isRequired" v-slot="{ fieldComments }">
+                  <textarea
+                    name="comments"
                     id="comments"
                     type="text"
-                    v-model="commentary.text"
-                  ></textarea>
+                    v-model="commentary.text" v-bind="fieldComments"
+                  ></textarea></Field>
+                   <ErrorMessage name="comments" class="errorMessage"/><br/>
                   <label for="image">Image:</label>
                   <input
                     type="file"
@@ -175,9 +187,9 @@
   <span class="iconXPreview" @click="closePreviewMessageId()">
   <i class="fa-solid fa-x"></i></span>
   <h4 class="titreMessageComment">{{ comment.message.title}}</h4>
-  <img class="imagePreviewMessage" v-bind:src="comment.message.image"/>
+  <img class="imagePreviewMessage" v-bind:src="comment.message.image" alt="image du message lier au commentaire"/>
   <div class="textPreviewMessage">{{ comment.message.text }}</div></div>
-  <img class="imageComment" v-bind:src="comment.image" v-show="comment.image"/>
+  <img class="imageComment" v-bind:src="comment.image" v-show="comment.image" alt="image du commentaire"/>
   <div class="textComment">{{ comment.text }}</div></div>
   </div>
     </div>
@@ -185,9 +197,15 @@
 </template>
 <script>
  import axios from "axios";
+import { Field, Form, ErrorMessage } from 'vee-validate';
 
 export default {
   name: "PageMembers",
+     components: {
+    Field,
+    Form,
+    ErrorMessage,
+  }, 
   data: function () {
     return {
       // data lier au ouverture de divers bloc
@@ -255,6 +273,13 @@ console.log(comments.data);
 })
 },
  methods: {
+     isRequired(value) {
+      if (value && value.trim()) {
+        return true;
+      }
+
+      return 'Champs obligatoire';
+    },
   //  methode pour ouvrir le menue utilisation
 showNavBarSwitch(userId) {
      this.showNavBarId = userId;
@@ -481,6 +506,11 @@ location.reload();
   margin-top: 20px;
   border-radius: 10px;
   margin-right: 30px;
+    .errorMessage{
+    color: black;
+    font-size: 13px;
+    font-weight: bold;
+  }
   h2{
       margin-left: 5%;
       color: #565363;
@@ -565,8 +595,12 @@ font-size: 13px;
  left: 38%;
       background-color: white;
       width: 500px;
-      height: 300px;
+      // height: 300px;
       padding: 10px;
+         form{
+        display: flex;
+        flex-direction: column;
+      }
       h3{
         text-align: center;
         margin-top: -5px;
@@ -688,6 +722,8 @@ margin-left: 8px;
          margin-left: auto;
          margin-right: auto;
          margin-top: 10px;
+           object-fit: cover;
+              height: 55%; 
          width: 50%;
          border-radius: 20px;
        }
@@ -702,8 +738,14 @@ margin-left: 8px;
  box-shadow: 1px 2px 5px #635c9b;
       background-color: white;
       width: 500px;
-      height: 200px;
+      // height: 200px;
       padding: 10px;
+          .errorMessageText{
+            margin-top: 5px;
+    color: black;
+    font-size: 13px;
+    font-weight: bold;
+  }
       form{
         display: flex;
         flex-direction: column;
@@ -789,9 +831,12 @@ background-color: #7272a5;
          border-radius: 20px;
          margin-left: auto;
          margin-right: auto;
+         
+         object-fit: cover;
+              height: 55%; 
          width: 50%;
        }
-       .textPreviewMessage{
+         .textPreviewMessage{
          display:flex;
          margin-left: auto;
          margin-right: auto;
@@ -840,8 +885,8 @@ background-color: #7272a5;
       top: 20%;
       left: 40%;
        width: 400px;
-       height: 300px;
-       padding: 5px;
+       
+       padding: 15px;
        border-radius: 20px;
        box-shadow: 1px 2px 5px #635c9b;
         .iconXComment{
@@ -863,4 +908,51 @@ background-color: #7272a5;
        }
        }
    }
+   @media screen and (max-width: 992px)
+{
+  .section-homePage {
+  width: 90%;
+  margin-right: 10px;
+}
+   .blockUpdateProfil{
+
+ margin-left: -50%;
+    
+      width: 200px;
+     
+      form{
+        margin-left: 20%;
+      width: 70%;
+      }
+   }
+    .retailPost{
+       margin-left: -35%;
+    
+    }
+       .blocModificationPost{
+ margin-left: -40%;
+      form{
+        width: 85%;
+        margin-left: 2%;
+      }
+       }
+       .formComment{
+     width: 90%;
+     margin-top: 10px;
+}
+        .blockPreview{
+      margin-left: -35%;
+      
+        }
+        .blockMenuComment{
+         right: 2%;
+        }
+        .blockUpdateComment{
+      margin-left: -38%;
+      
+        form{
+         margin-top: 30px;
+        }
+        }
+}
 </style>

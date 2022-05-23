@@ -4,12 +4,13 @@ rajout plus tard de la possibilité de voir les messages, le nombre de message e
   <section><div class="section-membersPage">
     <div class="center-block">
       <div v-for="user in users" v-bind:key="user.id" class="block-members">
-        <img v-bind:src="user.image" class="img-members" />
-        <h3>{{ user.name }} {{ user.lastname }}</h3>
+        <img v-bind:src="user.image" class="img-members" alt="image de profil"/>
+      <span class="displayInfos">  <h3>{{ user.name }} {{ user.lastname }}</h3>
         <p>
           {{ user.role }}<br />
           {{ user.email }}
         </p>
+        </span>
       </div>
     </div>
     </div>
@@ -83,10 +84,13 @@ export default {
       background-color: #565363;
       width: 30%;
       margin-left: 15px;
+      margin-top: 10px;
       border-radius: 20px;
       box-shadow: 1px 2px 5px #635c9b;
       .img-members {
-        width: 40%;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
         border-radius: 100px;
         margin-left: auto;
         margin-right: auto;
@@ -103,5 +107,32 @@ export default {
       }
     }
   }
+}
+@media screen and (max-width: 992px)
+{
+  .section-membersPage {
+position: absolute;
+  width: 85%;
+ top: 50%;
+ left: 5%;
+ .center-block {
+ 
+    margin-left: 5px;
+   .block-members { 
+      margin-top: 10px;
+      flex-direction: row;
+      width: 95%;
+      padding: 5px;
+      margin-left: 0px;
+    
+      .displayInfos{
+        margin-right: 10px;
+      }
+      .img-members {
+        width: 30%;
+      }
+   }
+   }
+}
 }
 </style>

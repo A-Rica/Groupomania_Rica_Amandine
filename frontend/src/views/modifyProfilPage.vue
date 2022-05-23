@@ -1,43 +1,49 @@
 <template>
 <!-- page pour la modification et suppression du compte utilisateur -->
-  <section><div class="section-membersPage">
+  <section><div class="section-membersPage"><Form>
     <label for="name">Nom:</label>
-    <input
+    <Field
       v-model="users.name"
+      name="name"
       id="name"
       type="text"
-      v-bind:placeholder="user.name"
+      v-bind:placeholder="user.name" :rules="isRequired"
     />
+    <ErrorMessage name="name" class="errorMessage"/><br/>
     <label for="lastname">Prenom: </label>
-    <input
+    <Field
       v-model="users.lastname"
+      name="lastname"
       id="lastname"
       type="text"
-      v-bind:placeholder="user.lastname"
+      v-bind:placeholder="user.lastname" :rules="isRequired"
     />
+    <ErrorMessage name="lastname" class="errorMessage"/><br/>
     <label for="email">Email:</label>
-    <input
+    <Field
       v-model="users.email"
       id="email"
       name="email"
       type="email"
-      v-bind:placeholder="user.email"
+      v-bind:placeholder="user.email" :rules="isRequired"
     />
+    <ErrorMessage name="email" class="errorMessage"/><br/>
     <label for="password">Mot de passe: </label>
-    <input
+    <Field
       v-model="users.password"
       id="password"
       name="password"
       type="password"
-      placeholder="Entrez ici votre mot de passe"
+      placeholder="Entrez ici votre mot de passe" :rules="isRequired"
     />
-    <label for="file">Votre image de profil:</label>
+    <ErrorMessage name="password" class="errorMessage"/><br/>
+    <label for="image">Votre image de profil:</label>
     <input
       @change="onFileChange"
       type="file"
       ref="file"
       name="image"
-      id="file"
+      id="image"
       accept=".jpg, .jpeg, .gif, .png"
     />
     <div class="positionButton"><button
@@ -52,17 +58,24 @@
       id="delete"
       name="delete"
       type="submit">Suppression du compte</button>
-    </div></div>
-   
+    </div>
+   </Form></div>
   </section>
 </template>
 <script>
 // import d'axios et du map Getters. Mise en place de la data.
 import axios from "axios";
 import { mapGetters } from "vuex";
+import { Field, Form, ErrorMessage } from 'vee-validate';
+
 
 export default {
   name: "ModifyProfilPage",
+   components: {
+    Field,
+    Form,
+    ErrorMessage,
+  }, 
   data: function () {
     return {
       // data lier à la modification de l'utilisateur
@@ -100,6 +113,13 @@ export default {
   },
 
   methods: {
+     isRequired(value) {
+      if (value && value.trim()) {
+        return true;
+      }
+
+      return 'Champs obligatoire';
+    },
 // recupération des information de l'image envoit via l'input
     onFileChange() {
       this.users.image = this.$refs.file.files[0];
@@ -166,8 +186,6 @@ axios.delete('http://localhost:3000/api/profil/' + localStorage.getItem("userId"
 </script>
 <style lang="scss" scoped>
 .section-membersPage {
-  display: flex;
-  flex-direction: column;
   background-color: #c4c4fd;
   background-image: url("../assets/Pattern-Transparent-Background.png");
   background-size: cover;
@@ -178,10 +196,19 @@ axios.delete('http://localhost:3000/api/profil/' + localStorage.getItem("userId"
   border-radius: 10px;
   margin-left: auto;
   margin-right: auto;
+  form{
+     display: flex;
+  flex-direction: column;
+  }
   .imgEntete {
     margin-left: auto;
     margin-right: auto;
     height: 50px;
+  }
+  .errorMessage{
+    color: black;
+    font-size: 13px;
+    font-weight: bold;
   }
   .positionButton{
     
@@ -212,5 +239,12 @@ margin-right: auto;
     }
   } 
    }
+}
+@media screen and (max-width: 992px)
+{
+.section-membersPage {
+  width: 90%;
+  margin-top: 70%;
+}
 }
 </style>

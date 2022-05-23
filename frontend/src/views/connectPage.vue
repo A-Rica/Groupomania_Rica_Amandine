@@ -41,7 +41,7 @@
     </form>
     <!-- formulaire inscription avec les mêmes champs que connexion mais avec le noms et prenom -->
     <!-- Ne pas oublier mettre message avertissement quand le formulaire est mal rempli -->
-    <Form class="formulaire" v-else @submit.prevent="createdUser()">
+    <Form class="formulaire" v-else @submit="createdUser()">
  
      <label for="email">Email: </label>
       <Field
@@ -274,5 +274,17 @@ export default {
       background-color: darken(#7272a5, 10%);
     }
   }
+}
+
+/***Début Ecran 992px***/
+
+@media screen and (max-width: 992px)
+{
+.section-connectPage {
+
+  width: 90%;
+  height: 50%;
+  padding: 10px;
+}
 }
 </style>

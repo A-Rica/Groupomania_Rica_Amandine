@@ -11,14 +11,14 @@
           v-model="post.title"
           type="texte"
           name="title"
-          :id="title"
+          id="title"
           class="blockTitle"
           placeholder="Placez votre titre ici." :rules="isRequired" />
-        <ErrorMessage name="title" /><br/>
+        <ErrorMessage name="title" class="errorMessage"/><br/>
         <label id="labelBlockNewPost" for="Text">Message:</label>
-        <Field name="Text"  v-model="post.text" :rules="isRequired" v-slot="{ field }" >
-        <textarea name="Text" class="blockText" v-bind="field"> </textarea></Field>
-        <ErrorMessage name="Text"/><br/>
+        <Field name="Text" id="Text"  v-model="post.text" :rules="isRequired" v-slot="{ field }" >
+        <textarea name="Text" id="Text" class="blockText" v-bind="field"> </textarea></Field>
+        <ErrorMessage name="Text" class="errorMessage"/><br/>
         <label id="labelBlockNewPost" for="image">Image:</label>
         
         <input
@@ -38,7 +38,7 @@
     <div v-if="authenficated" class="section-homePage">
       <div class="postWall" v-for="post in posts" v-bind:key="post.id">
         <div class="positionTitleNameImage">
-          <img v-bind:src="post.user.image" class="img-members" />
+          <img v-bind:src="post.user.image" class="img-members" alt="image de profil"/>
           <span class="positionTitleName">
             <h3>
               <router-link
@@ -57,10 +57,10 @@
         </div>
         <p class="formatText">
           {{ post.text }}
-          <img v-bind:src="post.image" class="imagePost" />
+          <img v-bind:src="post.image" class="imagePost" alt="image du message" />
         </p>
         <div class="barreBottom"> 
-          <button class="likeForm" :class="{disabled: iLiked}" @click="likeClick(post.id)"><i class="fa-solid fa-thumbs-up"></i></button> 
+          <a class="likeForm" :style="{color: iLiked}" @click="likeClick(post.id)"><i class="fa-solid fa-thumbs-up"></i></a>({{ post.like.length}}) 
       
         </div>
       </div>
@@ -88,8 +88,7 @@ export default {
       showNewPost: false,
       showComments: false,
       showCommentspostId: null,
-    
-     iLiked: false,
+     iLiked: '',
       post: {
         title: "",
         text: "",
@@ -119,21 +118,26 @@ export default {
     }),
   },
   created: function () {
-    axios.get("http://localhost:3000/api/messages/").then((posts) => {
-      this.posts = posts.data
-
-});
+ this.getPosts()
 
   },
 
 
   methods: {
+    getPosts(
+    ){
+      axios.get("http://localhost:3000/api/messages/").then((posts) => {
+      this.posts = posts.data
+console.log(posts.data);
+});
+   
+    },
  isRequired(value) {
       if (value && value.trim()) {
         return true;
       }
 
-      return 'This is required';
+      return 'Champs obligatoire';
     },
     // fonction permettant de récuperer l'image envoyé
     onFileChange() {
@@ -205,13 +209,12 @@ export default {
           location.reload();
         });
     },
- likeClick(PostId) {
-
+ likeClick(likeId) {
 const formData = new FormData();
 
 formData.append("userId", this.like.userId)
-formData.append('messageId', this.like. messageId)
-   axios.post('http://localhost:3000/api/messages/' + PostId + '/like', 
+formData.append('messageId', this.like.messageId)
+   axios.post('http://localhost:3000/api/messages/' + likeId + '/like', 
    formData, {
             // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
             headers: {
@@ -219,11 +222,19 @@ formData.append('messageId', this.like. messageId)
             },
           })
           .then((likes) => {
-          this.likes = likes.data.dataValues
-          this.iLiked = !this.iLiked;
+          if(likes.data.userLiked === false) {
+         return false
+          }else {
+             this.iLiked = '#635c9b';
+          }
+this.getPosts()
+
+          console.log(likes.data);
+          // this.likes = likes.data.dataValues
+       
           })
  },
- 
+  
   },
 
 
@@ -244,6 +255,11 @@ formData.append('messageId', this.like. messageId)
   border-radius: 10px;
   margin-right: 30px;
 }
+.errorMessage{
+    color: black;
+    font-size: 13px;
+    font-weight: bold;
+  }
 .newPost {
   float: right;
   margin-right: 57%;
@@ -309,6 +325,8 @@ formData.append('messageId', this.like. messageId)
     flex-direction: row;
     .img-members {
       width: 100px;
+      height: 100px;
+      object-fit: cover;
       border-radius: 100px;
       margin-top: -20px;
       margin-left: -20px;
@@ -373,57 +391,33 @@ formData.append('messageId', this.like. messageId)
         color: #635c9b;
       
     }
-    .linkComment {
-      float: right;
-      cursor: pointer;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-    .blockComment {
-      width: 98%;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 10px;
-      .blockCommentPosition{
-        display: flex;
-        flex-direction: row;
-     .imageUserComment{
-       width: 110px;
-       height: 110px;
-       border-radius: 100px;
-       margin-top: 20px;
-        box-shadow: 1px 2px 5px #635c9b;
-     }
-     .formComment {
-        margin-top: 25px;
-        width: 82%;
-        padding: 5px;
-        margin-left: 20px;
-        border-radius: 5px;
-        text-align: justify;
-        background-color: rgb(239, 237, 237);
-        box-shadow: 1px 2px 5px #635c9b;
-
-        h4 {
-          margin-top: -5px;
-          font-size: 15px;
-        }
-        span {
-          font-size: 13px;
-        }
-        .imageComment {
-                display: block;
-         margin-left: auto;
-         margin-right: auto;
-          height: 170px;
-          border-radius: 20px;
-        }
-      }
-     }
-    }
   }
 }
+@media screen and (max-width: 992px)
+{
+  .section-homePage {
+  width: 85%;
+  margin-right: 10px;
+}
 
+.newPost {
+  margin-right: 5%;
+}
+
+.blockNewPost {
+  margin-right: 10px;
+  width: 85%;
+}
+.postWall {
+   width: 100%;
+   margin-right:-10px;
+
+
+  .formatText {
+    overflow:auto;
+    height: 150px;
+  }
+}
+}
 
 </style>

@@ -14,6 +14,7 @@ const Regex_email = new RegExp("^[a-zA-Z0-9. -_]+[@]{1}[a-zA-Z0-9.-_]+$");
 //inscription de l'utilisateur//
 
 exports.signup = (req, res, next) => {
+
   //Hashage du mot de passe avec bcrypt et récupération des information avec req.body//
   bcrypt.hash(req.body.password, 10)
     .then(hash => {
@@ -25,6 +26,7 @@ exports.signup = (req, res, next) => {
         role: req.body.role,
         password: hash,
       });
+
       //Obligation de remplir les champs demandé avec plusieurs if et des regex//
       if (req.body.email == null || req.body.name == null || req.body.lastname == null || req.body.password == null) {
         return res.status(400).json({ error: 'Champs obligatoire vide!' })
@@ -140,7 +142,6 @@ exports.updateProfil = async (req, res) => {
         })
     }
 
-    console.log('mot de passe:', req.body.password)
     //mise en place d'un bcrypt sur le mot de passe afin que ce dernier, en cas de modification soit toujours sécurisé.
     bcrypt.hash(req.body.password, 10)
 

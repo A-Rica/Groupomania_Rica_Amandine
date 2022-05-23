@@ -7,6 +7,7 @@ const { user, comment } = require("../models");
 // //creation d'un post//
 
 exports.createMessage = (req, res, next) => {
+
   //condition si un fichier est téléchargé, alors on l'enregistre, sinon, un null est mis à la place
   if (req.file) {
     image = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
@@ -18,8 +19,7 @@ exports.createMessage = (req, res, next) => {
     title: req.body.title,
     text: req.body.text,
     image: image,
-    userId: req.userId,
-
+    userId: req.userId
   });
   //sauvegarde du message
   message.save()
@@ -90,7 +90,7 @@ exports.getAllMessages = async (req, res, next) => {
   Message.findAll({
     include:
       [
-        "user", { model: comment, as: "comment", include: ["user"] }
+        "like", "user", { model: comment, as: "comment", include: ["user"] }
       ]
 
   })

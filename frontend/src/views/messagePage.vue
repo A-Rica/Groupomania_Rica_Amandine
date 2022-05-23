@@ -16,19 +16,23 @@
       >
       <!-- Partie sur la modification de message -->
       <div class="postUser" v-if="showModifyPost">
-        <form @submit.prevent="modifyPost()">
+        <Form @submit.prevent="modifyPost()">
           <label for="title">Titre: </label>
-          <input
+          <Field
             v-model="post.title"
             type="texte"
             name="title"
             id="title"
             class="blockTitle"
-            placeholder="Placez votre titre ici."
+            placeholder="Placez votre titre ici." :rules="isRequired"
           />
+            <ErrorMessage name="title" /><br/>
           <label id="labelBlockNewPost" for="Text">Message:</label>
-          <textarea name="Text" class="blockText" v-model="post.text">
+           <Field name="Text" id="Text"  v-model="post.text" :rules="isRequired" v-slot="{ field }" >
+           <textarea name="Text" id="Text" class="blockText"  v-model="post.text" v-bind="field">
           </textarea>
+          </Field>
+           <ErrorMessage name="Text"/><br/>
           <label id="labelBlockNewPost" for="image">Image:</label>
           <input
             type="file"
@@ -44,7 +48,7 @@
       </div>
       <!-- Partie affichant le message -->
       <div class="postUser" v-else>
-        <img v-bind:src="post.user.image" class="img-members" />
+        <img v-bind:src="post.user.image" class="img-members" alt="image du profil"/>
         <span class="positionTitleName"
           ><h2>{{ post.title }}</h2>
           <h3>de {{ post.user.lastname }} {{ post.user.name }}</h3>
@@ -52,33 +56,36 @@
 
         <p class="formatText">
           {{ post.text }}
-          <img v-bind:src="post.image" class="imagePost" />
+          <img v-bind:src="post.image" class="imagePost" alt="image du message"/>
         </p>
         <div class="barreBottom">
-          <i class="fa-solid fa-thumbs-up"></i>
+  
           <span class="linkComment" @click="showCommentSwitch"
             >Voir les commentaires</span
           >
           <div class="blockComment" v-if="showComments">
             <!-- Partie création de commentaire -->
-            <form @submit.prevent="createdComment()">
-              <textarea
+            <Form @submit="createdComment()">
+          <label for="comment">Texte:</label>    
+          <Field name="comment" id="comment" v-model="comment.text" :rules="isRequired" v-slot="{ fieldComment }">
+          <textarea
                 name="comment"
-                id="comments"
+                id="comment"
                 type="text"
-                v-model="comment.text"
-              ></textarea>
-              <input
+                v-model="comment.text" v-bind="fieldComment"
+              ></textarea></Field>
+               <ErrorMessage name="comment" class="errorMessage"/><br/>
+             <label for="images">Image:</label> <input
                 type="file"
                 ref="file"
-                name="image"
-                id="image"
+                name="images"
+                id="images"
                 @change="onFileChangeComment"
               />
               <button class="send" id="forward" name="send" type="submit">
                 Envoyer
               </button>
-            </form>
+            </Form>
 
             <h3>Commentaires</h3>
             <div
@@ -109,15 +116,18 @@
                   <li @click="deleteComment(comment.id)">Suppression du Commentaire</li>
                 </ul>
               </nav>
-              <img class="formAvatar" v-bind:src="comment.user.image" />
+              <img class="formAvatar" v-bind:src="comment.user.image" alt="image du profil" />
               <div class="formComment" v-if="showModifyComments == comment.id">
-                <form @submit.prevent="modifyComments(comment.id)">
-                 <label for="comment">Texte:</label> <textarea
-                    name="comment"
+                <Form @submit="modifyComments(comment.id)">
+                 <label for="comments">Texte:</label>
+                   <Field name="comments" id="comments" v-model="commentary.text" :rules="isRequired" v-slot="{ fieldComments }">
+                   <textarea
+                    name="comments"
                     id="comments"
                     type="text"
-                    v-model="commentary.text"
-                  ></textarea>
+                    v-model="commentary.text" v-bind="fieldComments"
+                  ></textarea></Field>
+                   <ErrorMessage name="comments" class="errorMessage"/><br/>
                   <label for="image">Votre image:</label>
                   <input
                     type="file"
@@ -138,7 +148,7 @@
                   class="imageComment"
                   :src="comment.image"
                   v-show="comment.image"
-                />
+                alt="image du commentaire"/>
               </div>
             </div>
           </div>
@@ -151,8 +161,15 @@
 // import { mapGetters } from "vuex";
 import axios from "axios";
 import { mapGetters } from "vuex";
+import { Field, Form, ErrorMessage } from 'vee-validate';
+
 export default {
   name: "MessagePage",
+   components: {
+    Field,
+    Form,
+    ErrorMessage,
+  }, 
   data: function () {
     return {
       // data lier aux affichage de menue et des bloc de modification
@@ -231,6 +248,13 @@ export default {
   },
 
   methods: {
+     isRequired(value) {
+      if (value && value.trim()) {
+        return true;
+      }
+
+      return 'Champs obligatoire';
+    },
 // ouverture des menues, du cadre de modication de post, de commentaire
     showModifyPostSwitch() {
       this.showModifyPost = !this.showModifyPost;
@@ -422,6 +446,11 @@ location.reload();
       }
     }
   }
+  .errorMessage{
+    color: black;
+    font-size: 13px;
+    font-weight: bold;
+  }
   .img-members {
     float: left;
     width: 120px;
@@ -537,6 +566,8 @@ location.reload();
         cursor: pointer;
       }
       .formMenuModifyComment {
+        display:flex;
+        flex-direction: column;
         position: absolute;
         right: 8%;
         margin-top: 2%;
@@ -545,7 +576,7 @@ location.reload();
         background-image: url("../assets/Pattern-Transparent-Background.png");
         background-size: cover;
         box-shadow: 1px 2px 5px #635c9b;
-        width: 13%;
+       width: 100px;
         padding: 5px; 
         font-weight: bold;
         text-align: center;
@@ -564,6 +595,7 @@ location.reload();
       }
       .formComment {
         margin-top: 25px;
+      
         width: 82%;
         padding: 5px;
         margin-left: 20px;
@@ -589,6 +621,7 @@ location.reload();
       }
 
       .formAvatar {
+        display:block;
         margin-top: 25px;
         width: 100px;
         height: 100px;
@@ -597,5 +630,52 @@ location.reload();
       }
     }
   }
+}
+@media screen and (max-width: 992px)
+{
+.section-messagePage {
+  display: flex;
+  flex-direction: column;
+  float: right;
+  background-color: #c4c4fd;
+  background-image: url("../assets/Pattern-Transparent-Background.png");
+  background-size: cover;
+  box-shadow: 1px 2px 5px #635c9b;
+  width: 87%;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+.postUser {
+  width: 100%;
+  margin-right: 10px;
+  form {
+    width: 90%;
+    padding-bottom: 5px;
+  }
+}
+      .positionPoint {
+        position: absolute;
+       z-index: 2;
+       margin-top: 10px;
+      }
+.formMenuModifyComment {  
+  z-index: 2;
+        top: 135%;
+      }
+       .formComment {
+        display: flex;
+        flex-direction: column;
+             .imageComment {
+         display: block;
+         margin-left: auto;
+         margin-right: auto;        
+       height: 55%; 
+         width: 60%;
+          object-fit: cover;
+          border-radius: 20px;
+        }
+      }
 }
 </style>
