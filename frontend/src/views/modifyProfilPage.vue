@@ -1,6 +1,6 @@
 <template>
 <!-- page pour la modification et suppression du compte utilisateur -->
-  <section><div class="section-membersPage"><Form>
+  <section><div class="section-membersPage"><Form @submit="updateProfil()" >
     <label for="name">Nom:</label>
     <Field
       v-model="users.name"
@@ -47,7 +47,6 @@
       accept=".jpg, .jpeg, .gif, .png"
     />
     <div class="positionButton"><button
-      @click="updateProfil"
       class="update"
       id="update"
       name="update"

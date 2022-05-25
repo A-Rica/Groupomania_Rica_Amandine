@@ -32,7 +32,12 @@ exports.createMessage = (req, res, next) => {
 
 exports.getOneMessages = (req, res, next) => {
   //utilisation d'un findOne pour récuperer les données du message incluant l'user
-  Message.findOne({ where: { id: req.params.id }, include: ["user"] })
+  Message.findOne({
+    where: { id: req.params.id }, include:
+      [
+        "like", "user", { model: comment, as: "comment", include: ["user"] }
+      ]
+  })
     //res status soit pour visualisé le message. Soit message d'erreur
     .then(message => res.status(200).json(message))
     .catch((error) => {

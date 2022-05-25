@@ -23,6 +23,7 @@ exports.likeUsers = async function (req, res, next) {
             ) => {
 
                 res.status(200).send({
+                    ...liked,
                     message: "like supprimé"
                 })
             }

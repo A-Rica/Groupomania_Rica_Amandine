@@ -60,8 +60,9 @@
           <img v-bind:src="post.image" class="imagePost" alt="image du message" />
         </p>
         <div class="barreBottom"> 
-          <a class="likeForm" :style="{color: iLiked}" @click="likeClick(post.id)"><i class="fa-solid fa-thumbs-up"></i></a>({{ post.like.length}}) 
-      
+          <a class="likeForm disabled"  @click="likeClick(post.id)" v-if="this.postLike.like.userLiked == true "><i class="fa-solid fa-thumbs-up"></i></a>
+     <a class="likeForm"  @click="likeClick(post.id)" v-else><i class="fa-solid fa-thumbs-up"></i></a>
+     ({{ post.like.length}})   
         </div>
       </div>
     </div>
@@ -88,7 +89,8 @@ export default {
       showNewPost: false,
       showComments: false,
       showCommentspostId: null,
-     iLiked: '',
+     iLiked: false,
+     unLiked: 'black',
       post: {
         title: "",
         text: "",
@@ -100,6 +102,9 @@ export default {
   
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
+  postLike: {
+    like: ''
+  },
       // data lier aux likes
       //faire mounted avec if
       like: 
@@ -128,7 +133,6 @@ export default {
     ){
       axios.get("http://localhost:3000/api/messages/").then((posts) => {
       this.posts = posts.data
-console.log(posts.data);
 });
    
     },
@@ -222,13 +226,15 @@ formData.append('messageId', this.like.messageId)
             },
           })
           .then((likes) => {
-          if(likes.data.userLiked === false) {
-         return false
-          }else {
-             this.iLiked = '#635c9b';
-          }
+        //   if(likes.data.userLiked === false) {
+        //  return false
+        //   }else {
+        //      this.iLiked = '#635c9b';
+        //   }
 this.getPosts()
-
+         if(this.postLike.like.userLiked == true) {
+           this.iLiked = !this.iLiked
+         }
           console.log(likes.data);
           // this.likes = likes.data.dataValues
        

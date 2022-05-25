@@ -90,7 +90,7 @@
             <h3>Commentaires</h3>
             <div
               class="blockDisplayComment"
-              v-for="comment in comments"
+              v-for="comment in post.comments"
               v-bind:key="comment.id"
             >
               <!-- bouton list modifié -->
@@ -186,6 +186,7 @@ export default {
         image: "",
         id: "",
         user: [],
+        comments: [],
       },
       // data lier à l'envoi d'un commentaire
       comment: {
@@ -207,7 +208,7 @@ export default {
         userId: localStorage.getItem("userId"),
       },
  // data permettant de visualiser un commentaire
-      comments: [],
+     
     };
   },
   computed: {
@@ -232,6 +233,7 @@ export default {
         this.post.text = post.data.text;
         this.post.image = post.data.image;
         this.post.user = post.data.user;
+        this.post.comments = post.data.comment;
       });
 // visualisation des données lier aux commentaires
     axios
