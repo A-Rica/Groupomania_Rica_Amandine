@@ -16,7 +16,7 @@
       >
       <!-- Partie sur la modification de message -->
       <div class="postUser" v-if="showModifyPost">
-        <Form @submit.prevent="modifyPost()">
+        <Form @submit="modifyPost()">
           <label for="title">Titre: </label>
           <Field
             v-model="post.title"
