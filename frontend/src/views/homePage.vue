@@ -60,9 +60,8 @@
           <img v-bind:src="post.image" class="imagePost" alt="image du message" />
         </p>
         <div class="barreBottom"> 
-          <a class="likeForm disabled"  @click="likeClick(post.id)" v-if="this.postLike.like.userLiked == true "><i class="fa-solid fa-thumbs-up"></i></a>
-     <a class="likeForm"  @click="likeClick(post.id)" v-else><i class="fa-solid fa-thumbs-up"></i></a>
-     ({{ post.like.length}})   
+          <a :style="{color: iLiked}"  @click="likeClick(post.id)"><i class="fa-solid fa-thumbs-up"></i></a>
+      ({{ post.like.length}})   
         </div>
       </div>
     </div>
@@ -89,8 +88,7 @@ export default {
       showNewPost: false,
       showComments: false,
       showCommentspostId: null,
-     iLiked: false,
-     unLiked: 'black',
+     iLiked: "",
       post: {
         title: "",
         text: "",
@@ -111,6 +109,7 @@ export default {
       {
        userId: localStorage.getItem('userId'),
        messageId: '',
+       user: '',
       },
     };
   },
@@ -218,6 +217,7 @@ const formData = new FormData();
 
 formData.append("userId", this.like.userId)
 formData.append('messageId', this.like.messageId)
+formData.append('user', this.like.user)
    axios.post('http://localhost:3000/api/messages/' + likeId + '/like', 
    formData, {
             // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
@@ -229,18 +229,21 @@ formData.append('messageId', this.like.messageId)
         //   if(likes.data.userLiked === false) {
         //  return false
         //   }else {
-        //      this.iLiked = '#635c9b';
+        //      this.iLiked = '';
         //   }
 this.getPosts()
-         if(this.postLike.like.userLiked == true) {
-           this.iLiked = !this.iLiked
+
+      this.postLike.like = likes.data
+console.log(likes.data);
+    if(this.postLike.like.userLiked == false) {
+        this.iLiked = "black"
+         }else{
+            this.iLiked = "#635c9b"
          }
-          console.log(likes.data);
-          // this.likes = likes.data.dataValues
-       
+
           })
  },
-  
+
   },
 
 

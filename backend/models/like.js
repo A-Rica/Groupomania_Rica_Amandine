@@ -6,10 +6,6 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true
     },
 
-    userLiked: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false
-    }
   });
   return Like;
 }; 

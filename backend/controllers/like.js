@@ -9,7 +9,7 @@ exports.likeUsers = async function (req, res, next) {
     // console.log(message.userLiked);
     // // recupération des données du like grace au findOne grace au UserId et messageId
     const liked = await Like.findOne({
-        where: { UserId: req.userId, messageId: message.id },
+        where: { UserId: req.userId, messageId: message.id }
     });
 
 
@@ -24,6 +24,7 @@ exports.likeUsers = async function (req, res, next) {
 
                 res.status(200).send({
                     ...liked,
+                    userLiked: false,
                     message: "like supprimé"
                 })
             }
@@ -38,7 +39,10 @@ exports.likeUsers = async function (req, res, next) {
         const like = new Like({
             messageId: req.params.id,
             userId: req.userId,
-            userLiked: true
+            userLiked: true,
+            user: await Like.findOne({
+                where: { UserId: req.userId, messageId: message.id }, inclure: ["user"]
+            })
         });
 
         // sauvegarde du like
@@ -49,6 +53,7 @@ exports.likeUsers = async function (req, res, next) {
 
                 res.status(201).json({
                     ...like,
+                    userLiked: true,
                     message: "vous avez bien liké ce message"
                 })
             })
