@@ -95,7 +95,7 @@ exports.profil = (req, res, next) => {
   // Utilisation de findOne pour visualiser les information de l'utilisateur avec where et req.params.id
   User.findOne({
     // attributes: ['id', 'nom', 'prenom', 'email', 'image'],
-    where: { id: req.userId }
+    where: { id: req.userId }, include: ["like", "message"]
   })
     //Si aucune erreur, les informations s'afficherons. Sinon un message apparaitra indiquant que l'utilisateur n'existe pas
     .then(user => {

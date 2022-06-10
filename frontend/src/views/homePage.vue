@@ -1,5 +1,5 @@
 <template>
-<section>
+  <section>
     <!-- Partie permettant d'envoyer les messages sur le mur avec un effet glissière -->
     <div class="newPost" @click="showNewPostSwitch" v-if="authenficated">
       Postez un nouveau message
@@ -7,27 +7,17 @@
     <div class="blockNewPost" v-if="showNewPost">
       <Form @submit="createdPost()">
         <label for="title">Titre :</label>
-        <Field
-          v-model="post.title"
-          type="texte"
-          name="title"
-          id="title"
-          class="blockTitle"
+        <Field v-model="post.title" type="texte" name="title" id="title" class="blockTitle"
           placeholder="Placez votre titre ici." :rules="isRequired" />
-        <ErrorMessage name="title" class="errorMessage"/><br/>
+        <ErrorMessage name="title" class="errorMessage" /><br />
         <label id="labelBlockNewPost" for="Text">Message:</label>
-        <Field name="Text" id="Text"  v-model="post.text" :rules="isRequired" v-slot="{ field }" >
-        <textarea name="Text" id="Text" class="blockText" v-bind="field"> </textarea></Field>
-        <ErrorMessage name="Text" class="errorMessage"/><br/>
+        <Field name="Text" id="Text" v-model="post.text" :rules="isRequired" v-slot="{ field }">
+          <textarea name="Text" id="Text" class="blockText" v-bind="field"> </textarea>
+        </Field>
+        <ErrorMessage name="Text" class="errorMessage" /><br />
         <label id="labelBlockNewPost" for="image">Image:</label>
-        
-        <input
-          type="file"
-          ref="file"
-          name="image"
-          id="image"
-          @change="onFileChange"
-        /><br />
+
+        <input type="file" ref="file" name="image" id="image" @change="onFileChange" /><br />
 
         <button class="send" id="send" name="send" type="submit">
           Envoyer
@@ -38,34 +28,32 @@
     <div v-if="authenficated" class="section-homePage">
       <div class="postWall" v-for="post in posts" v-bind:key="post.id">
         <div class="positionTitleNameImage">
-          <img v-bind:src="post.user.image" class="img-members" alt="image de profil"/>
+          <img v-bind:src="post.user.image" class="img-members" alt="image de profil" />
           <span class="positionTitleName">
             <h3>
-              <router-link
-                :to="{ name: 'message', params: { id: post.id } }"
-                class="colorLink"
-                >{{ post.title }}</router-link
-              >
+              <router-link :to="{ name: 'message', params: { id: post.id } }" class="colorLink">{{ post.title }}
+              </router-link>
             </h3>
             <br />
             <h4>
               Par {{ post.user.lastname }} {{ post.user.name }} le
               {{ new Date(post.createdAt).toLocaleString() }}
-            </h4></span
-          >
-          <span class="croixDelete" @click="deletePost(post.id)" :key="post.user.id"><i class="fa-solid fa-xmark"></i></span>
+            </h4>
+          </span>
+          <span class="croixDelete" @click="deletePost(post.id)" :key="post.user.id"><i
+              class="fa-solid fa-xmark"></i></span>
         </div>
         <p class="formatText">
           {{ post.text }}
           <img v-bind:src="post.image" class="imagePost" alt="image du message" />
         </p>
-        <div class="barreBottom"> 
-          <a :style="{color: iLiked}"  @click="likeClick(post.id)"><i class="fa-solid fa-thumbs-up"></i></a>
-      ({{ post.like.length}})   
+        <div class="barreBottom">
+          <a @click="likeClick(post.id)" :style="{color: colorLiked}"><i class="fa-solid fa-thumbs-up"></i></a>
+          ({{ post.like.length}})
         </div>
       </div>
     </div>
-     
+
   </section>
 </template>
 <script>
@@ -97,7 +85,6 @@ export default {
         // UserId récupérer dans le localStorage
         userId: localStorage.getItem("userId"),
       },
-  
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
   postLike: {
@@ -109,21 +96,24 @@ export default {
       {
        userId: localStorage.getItem('userId'),
        messageId: '',
-       user: '',
       },
+      likeIdMounted: '',
+      colorLiked: '',
     };
   },
- 
+
+  mounted: function () {
+    // this.colorLiked = localStorage.getItem('color')
+  },
   computed: {
     // Récupération de l'authentification dans le store
     ...mapGetters({
       authenficated: "auth/authenficated",
-      user: "auth/user",
     }),
   },
   created: function () {
- this.getPosts()
-
+    this.getPosts();
+  
   },
 
 
@@ -135,6 +125,7 @@ export default {
 });
    
     },
+
  isRequired(value) {
       if (value && value.trim()) {
         return true;
@@ -212,40 +203,37 @@ export default {
           location.reload();
         });
     },
- likeClick(likeId) {
+    likeClick(likeId) {
+
 const formData = new FormData();
 
 formData.append("userId", this.like.userId)
 formData.append('messageId', this.like.messageId)
-formData.append('user', this.like.user)
-   axios.post('http://localhost:3000/api/messages/' + likeId + '/like', 
-   formData, {
-            // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
-            headers: {
-              Authorization: "Bearer " + localStorage.getItem("token"),
-            },
-          })
-          .then((likes) => {
-        //   if(likes.data.userLiked === false) {
-        //  return false
-        //   }else {
-        //      this.iLiked = '';
-        //   }
-this.getPosts()
-
-      this.postLike.like = likes.data
-console.log(likes.data);
-    if(this.postLike.like.userLiked == false) {
-        this.iLiked = "black"
-         }else{
-            this.iLiked = "#635c9b"
-         }
-
-          })
- },
-
+      axios.post('http://localhost:3000/api/messages/' + likeId + '/like',
+        formData, {
+        // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+        .then((likes) => {
+          this.getPosts(likeId)
+          this.postLike.like = likes.data
+          console.log(likes.data);
+          if (likes.data.userLiked === false) {
+            this.colorLiked = "black"
+            localStorage.removeItem('color')
+          } else {
+            this.colorLiked = '#635c9b'
+            localStorage.setItem('color', "#635c9b")
+          }
+        })
+     
   },
 
+
+  },
+  
 
 };
 </script>

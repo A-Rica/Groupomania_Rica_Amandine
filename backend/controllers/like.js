@@ -12,7 +12,6 @@ exports.likeUsers = async function (req, res, next) {
         where: { UserId: req.userId, messageId: message.id }
     });
 
-
     // mise en place d'un condition if avec la constante liked. Si un like existe lier a l'id de l'utilisateur,
     //  on enlève le like grace à un destroy
     if (liked) {
@@ -38,11 +37,7 @@ exports.likeUsers = async function (req, res, next) {
         // constante like pour crée le like avec l'id du message et de l'utilisateurs
         const like = new Like({
             messageId: req.params.id,
-            userId: req.userId,
-            userLiked: true,
-            user: await Like.findOne({
-                where: { UserId: req.userId, messageId: message.id }, inclure: ["user"]
-            })
+            userId: req.userId
         });
 
         // sauvegarde du like
