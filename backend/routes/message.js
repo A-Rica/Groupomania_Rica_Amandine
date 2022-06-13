@@ -21,6 +21,6 @@ module.exports = app => {
     //Mettre des likes
     router.post("/:id/like", authJwt.verifyToken, like.likeUsers);
     // visionner les likes
-
+    router.get("/:id/like", authJwt.verifyToken, like.getOneLike);
     app.use('/api/messages', router);
 } 

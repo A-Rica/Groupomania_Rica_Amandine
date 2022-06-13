@@ -3,6 +3,26 @@ const Like = db.like;
 const Message = db.message
 const fs = require('fs');
 
+//lire les likes
+
+exports.getOneLike = async (req, res, next) => {
+    //utilisation d'un findOne pour récuperer les données du message incluant l'user
+    const message = await Message.findByPk(req.params.id);
+    // console.log(message.userLiked);
+    // // recupération des données du like grace au findOne grace au UserId et messageId
+    Like.findOne({
+        where: { UserId: req.userId, messageId: message.id }
+    })
+
+        //res status soit pour visualisé le message. Soit message d'erreur
+        .then(like => res.status(200).json(like))
+        .catch((error) => {
+            res.status(404).json({
+                error: error
+            })
+        });
+};
+
 //mise en place du système de like pour les messages
 exports.likeUsers = async function (req, res, next) {
     const message = await Message.findByPk(req.params.id);
@@ -37,7 +57,8 @@ exports.likeUsers = async function (req, res, next) {
         // constante like pour crée le like avec l'id du message et de l'utilisateurs
         const like = new Like({
             messageId: req.params.id,
-            userId: req.userId
+            userId: req.userId,
+            userLike: true
         });
 
         // sauvegarde du like
@@ -48,7 +69,6 @@ exports.likeUsers = async function (req, res, next) {
 
                 res.status(201).json({
                     ...like,
-                    userLiked: true,
                     message: "vous avez bien liké ce message"
                 })
             })

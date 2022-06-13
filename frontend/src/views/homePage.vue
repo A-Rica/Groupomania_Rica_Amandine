@@ -48,7 +48,7 @@
           <img v-bind:src="post.image" class="imagePost" alt="image du message" />
         </p>
         <div class="barreBottom">
-          <a @click="likeClick(post.id)" :style="{color: colorLiked}"><i class="fa-solid fa-thumbs-up"></i></a>
+          <a @click.prevent="likeClick(post.id)" :style="{color: colorLiked}"><i class="fa-solid fa-thumbs-up"></i></a>
           ({{ post.like.length}})
         </div>
       </div>
@@ -76,7 +76,7 @@ export default {
       showNewPost: false,
       showComments: false,
       showCommentspostId: null,
-     iLiked: "",
+    likePostId: null,
       post: {
         title: "",
         text: "",
@@ -87,9 +87,7 @@ export default {
       },
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
-  postLike: {
-    like: ''
-  },
+  postLike: [],
       // data lier aux likes
       //faire mounted avec if
       like: 
@@ -99,11 +97,12 @@ export default {
       },
       likeIdMounted: '',
       colorLiked: '',
+      userLiked: ''
     };
   },
 
   mounted: function () {
-    // this.colorLiked = localStorage.getItem('color')
+    this.colorLiked = localStorage.getItem('color')
   },
   computed: {
     // Récupération de l'authentification dans le store
@@ -217,16 +216,29 @@ formData.append('messageId', this.like.messageId)
         },
       })
         .then((likes) => {
-          this.getPosts(likeId)
-          this.postLike.like = likes.data
-          console.log(likes.data);
-          if (likes.data.userLiked === false) {
-            this.colorLiked = "black"
-            localStorage.removeItem('color')
-          } else {
-            this.colorLiked = '#635c9b'
-            localStorage.setItem('color', "#635c9b")
+          this.getPosts()
+          // console.log(this.posts);
+          for (let i = 0;i < this.posts.length; i++) {
+            console.log(this.posts[i].like);
+            this.posts[i].like = likes.data
+          //   if (this.posts[i].like === false) {
+          //   this.colorLiked = "black"
+          //   localStorage.removeItem('color')
+          // } else {
+          //   this.colorLiked = '#635c9b'
+          //   localStorage.setItem('color', "#635c9b")
+          // }
           }
+          console.log(likes);
+  //         this.postLike.like= likes.data
+  // this.userLiked = likes.data.userLiked
+  //         if (likes.data.userLiked === false) {
+  //           this.colorLiked = "black"
+  //           localStorage.removeItem('color')
+  //         } else {
+  //           this.colorLiked = '#635c9b'
+  //           localStorage.setItem('color', "#635c9b")
+  //         }
         })
      
   },
