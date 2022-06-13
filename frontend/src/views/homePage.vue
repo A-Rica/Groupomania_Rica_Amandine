@@ -46,9 +46,9 @@
         <p class="formatText">
           {{ post.text }}
           <img v-bind:src="post.image" class="imagePost" alt="image du message" />
-        </p>
+        </p> 
         <div class="barreBottom">
-          <a @click.prevent="likeClick(post.id)" :style="{color: colorLiked}"><i class="fa-solid fa-thumbs-up"></i></a>
+          <a @click.prevent="likeClick(post.id)" :class="{liked: post.like.find(likes =>likes.userId == userId )}"><i class="fa-solid fa-thumbs-up"></i></a>
           ({{ post.like.length}})
         </div>
       </div>
@@ -76,7 +76,6 @@ export default {
       showNewPost: false,
       showComments: false,
       showCommentspostId: null,
-    likePostId: null,
       post: {
         title: "",
         text: "",
@@ -87,7 +86,6 @@ export default {
       },
       // Data lier à l'affichage des messages. Mis en Array
       posts: [],
-  postLike: [],
       // data lier aux likes
       //faire mounted avec if
       like: 
@@ -95,14 +93,9 @@ export default {
        userId: localStorage.getItem('userId'),
        messageId: '',
       },
-      likeIdMounted: '',
-      colorLiked: '',
-      userLiked: ''
-    };
-  },
-
-  mounted: function () {
-    this.colorLiked = localStorage.getItem('color')
+      userId: localStorage.getItem('userId'),
+      liked: "disable"
+    }; 
   },
   computed: {
     // Récupération de l'authentification dans le store
@@ -120,7 +113,10 @@ export default {
     getPosts(
     ){
       axios.get("http://localhost:3000/api/messages/").then((posts) => {
-      this.posts = posts.data
+ this.posts = posts.data
+       
+console.log(posts.data);
+     
 });
    
     },
@@ -215,30 +211,16 @@ formData.append('messageId', this.like.messageId)
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
-        .then((likes) => {
+        .then(() => {
           this.getPosts()
-          // console.log(this.posts);
-          for (let i = 0;i < this.posts.length; i++) {
-            console.log(this.posts[i].like);
-            this.posts[i].like = likes.data
-          //   if (this.posts[i].like === false) {
-          //   this.colorLiked = "black"
+     
+          // if (this.liked == false) {
+          //   this.colorLiked = null
           //   localStorage.removeItem('color')
           // } else {
           //   this.colorLiked = '#635c9b'
           //   localStorage.setItem('color', "#635c9b")
           // }
-          }
-          console.log(likes);
-  //         this.postLike.like= likes.data
-  // this.userLiked = likes.data.userLiked
-  //         if (likes.data.userLiked === false) {
-  //           this.colorLiked = "black"
-  //           localStorage.removeItem('color')
-  //         } else {
-  //           this.colorLiked = '#635c9b'
-  //           localStorage.setItem('color', "#635c9b")
-  //         }
         })
      
   },
@@ -250,6 +232,8 @@ formData.append('messageId', this.like.messageId)
 };
 </script>
 <style lang="scss">
+
+
 .section-homePage {
   display: flex;
   flex-direction: column;
@@ -396,10 +380,10 @@ formData.append('messageId', this.like.messageId)
       background-color: transparent;
       border: none;
     }
-    .disabled {
+ .liked{
         color: #635c9b;
-      
     }
+ 
   }
 }
 @media screen and (max-width: 992px)

@@ -58,7 +58,6 @@ exports.likeUsers = async function (req, res, next) {
         const like = new Like({
             messageId: req.params.id,
             userId: req.userId,
-            userLike: true
         });
 
         // sauvegarde du like
@@ -69,6 +68,7 @@ exports.likeUsers = async function (req, res, next) {
 
                 res.status(201).json({
                     ...like,
+                    userLiked: true,
                     message: "vous avez bien liké ce message"
                 })
             })
