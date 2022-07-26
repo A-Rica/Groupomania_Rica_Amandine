@@ -17,7 +17,7 @@
         <ErrorMessage name="Text" class="errorMessage" /><br />
         <label id="labelBlockNewPost" for="image">Image:</label>
 
-        <input type="file" ref="file" name="image" id="image" @change="onFileChange" /><br />
+        <input type="file" ref="file" name="image" id="image" class="buttonImage" @change="onFileChange" /><br />
 
         <button class="send" id="send" name="send" type="submit">
           Envoyer
@@ -45,11 +45,28 @@
         </div>
         <p class="formatText">
           {{ post.text }}
-          <img v-bind:src="post.image" class="imagePost" alt="image du message" />
-        </p> 
+          <iframe width="560" height="315" v-bind:src="post.image" v-show="post.image" class="imagePost"
+            sandbox></iframe>
+        </p>
         <div class="barreBottom">
-          <a @click.prevent="likeClick(post.id)" :class="{liked: post.like.find(likes =>likes.userId == userId )}"><i class="fa-solid fa-thumbs-up"></i></a>
+          <a @click.prevent="likeClick(post.id)" :class="{liked: post.like.find(likes =>likes.userId == userId )}"><i
+              class="fa-solid fa-thumbs-up"></i></a>
           ({{ post.like.length}})
+
+          <span class="linkComment" @click="showCommentSwitch(post.id)">Voir les
+            commentaires</span>
+
+          <div class="blockComment" v-if="showCommentspostId == post.id">
+            <h3>Commentaires</h3>
+            <div class="blockDisplayComment" v-for="comment in post.comment" v-bind:key="comment.id">
+              <img class="formAvatar" v-bind:src="comment.user.image" alt="image du profil" />
+              <div class="formComment">
+                <h4>de {{ comment.user.lastname }} {{ comment.user.name }}</h4>
+                <span>{{ comment.text }}</span>
+                <img class="imageComment" :src="comment.image" v-show="comment.image" alt="image du commentaire" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -61,6 +78,7 @@
 import { mapGetters } from "vuex";
 import axios from "axios";
 import { Field, Form, ErrorMessage } from 'vee-validate';
+
 
 // import moment from "moment";
 export default {
@@ -75,6 +93,7 @@ export default {
     return {
       showNewPost: false,
       showComments: false,
+      showCommentsLink: false,
       showCommentspostId: null,
       post: {
         title: "",
@@ -115,7 +134,7 @@ export default {
       axios.get("http://localhost:3000/api/messages/").then((posts) => {
  this.posts = posts.data
        
-console.log(posts.data);
+
      
 });
    
@@ -178,7 +197,6 @@ console.log(posts.data);
     // Ouvrir le block commentaires 
     showCommentSwitch(postId) {
       this.showCommentspostId = postId;
-      this.showComments = !this.showComments;
     },
 
     // Suppression du message
@@ -232,6 +250,11 @@ formData.append('messageId', this.like.messageId)
 };
 </script>
 <style lang="scss">
+
+
+
+
+
 
 
 .section-homePage {
@@ -301,6 +324,10 @@ formData.append('messageId', this.like.messageId)
     &:hover {
       background-color: darken(#635c9b, 10%);
     }
+  }
+
+  .buttonImage{
+    margin-left: 20px;
   }
 }
 .postWall {
@@ -383,7 +410,63 @@ formData.append('messageId', this.like.messageId)
  .liked{
         color: #635c9b;
     }
- 
+
+    .linkComment {
+      float: right;
+      cursor: pointer;
+  
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+        .blockComment {
+          width: 98%;
+          margin-left: auto;
+          margin-right: auto;
+          padding: 10px;
+        }
+      .blockDisplayComment {
+                   display: flex;
+                   flex-direction: row;
+                   margin-left: auto;
+                   margin-right: auto;
+                 }
+        .formAvatar {
+              display: block;
+              margin-top: 25px;
+              width: 100px;
+              height: 100px;
+              border-radius: 5px;
+              box-shadow: 1px 2px 5px #635c9b;
+            }
+     .formComment {
+       margin-top: 25px;
+  
+       width: 82%;
+       padding: 5px;
+       margin-left: 20px;
+       border-radius: 5px;
+       text-align: justify;
+       background-color: rgb(239, 237, 237);
+       box-shadow: 1px 2px 5px #635c9b;
+  
+       h4 {
+         margin-top: -5px;
+         font-size: 15px;
+       }
+  
+       span {
+         font-size: 13px;
+       }
+  
+       .imageComment {
+         display: block;
+         margin-left: auto;
+         margin-right: auto;
+         height: 170px;
+         border-radius: 20px;
+       }
+     }
   }
 }
 @media screen and (max-width: 992px)

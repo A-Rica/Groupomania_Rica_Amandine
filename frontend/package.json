@@ -19,12 +19,14 @@
     "core-js": "^3.8.3",
     "jquery": "^3.6.0",
     "moment": "^2.29.3",
+    "node-polyfill-webpack-plugin": "^2.0.0",
     "popper.js": "^1.16.1",
     "sweetalert2": "^11.4.8",
     "vee-validate": "^4.5.11",
     "vue": "^3.2.13",
     "vue-router": "^4.0.14",
     "vuex": "^4.0.2",
+    "webpack": "^5.74.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {
