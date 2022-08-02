@@ -7,18 +7,31 @@ const { user, comment } = require("../models");
 // //creation d'un post//
 
 exports.createMessage = (req, res, next) => {
-
+  // image = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+  // video = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+  // console.log(video = `${req.protocol}://${req.get("host")}/images/}`);
   //condition si un fichier est téléchargé, alors on l'enregistre, sinon, un null est mis à la place
-  if (req.file) {
-    image = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+  if (req.files['image']) {
+    image = `${req.protocol}://${req.get("host")}/images/${req.files['image'][0].filename}`;
+    console.log("l'image:", image);
   } else {
     image = null;
+
   }
-  //constante pour crée le nouveau message
+
+  if (req.files['video']) {
+    video = `${req.protocol}://${req.get("host")}/images/${req.files['video'][0].filename}`;
+    console.log("la video: ", video);
+  }
+  else {
+    video = null;
+  }
+  // constante pour crée le nouveau message
   const message = new Message({
     title: req.body.title,
     text: req.body.text,
     image: image,
+    video: video,
     userId: req.userId
   });
   //sauvegarde du message

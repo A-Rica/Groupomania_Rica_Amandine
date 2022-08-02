@@ -8,6 +8,7 @@ exports.createComment = (req, res, next) => {
   //mise en place d'une condition permettant de savoir si une image est téléchargé ou non, si non, l'image sera indiquer "null"
   if (req.file) {
     image = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+    video = `${req.protocol}://${req.get("host")}/videos/${req.file.filename}`;
   } else {
     image = null;
   }
@@ -16,6 +17,7 @@ exports.createComment = (req, res, next) => {
   const comment = new Comment({
     text: req.body.text,
     image: image,
+    video: video,
     userId: req.body.userId,
     messageId: req.body.messageId
 
@@ -62,6 +64,13 @@ exports.modifyComment = async function (req, res, next) {
           fs.unlinkSync(`images/${filename}`)
 
         })
+        .then(comment => {
+          if (comment.video == null) {
+            return;
+          }
+          const filenameVideo = comment.video.split('/videos/')[1];
+          fs.unlinkSync(`videos/${filenameVideo}`)
+        })
     }
     //mise en place d'une constance avec la lecture des données grace aux req.body
 
@@ -70,6 +79,7 @@ exports.modifyComment = async function (req, res, next) {
         text: req.body.text,
         //mise en lien du fichier image téléchargé.
         image: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+        video: `${req.protocol}://${req.get("host")}/videos/${req.file.filename}`,
       } : { ...req.body };
     console.log(commentObject);
     //utilisation update afin de mettre a jours les données que l'utilisateur aura modifié. le where servant à dire où chercher.
@@ -100,7 +110,10 @@ exports.deleteComment = async (req, res) => {
         {
           const filename = comment.image.split('/images/')[1];
           fs.unlink(`images/${filename}`)
+          const filenameVideo = comment.video.split('/videos/')[1];
+          fs.unlink(`videos/${filenameVideo}`)
         }
+
         //utilisation de Comment.Destroy afin de supprimer l'utilisateur.
         comment.destroy()
           // res.status avec confirmation de la suppression sinon erreur

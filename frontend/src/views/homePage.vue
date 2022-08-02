@@ -18,7 +18,10 @@
         <label id="labelBlockNewPost" for="image">Image:</label>
 
         <input type="file" ref="file" name="image" id="image" class="buttonImage" @change="onFileChange" /><br />
+        <label id="labelBlockNewPost" for="video">Video:</label>
 
+        <input type="file" ref="file" name="video" id="video" class="buttonImage" @change="onFileChangeVideo" /><br />
+      
         <button class="send" id="send" name="send" type="submit">
           Envoyer
         </button>
@@ -45,8 +48,10 @@
         </div>
         <p class="formatText">
           {{ post.text }}
-          <iframe width="560" height="315" v-bind:src="post.image" v-show="post.image" class="imagePost"
-            sandbox></iframe>
+          <img v-bind:src="post.image" v-show="post.image" class="imagePost" alt="image du post" />
+          <video controls v-bind:src="post.video" v-show="post.video" class="imagePost">
+          </video>
+
         </p>
         <div class="barreBottom">
           <a @click.prevent="likeClick(post.id)" :class="{liked: post.like.find(likes =>likes.userId == userId )}"><i
@@ -78,18 +83,16 @@
 import { mapGetters } from "vuex";
 import axios from "axios";
 import { Field, Form, ErrorMessage } from 'vee-validate';
-
-
 // import moment from "moment";
 export default {
   name: "Wall-post",
-    components: {
+  components: {
     Field,
     Form,
     ErrorMessage,
-  }, 
+  },
   // Data à envoyé dans la dataBase
-   data: function () {
+  data: function () {
     return {
       showNewPost: false,
       showComments: false,
@@ -99,6 +102,7 @@ export default {
         title: "",
         text: "",
         image: "",
+        video: "",
         id: "",
         // UserId récupérer dans le localStorage
         userId: localStorage.getItem("userId"),
@@ -107,14 +111,14 @@ export default {
       posts: [],
       // data lier aux likes
       //faire mounted avec if
-      like: 
+      like:
       {
-       userId: localStorage.getItem('userId'),
-       messageId: '',
+        userId: localStorage.getItem('userId'),
+        messageId: '',
       },
       userId: localStorage.getItem('userId'),
       liked: "disable"
-    }; 
+    };
   },
   computed: {
     // Récupération de l'authentification dans le store
@@ -124,40 +128,37 @@ export default {
   },
   created: function () {
     this.getPosts();
-  
+
   },
-
-
   methods: {
     getPosts(
-    ){
+    ) {
       axios.get("http://localhost:3000/api/messages/").then((posts) => {
- this.posts = posts.data
-       
+        this.posts = posts.data
 
-     
-});
-   
+
+      });
+
     },
-
- isRequired(value) {
+    isRequired(value) {
       if (value && value.trim()) {
         return true;
       }
-
       return 'Champs obligatoire';
     },
     // fonction permettant de récuperer l'image envoyé
     onFileChange() {
-      this.post.image = this.$refs.file.files[0];
+        this.post.image = this.$refs.file.files[0];       
+    },
+    onFileChangeVideo() {
+      this.post.video = this.$refs.file.files[0];
     },
     // fonction de redirection en cas ou l'utilisateur est déconnecté, visant à le renvoyé à la page connexion
     redirection() {
       this.$router.push({ name: "connexion" });
     },
-
-    linkMessage(postsId){
-  this.$router.push({  path: '/message/' + postsId });
+    linkMessage(postsId) {
+      this.$router.push({ path: '/message/' + postsId });
     },
     // Ouverture du block New Post.
     showNewPostSwitch() {
@@ -166,13 +167,15 @@ export default {
     },
     // mise en place de l'envoie d'un message dans la base de données
     createdPost() {
-
+      console.log('voici la video:', this.post.video);
+      console.log("voici l'image", this.post.image);
       // création d'une constante formData pour y imposer les data à envoyé
       const formData = new FormData();
       // ajout du titre, texte et de l'image dans formData
       formData.append("title", this.post.title);
       formData.append("text", this.post.text);
       formData.append("image", this.post.image);
+      formData.append("video", this.post.video);
       // mise en place du lien vers l'API message, en utilisant l'userId présent dans la data.
       axios
         .post(
@@ -198,17 +201,16 @@ export default {
     showCommentSwitch(postId) {
       this.showCommentspostId = postId;
     },
-
     // Suppression du message
-    deletePost(postId){
-      axios.delete('http://localhost:3000/api/messages/' + postId, 
-       {
-            // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
-            headers: {
-              Authorization: "Bearer " + localStorage.getItem("token"),
-            },
-          })
-          .then(() => {
+    deletePost(postId) {
+      axios.delete('http://localhost:3000/api/messages/' + postId,
+        {
+          // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then(() => {
           const accept = confirm("Souhaitez vous supprimer ce message?");
           if (accept) {
             alert("Votre message à bien été supprimé.");
@@ -217,11 +219,9 @@ export default {
         });
     },
     likeClick(likeId) {
-
-const formData = new FormData();
-
-formData.append("userId", this.like.userId)
-formData.append('messageId', this.like.messageId)
+      const formData = new FormData();
+      formData.append("userId", this.like.userId)
+      formData.append('messageId', this.like.messageId)
       axios.post('http://localhost:3000/api/messages/' + likeId + '/like',
         formData, {
         // autorisation nécessaire à l'envoie des données et récupération du token dans le localStorage.
@@ -231,7 +231,7 @@ formData.append('messageId', this.like.messageId)
       })
         .then(() => {
           this.getPosts()
-     
+
           // if (this.liked == false) {
           //   this.colorLiked = null
           //   localStorage.removeItem('color')
@@ -240,22 +240,13 @@ formData.append('messageId', this.like.messageId)
           //   localStorage.setItem('color', "#635c9b")
           // }
         })
-     
-  },
 
-
+    },
   },
-  
 
 };
 </script>
 <style lang="scss">
-
-
-
-
-
-
 
 .section-homePage {
   display: flex;
@@ -271,11 +262,13 @@ formData.append('messageId', this.like.messageId)
   border-radius: 10px;
   margin-right: 30px;
 }
-.errorMessage{
-    color: black;
-    font-size: 13px;
-    font-weight: bold;
-  }
+
+.errorMessage {
+  color: black;
+  font-size: 13px;
+  font-weight: bold;
+}
+
 .newPost {
   float: right;
   margin-right: 57%;
@@ -289,10 +282,12 @@ formData.append('messageId', this.like.messageId)
   cursor: pointer;
   // top: 68px;
   margin-top: 20px;
+
   &:hover {
     background-color: darken(#635c9b, 10%);
   }
 }
+
 .blockNewPost {
   display: flex;
   flex-direction: column;
@@ -304,16 +299,20 @@ formData.append('messageId', this.like.messageId)
   width: 70%;
   margin-top: 10px;
   padding: 15px;
+
   .blockText {
     width: 100%;
     height: 100px;
   }
+
   .blockTitle {
     width: 100%;
   }
+
   #labelText {
     margin-top: 10px;
   }
+
   .send {
     width: 20%;
     height: 25px;
@@ -321,15 +320,17 @@ formData.append('messageId', this.like.messageId)
     margin-left: 40%;
     color: white;
     background-color: #635c9b;
+
     &:hover {
       background-color: darken(#635c9b, 10%);
     }
   }
 
-  .buttonImage{
+  .buttonImage {
     margin-left: 20px;
   }
 }
+
 .postWall {
   display: flex;
   flex-direction: column;
@@ -340,9 +341,11 @@ formData.append('messageId', this.like.messageId)
   box-shadow: 1px 2px 5px #635c9b;
   border-radius: 20px;
   margin-top: 25px;
+
   .positionTitleNameImage {
     display: flex;
     flex-direction: row;
+
     .img-members {
       width: 100px;
       height: 100px;
@@ -351,19 +354,23 @@ formData.append('messageId', this.like.messageId)
       margin-top: -20px;
       margin-left: -20px;
     }
+
     .positionTitleName {
       display: flex;
       flex-direction: column;
+
       h3 {
         font-size: 16.5px;
         margin-left: 10px;
         margin-top: -2px;
         cursor: pointer;
+
         .colorLink {
           color: black;
           text-decoration: none;
         }
       }
+
       h4 {
         font-size: 13px;
         font-weight: lighter;
@@ -371,7 +378,8 @@ formData.append('messageId', this.like.messageId)
         margin-left: 10px;
       }
     }
-    .croixDelete{
+
+    .croixDelete {
       position: absolute;
       cursor: pointer;
       right: 8%;
@@ -380,6 +388,7 @@ formData.append('messageId', this.like.messageId)
       margin-top: 4px;
     }
   }
+
   .formatText {
     display: flex;
     flex-direction: column;
@@ -388,112 +397,121 @@ formData.append('messageId', this.like.messageId)
     margin-top: -2px;
     margin-left: auto;
     margin-right: auto;
+
     .imagePost {
+      border: none;
       width: 60%;
+      height: 300px;
       margin-left: 19%;
       margin-top: 20px;
       border-radius: 5px;
     }
   }
+
   .barreBottom {
     width: 96%;
     border-top: 2px solid darkgray;
     margin-left: auto;
     margin-right: auto;
     padding: 3px;
-    .likeForm{
+
+    .likeForm {
       font-size: 20px;
       margin-left: 20px;
       background-color: transparent;
       border: none;
     }
- .liked{
-        color: #635c9b;
+
+    .liked {
+      color: #635c9b;
     }
 
     .linkComment {
       float: right;
       cursor: pointer;
-  
+
       &:hover {
         text-decoration: underline;
       }
     }
-        .blockComment {
-          width: 98%;
-          margin-left: auto;
-          margin-right: auto;
-          padding: 10px;
-        }
-      .blockDisplayComment {
-                   display: flex;
-                   flex-direction: row;
-                   margin-left: auto;
-                   margin-right: auto;
-                 }
-        .formAvatar {
-              display: block;
-              margin-top: 25px;
-              width: 100px;
-              height: 100px;
-              border-radius: 5px;
-              box-shadow: 1px 2px 5px #635c9b;
-            }
-     .formComment {
-       margin-top: 25px;
-  
-       width: 82%;
-       padding: 5px;
-       margin-left: 20px;
-       border-radius: 5px;
-       text-align: justify;
-       background-color: rgb(239, 237, 237);
-       box-shadow: 1px 2px 5px #635c9b;
-  
-       h4 {
-         margin-top: -5px;
-         font-size: 15px;
-       }
-  
-       span {
-         font-size: 13px;
-       }
-  
-       .imageComment {
-         display: block;
-         margin-left: auto;
-         margin-right: auto;
-         height: 170px;
-         border-radius: 20px;
-       }
-     }
+
+    .blockComment {
+      width: 98%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 10px;
+    }
+
+    .blockDisplayComment {
+      display: flex;
+      flex-direction: row;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .formAvatar {
+      display: block;
+      margin-top: 25px;
+      width: 100px;
+      height: 100px;
+      border-radius: 5px;
+      box-shadow: 1px 2px 5px #635c9b;
+    }
+
+    .formComment {
+      margin-top: 25px;
+
+      width: 82%;
+      padding: 5px;
+      margin-left: 20px;
+      border-radius: 5px;
+      text-align: justify;
+      background-color: rgb(239, 237, 237);
+      box-shadow: 1px 2px 5px #635c9b;
+
+      h4 {
+        margin-top: -5px;
+        font-size: 15px;
+      }
+
+      span {
+        font-size: 13px;
+      }
+
+      .imageComment {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        height: 170px;
+        border-radius: 20px;
+      }
+    }
   }
 }
-@media screen and (max-width: 992px)
-{
+
+@media screen and (max-width: 992px) {
   .section-homePage {
-  width: 85%;
-  margin-right: 10px;
-}
+    width: 85%;
+    margin-right: 10px;
+  }
 
-.newPost {
-  margin-right: 5%;
-}
+  .newPost {
+    margin-right: 5%;
+  }
 
-.blockNewPost {
-  margin-right: 10px;
-  width: 85%;
-}
-.postWall {
-   width: 100%;
-   margin-right:-10px;
+  .blockNewPost {
+    margin-right: 10px;
+    width: 85%;
+  }
 
+  .postWall {
+    width: 100%;
+    margin-right: -10px;
 
-  .formatText {
-    overflow:auto;
-    height: 150px;
+    .formatText {
+      overflow: auto;
+      height: 150px;
+    }
   }
 }
-}
-
 </style>

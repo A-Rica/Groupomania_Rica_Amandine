@@ -15,6 +15,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING
     },
 
+    video: {
+      type: Sequelize.STRING
+    },
+
     date: {
       type: Sequelize.DATE,
       defaultValue: sequelize.NOW
