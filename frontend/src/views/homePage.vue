@@ -17,7 +17,7 @@
         <ErrorMessage name="Text" class="errorMessage" /><br />
         <label id="labelBlockNewPost" for="image">Image:</label>
 
-        <input type="file" ref="file" name="image" id="image" class="buttonImage" @change="onFileChange" /><br />
+        <input type="file" ref="files" name="image" id="image" class="buttonImage" @change="onFileChange" /><br />
         <label id="labelBlockNewPost" for="video">Video:</label>
 
         <input type="file" ref="file" name="video" id="video" class="buttonImage" @change="onFileChangeVideo" /><br />
@@ -148,7 +148,7 @@ export default {
     },
     // fonction permettant de récuperer l'image envoyé
     onFileChange() {
-        this.post.image = this.$refs.file.files[0];       
+        this.post.image = this.$refs.files.files[0];
     },
     onFileChangeVideo() {
       this.post.video = this.$refs.file.files[0];
@@ -167,7 +167,7 @@ export default {
     },
     // mise en place de l'envoie d'un message dans la base de données
     createdPost() {
-      console.log('voici la video:', this.post.video);
+      // console.log('voici la video:', this.post.video);
       console.log("voici l'image", this.post.image);
       // création d'une constante formData pour y imposer les data à envoyé
       const formData = new FormData();
