@@ -25,6 +25,11 @@
       </ul>
     </div>
     <span class="welcomeUser">Bienvenue {{ user.lastname }} </span>
+    
+    <div class="searchBar">
+<input class="searchBarInput" type="text" id="searchBar" name="searchBar" />
+<button class="searchBarButton" type="submit" name="searchBarButton"></button>
+    </div>
     <img src="../assets/icon-left-font-monochrome-white.png" alt="Logo de l'entreprise"/>
   </nav>
 </template>
@@ -84,6 +89,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+
+
 #navBar {
   display: flex;
   background-color: #565363;
@@ -158,6 +165,37 @@ export default {
       }
     }
   }
+
+  .searchBar{
+    display: flex;
+    background-color: white;
+    width: 500px;
+    height: 40px;
+    border-radius: 20px;
+    margin-left: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+  align-content: center;
+  .searchBarInput{
+    margin-left: 20px;
+    border: none;
+    width: 435px;         
+  }
+  .searchBarButton{
+    border-radius: 100px;
+    // margin-left: -5px;
+    margin-top: auto;
+    margin-bottom: auto;
+    background-color: #635c9b;
+    border: none;
+    width: 38px;
+    height: 38px;
+    &:active{
+      background-color: lightgray;
+      border:2px solid #635c9b;
+    }
+  }
+    }
 }
 
 /***Début Ecran 992px***/

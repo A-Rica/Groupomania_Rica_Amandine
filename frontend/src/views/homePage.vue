@@ -21,7 +21,7 @@
         <label id="labelBlockNewPost" for="video">Video:</label>
 
         <input type="file" ref="file" name="video" id="video" class="buttonImage" @change="onFileChangeVideo" /><br />
-      
+
         <button class="send" id="send" name="send" type="submit">
           Envoyer
         </button>
@@ -54,8 +54,8 @@
 
         </p>
         <div class="barreBottom">
-          <a @click.prevent="likeClick(post.id)" :class="{liked: post.like.find(likes =>likes.userId == userId )}"><i
-              class="fa-solid fa-thumbs-up"></i></a>
+          <button @click.prevent="likeClick(post.id)" class="likedBlack" :class="{liked: post.like.find(likes =>likes.userId == userId )}" 
+            title="bouton like"><i class="fa-solid fa-thumbs-up"></i></button>
           ({{ post.like.length}})
 
           <span class="linkComment" @click="showCommentSwitch(post.id)">Voir les
@@ -117,7 +117,7 @@ export default {
         messageId: '',
       },
       userId: localStorage.getItem('userId'),
-      liked: "disable"
+      // liked: "disable"
     };
   },
   computed: {
@@ -231,14 +231,6 @@ export default {
       })
         .then(() => {
           this.getPosts()
-
-          // if (this.liked == false) {
-          //   this.colorLiked = null
-          //   localStorage.removeItem('color')
-          // } else {
-          //   this.colorLiked = '#635c9b'
-          //   localStorage.setItem('color', "#635c9b")
-          // }
         })
 
     },
@@ -247,6 +239,17 @@ export default {
 };
 </script>
 <style lang="scss">
+
+
+
+
+
+
+
+
+
+
+
 
 .section-homePage {
   display: flex;
@@ -408,20 +411,21 @@ export default {
     }
   }
 
+
+
   .barreBottom {
     width: 96%;
     border-top: 2px solid darkgray;
     margin-left: auto;
     margin-right: auto;
     padding: 3px;
+    pointer-events: auto;
 
-    .likeForm {
-      font-size: 20px;
-      margin-left: 20px;
-      background-color: transparent;
-      border: none;
-    }
-
+.likedBlack{
+  border: none;
+  background-color: white;
+  font-size: 15px
+  }
     .liked {
       color: #635c9b;
     }
