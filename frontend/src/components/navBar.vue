@@ -1,10 +1,10 @@
 <template>
   <nav id="navBar" v-if="authenficated">
-    <span class="icon-Menue" @click="showNavBarSwitch" v-if="!showNavBar"
+    <span class="icon-Menue" @click="showNavBarSwitch" title="Menue" v-if="!showNavBar"
       ><i class="fa-solid fa-bars"></i
     ></span>
-    <span class="icon-Menue" @click="showNavBarSwitch" v-else
-      ><i class="fa-solid fa-x"></i
+    <span class="icon-Menue" @click="showNavBarSwitch" title="Menue" v-else
+      ><i class="fa-solid fa-x" ></i
     ></span>
     <div class="menue-profil" v-if="showNavBar">
       <ul>

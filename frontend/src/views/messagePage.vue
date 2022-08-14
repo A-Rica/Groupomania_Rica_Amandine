@@ -4,43 +4,25 @@
       <!-- partie message utilisateurs -->
       <!-- Partie modification du message de l'utilisateur avec un switch
        faisant disparaitre le message pour laisser s'afficher la page de modification -->
-      <span
-        class="switchModifyPost"
-        @click="showModifyPostSwitch"
-        v-if="!showModifyPost"
-      >
-        Modifier le post</span
-      >
+      <span class="switchModifyPost" @click="showModifyPostSwitch" v-if="!showModifyPost">
+        Modifier le post</span>
       <span class="switchModifyPost" @click="showModifyPostSwitch" v-else>
-        Annuler la modification du post</span
-      >
+        Annuler la modification du post</span>
       <!-- Partie sur la modification de message -->
       <div class="postUser" v-if="showModifyPost">
         <Form @submit="modifyPost()">
           <label for="title">Titre: </label>
-          <Field
-            v-model="post.title"
-            type="texte"
-            name="title"
-            id="title"
-            class="blockTitle"
-            placeholder="Placez votre titre ici." :rules="isRequired"
-          />
-            <ErrorMessage name="title" /><br/>
+          <Field v-model="post.title" type="texte" name="title" id="title" class="blockTitle"
+            placeholder="Placez votre titre ici." :rules="isRequired" />
+          <ErrorMessage name="title" /><br />
           <label id="labelBlockNewPost" for="Text">Message:</label>
-           <Field name="Text" id="Text"  v-model="post.text" :rules="isRequired" v-slot="{ field }" >
-           <textarea name="Text" id="Text" class="blockText"  v-model="post.text" v-bind="field">
+          <Field name="Text" id="Text" v-model="post.text" :rules="isRequired" v-slot="{ field }">
+            <textarea name="Text" id="Text" class="blockText" v-model="post.text" v-bind="field">
           </textarea>
           </Field>
-           <ErrorMessage name="Text"/><br/>
+          <ErrorMessage name="Text" /><br />
           <label id="labelBlockNewPost" for="image">Image:</label>
-          <input
-            type="file"
-            ref="file"
-            name="image"
-            id="image"
-            @change="onFileChange"
-          /><br />
+          <input type="file" ref="file" name="image" id="image" @change="onFileChange" /><br />
           <button class="send" id="send" name="send" type="submit">
             Envoyer
           </button>
@@ -48,66 +30,45 @@
       </div>
       <!-- Partie affichant le message -->
       <div class="postUser" v-else>
-        <img v-bind:src="post.user.image" class="img-members" alt="image du profil"/>
-        <span class="positionTitleName"
-          ><h2>{{ post.title }}</h2>
+        <img v-bind:src="post.user.image" class="img-members" alt="image du profil" />
+        <span class="positionTitleName">
+          <h2>{{ post.title }}</h2>
           <h3>de {{ post.user.lastname }} {{ post.user.name }}</h3>
         </span>
 
         <p class="formatText">
           {{ post.text }}
-          <img v-bind:src="post.image" class="imagePost" alt="image du message"/>
+          <img v-bind:src="post.image" v-show="post.image" class="imagePost" alt="image du post" />
+          <video controls v-bind:src="post.video" v-show="post.video" class="imagePost">
+</video>
         </p>
         <div class="barreBottom">
-  
-          <span class="linkComment" @click="showCommentSwitch"
-            >Voir les commentaires</span
-          >
+
+          <span class="linkComment" @click="showCommentSwitch">Voir les commentaires</span>
           <div class="blockComment" v-if="showComments">
             <!-- Partie création de commentaire -->
             <Form @submit="createdComment()">
-          <label for="comment">Texte:</label>    
-          <Field name="comment" id="comment" v-model="comment.text" :rules="isRequired" v-slot="{ fieldComment }">
-          <textarea
-                name="comment"
-                id="comment"
-                type="text"
-                v-model="comment.text" v-bind="fieldComment"
-              ></textarea></Field>
-               <ErrorMessage name="comment" class="errorMessage"/><br/>
-             <label for="images">Image:</label> <input
-                type="file"
-                ref="file"
-                name="images"
-                id="images"
-                @change="onFileChangeComment"
-              />
+              <label for="comment">Texte:</label>
+              <Field name="comment" id="comment" v-model="comment.text" :rules="isRequired" v-slot="{ fieldComment }">
+                <textarea name="comment" id="comment" type="text" v-model="comment.text"
+                  v-bind="fieldComment"></textarea>
+              </Field>
+              <ErrorMessage name="comment" class="errorMessage" /><br />
+              <label for="images">Image:</label> <input type="file" ref="file" name="images" id="images"
+                @change="onFileChangeComment" />
               <button class="send" id="forward" name="send" type="submit">
                 Envoyer
               </button>
             </Form>
 
             <h3>Commentaires</h3>
-            <div
-              class="blockDisplayComment"
-              v-for="comment in post.comments"
-              v-bind:key="comment.id"
-            >
+            <div class="blockDisplayComment" v-for="comment in post.comments" v-bind:key="comment.id">
               <!-- bouton list modifié -->
               <nav>
-                <span
-                  class="positionPoint"
-                  @click="showModifyMenuComment(comment.id)"
-                  ><i class="fa-solid fa-ellipsis"></i
-                ></span>
-                <ul
-                  class="formMenuModifyComment"
-                  v-if="showCommentMenuId == comment.id"
-                >
-                  <li
-                    @click="showModifyCommentSwitch(comment.id)"
-                    v-if="!showButtonModify"
-                  class="marginTopLi">
+                <span class="positionPoint" @click="showModifyMenuComment(comment.id)"><i
+                    class="fa-solid fa-ellipsis"></i></span>
+                <ul class="formMenuModifyComment" v-if="showCommentMenuId == comment.id">
+                  <li @click="showModifyCommentSwitch(comment.id)" v-if="!showButtonModify" class="marginTopLi">
                     Modifier le commentaire
                   </li>
                   <li @click="showModifyCommentSwitch" v-else class="marginTopLi">
@@ -119,23 +80,15 @@
               <img class="formAvatar" v-bind:src="comment.user.image" alt="image du profil" />
               <div class="formComment" v-if="showModifyComments == comment.id">
                 <Form @submit="modifyComments(comment.id)">
-                 <label for="comments">Texte:</label>
-                   <Field name="comments" id="comments" v-model="commentary.text" :rules="isRequired" v-slot="{ fieldComments }">
-                   <textarea
-                    name="comments"
-                    id="comments"
-                    type="text"
-                    v-model="commentary.text" v-bind="fieldComments"
-                  ></textarea></Field>
-                   <ErrorMessage name="comments" class="errorMessage"/><br/>
+                  <label for="comments">Texte:</label>
+                  <Field name="comments" id="comments" v-model="commentary.text" :rules="isRequired"
+                    v-slot="{ fieldComments }">
+                    <textarea name="comments" id="comments" type="text" v-model="commentary.text"
+                      v-bind="fieldComments"></textarea>
+                  </Field>
+                  <ErrorMessage name="comments" class="errorMessage" /><br />
                   <label for="image">Votre image:</label>
-                  <input
-                    type="file"
-                    ref="file"
-                    name="image"
-                    id="image"
-                    @change="onImageChangeComment(comment.id)"
-                  />
+                  <input type="file" ref="file" name="image" id="image" @change="onImageChangeComment(comment.id)" />
                   <button class="send" id="forward" name="send" type="submit">
                     Envoyer
                   </button>
@@ -144,11 +97,7 @@
               <div class="formComment" v-else>
                 <h4>de {{ comment.user.lastname }} {{ comment.user.name }}</h4>
                 <span>{{ comment.text }}</span>
-                <img
-                  class="imageComment"
-                  :src="comment.image"
-                  v-show="comment.image"
-                alt="image du commentaire"/>
+                <img class="imageComment" :src="comment.image" v-show="comment.image" alt="image du commentaire" />
               </div>
             </div>
           </div>
@@ -184,6 +133,7 @@ export default {
         title: "",
         text: "",
         image: "",
+        video: "",
         id: "",
         user: [],
         comments: [],
@@ -232,6 +182,7 @@ export default {
         this.post.title = post.data.title;
         this.post.text = post.data.text;
         this.post.image = post.data.image;
+        this.post.video = post.data.video;
         this.post.user = post.data.user;
         this.post.comments = post.data.comment;
       });

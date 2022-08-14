@@ -5,12 +5,12 @@
     <h2 v-if="mode == 'login'">
       Si vous n'avez toujours pas de compte chez nous, merci de bien vouloir
       vous
-      <span class="lien-inscription" @click="switchCreateUser()">inscrire</span>
+      <button class="lien-inscription" @click="switchCreateUser()">inscrire</button>
     </h2>
     <!-- titre switchant vers la connexion -->
     <h2 v-else>
       Si vous avez déjà un compte chez nous, merci de bien vouloir vous
-      <span class="lien-inscription" @click="switchLogin()">connecter</span>
+      <button class="lien-inscription" @click="switchLogin()">connecter</button>
     </h2>
     <!-- formulaire connexion contenant l'email et le mot de passe -->
     <Form class="formulaire" v-if="mode == 'login'" @submit="submit()">
@@ -190,6 +190,11 @@ export default {
     // mise en forme du lien
     .lien-inscription {
       color: #525273;
+      background-color: transparent;
+      border: none;
+      font-weight: bold;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 16px;
       cursor: pointer;
       &:hover {
         color: darken(#525273, 10%);

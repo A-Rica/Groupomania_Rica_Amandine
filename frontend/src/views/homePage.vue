@@ -43,8 +43,8 @@
               {{ new Date(post.createdAt).toLocaleString() }}
             </h4>
           </span>
-          <span class="croixDelete" @click="deletePost(post.id)" :key="post.user.id"><i
-              class="fa-solid fa-xmark"></i></span>
+          <button class="croixDelete" @click="deletePost(post.id)" :key="post.user.id"><i
+              class="fa-solid fa-xmark"></i></button>
         </div>
         <p class="formatText">
           {{ post.text }}
@@ -58,8 +58,8 @@
             title="bouton like"><i class="fa-solid fa-thumbs-up"></i></button>
           ({{ post.like.length}})
 
-          <span class="linkComment" @click="showCommentSwitch(post.id)">Voir les
-            commentaires</span>
+          <button class="linkComment" @click="showCommentSwitch(post.id)">Voir les
+            commentaires</button>
 
           <div class="blockComment" v-if="showCommentspostId == post.id">
             <h3>Commentaires</h3>
@@ -383,6 +383,9 @@ export default {
     }
 
     .croixDelete {
+      background-color: transparent;
+      border: none;
+      font-family: 'Times New Roman', Times, serif;
       position: absolute;
       cursor: pointer;
       right: 8%;
@@ -433,6 +436,8 @@ export default {
     .linkComment {
       float: right;
       cursor: pointer;
+background-color: white;
+border: none;
 
       &:hover {
         text-decoration: underline;
