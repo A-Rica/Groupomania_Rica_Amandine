@@ -4,10 +4,10 @@
       <!-- partie message utilisateurs -->
       <!-- Partie modification du message de l'utilisateur avec un switch
        faisant disparaitre le message pour laisser s'afficher la page de modification -->
-      <span class="switchModifyPost" @click="showModifyPostSwitch" v-if="!showModifyPost">
-        Modifier le post</span>
-      <span class="switchModifyPost" @click="showModifyPostSwitch" v-else>
-        Annuler la modification du post</span>
+      <button class="switchModifyPost" @click="showModifyPostSwitch" v-if="!showModifyPost">
+        Modifier le post</button>
+      <button class="switchModifyPost" @click="showModifyPostSwitch" v-else>
+        Annuler la modification du post</button>
       <!-- Partie sur la modification de message -->
       <div class="postUser" v-if="showModifyPost">
         <Form @submit="modifyPost()">
@@ -44,7 +44,7 @@
         </p>
         <div class="barreBottom">
 
-          <span class="linkComment" @click="showCommentSwitch">Voir les commentaires</span>
+          <button class="linkComment" @click="showCommentSwitch">Voir les commentaires</button>
           <div class="blockComment" v-if="showComments">
             <!-- Partie création de commentaire -->
             <Form @submit="createdComment()">
@@ -452,6 +452,7 @@ location.reload();
   position: absolute;
   right: 8%;
   background-color: #635c9b;
+  border: none;
   border-radius: 20px;
   padding: 10px;
   width: 220px;
@@ -474,6 +475,10 @@ location.reload();
   .linkComment {
     float: right;
     cursor: pointer;
+    background-color: transparent;
+    border: none;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 15px;
     &:hover {
       text-decoration: underline;
     }
